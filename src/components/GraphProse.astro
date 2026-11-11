@@ -1,0 +1,28 @@
+---
+/**
+ * Wraps rendered Markdown and resolves thing:, claim: and obs: links.
+ * See src/lib/prose.ts.
+ *
+ * A paragraph containing only ::graph:: marks where the episode's picture
+ * goes. Whatever is passed in the "graph" slot is placed there. Without the
+ * marker the slot is not rendered and the page puts the picture elsewhere.
+ */
+import { withBase } from '../lib/paths.ts';
+import { GRAPH_MARKER, resolveGraphLinks, splitAtGraph } from '../lib/prose.ts';
+
+const html = resolveGraphLinks(await Astro.slots.render('default'), withBase);
+const parts = splitAtGraph(html);
+const figure = parts && Astro.slots.has('graph') ? await Astro.slots.render('graph') : '';
+---
+
+{
+  parts ? (
+    <>
+      <div class="prose" set:html={parts.before} />
+      <Fragment set:html={figure} />
+      <div class="prose" set:html={parts.after} />
+    </>
+  ) : (
+    <div class="prose" set:html={html.replace(GRAPH_MARKER, '')} />
+  )
+}

@@ -1,0 +1,180 @@
+---
+import PositionTable from '../../components/PositionTable.astro';
+import Stamp from '../../components/Stamp.astro';
+import Thing from '../../components/Thing.astro';
+import Base from '../../layouts/Base.astro';
+import { nodeFor } from '../../lib/graph/jsonld.ts';
+import { explorerPath, pathFor } from '../../lib/graph/routes.ts';
+import { stance } from '../../lib/graph/stances.ts';
+import { claimHistory, claimStatus, entityLabel, evidenceFor, citationsOf, latestPositions, postFor, refinementsOf } from '../../lib/graph/views.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+export async function getStaticPaths() {
+  const graph = await getSiteGraph();
+  return graph.claims.map((claim) => ({ params: { id: claim.id } }));
+}
+
+const graph = await getSiteGraph();
+const claim = graph.claims.find((c) => c.id === Astro.params.id)!;
+const status = claimStatus(graph, claim.id);
+const history = claimHistory(graph, claim.id);
+const positions = latestPositions(graph, claim.id);
+const evidence = evidenceFor(graph, claim.id);
+const post = postFor(graph, claim.post)!;
+const refines = claim.refines ? graph.claims.find((c) => c.id === claim.refines) : null;
+const refinedBy = refinementsOf(graph, claim.id);
+const predicate = claim.predicate ? graph.predicates.find((p) => p.id === claim.predicate) : null;
+const others = claim.about.filter((id) => id !== claim.subject && id !== claim.object);
+---
+
+<Base title={claim.label} description={`${entityLabel(graph, claim.attributedTo)}'s claim, and what has happened to it since.`} jsonld={nodeFor(graph, claim.id)}>
+  <p class="quiet">
+    Claim, proposed by <Thing graph={graph} id={claim.attributedTo} inline /> in{' '}
+    <a href={withBase(`/episodes/${post.slug}/`)}>episode {post.episode}</a>
+  </p>
+  <h1 class:list={[{ struck: status === 'withdrawn' }]}>{claim.label}</h1>
+  <p class="status"><Stamp status={status} large /></p>
+  {claim.description && <p class="lede">{claim.description}</p>}
+
+  <dl class="form">
+    {
+      claim.subject && claim.object && predicate && (
+        <>
+          <dt>As a statement</dt>
+          <dd>
+            <Thing graph={graph} id={claim.subject} /> <span class="predicate">{predicate.label}</span>{' '}
+            <Thing graph={graph} id={claim.object} />
+            <div class="quiet small" style="margin-top:0.35rem">Recorded as a claim. The graph does not assert it as fact.</div>
+          </dd>
+        </>
+      )
+    }
+    {
+      others.length > 0 && (
+        <>
+          <dt>Also concerns</dt>
+          <dd>
+            {others.map((id) => (
+              <>
+                <Thing graph={graph} id={id} />{' '}
+              </>
+            ))}
+          </dd>
+        </>
+      )
+    }
+    <dt>Where things stand</dt>
+    <dd>
+      {
+        positions.map((p) => (
+          <div>
+            {entityLabel(graph, p.by)}:{' '}
+            <span class="stance" data-polarity={stance(p.stance).polarity}>
+              {stance(p.stance).label.toLowerCase()}
+            </span>
+            <span class="quiet">, as of episode {p.episode}</span>
+          </div>
+        ))
+      }
+    </dd>
+    {
+      refines && (
+        <>
+          <dt>Narrows</dt>
+          <dd>
+            <a href={withBase(`/claims/${refines.id}/`)}>{refines.label}</a>
+          </dd>
+        </>
+      )
+    }
+    {
+      refinedBy.length > 0 && (
+        <>
+          <dt>Narrowed by</dt>
+          <dd>
+            {refinedBy.map((c) => (
+              <div>
+                <a href={withBase(`/claims/${c.id}/`)}>{c.label}</a>
+              </div>
+            ))}
+          </dd>
+        </>
+      )
+    }
+    <dt>Identifier</dt>
+    <dd class="identifier">{graph.site.idBase}{claim.id}</dd>
+  </dl>
+
+  <div class="button-row">
+    <a class="button button--primary" href={withBase(explorerPath(graph, claim.id)!)}>See it in the graph</a>
+  </div>
+
+  <section>
+    <h2>The record</h2>
+    <p class="measure quiet">Every position anyone has taken on this claim, in the order it was published. Nothing is edited after the fact.</p>
+    <PositionTable graph={graph} assessments={history} />
+  </section>
+
+  {
+    evidence.length > 0 && (
+      <section>
+        <h2>Evidence cited</h2>
+        <ul class="evidence">
+          {evidence.map((o) => {
+            const source = postFor(graph, o.post)!;
+            const citedBy = citationsOf(graph, o.id).filter((a) => a.claim === claim.id);
+            return (
+              <li id={`evidence-${o.id}`}>
+                <p>{o.text}</p>
+                <p class="quiet small">
+                  Observed by {entityLabel(graph, o.observedBy)} in episode {source.episode}. Cited by{' '}
+                  {citedBy.map((a, i) => (
+                    <>
+                      {i > 0 && ', '}
+                      {entityLabel(graph, a.by)} {{ support: 'to support it', doubt: 'to doubt it', open: 'while leaving it open', retract: 'to withdraw it' }[stance(a.stance).polarity]}
+                    </>
+                  ))}
+                  . <a href={withBase(pathFor(graph, o.id)!)}>Read the passage</a>
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  h1 {
+    max-width: 20ch;
+  }
+  h1.struck {
+    text-decoration: line-through;
+    text-decoration-color: var(--withdrawn);
+    text-decoration-thickness: 4px;
+  }
+  .status {
+    margin: 1.1rem 0 0.5rem;
+  }
+  .predicate {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 0 0.15rem;
+  }
+  .evidence {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .evidence li {
+    padding: 0.7rem 0 0.7rem 1rem;
+    border-left: 3px solid var(--blue-wash);
+    margin-bottom: 0.5rem;
+  }
+  .evidence p {
+    margin: 0;
+  }
+</style>

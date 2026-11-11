@@ -1,0 +1,149 @@
+---
+import PositionTable from '../components/PositionTable.astro';
+import Stamp from '../components/Stamp.astro';
+import Thing from '../components/Thing.astro';
+import Base from '../layouts/Base.astro';
+import { formatDate } from '../lib/format.ts';
+import { stance } from '../lib/graph/stances.ts';
+import { claimStatus, entityLabel } from '../lib/graph/views.ts';
+import { withBase } from '../lib/paths.ts';
+import { getSiteGraph } from '../lib/site-graph.ts';
+import { SITE } from '../site.config.ts';
+
+const graph = await getSiteGraph();
+const posts = [...graph.posts].reverse();
+const recent = [...graph.assessments].sort((a, b) => b.sequence - a.sequence);
+
+// The hero is the most recent retraction, because nothing describes the series better.
+const retraction = recent.find((a) => a.stance === 'withdraws');
+const retracted = retraction && graph.claims.find((c) => c.id === retraction.claim);
+
+const followable = graph.entities
+  .filter((e) => e.type !== 'person')
+  .sort((a, b) => b.mentionedIn.length + b.aliases.length - (a.mentionedIn.length + a.aliases.length))
+  .slice(0, 6);
+---
+
+<Base>
+  <section class="hero">
+    <div>
+      <h1>Everything one household has believed, on the record.</h1>
+      <p class="lede">{SITE.description}</p>
+      <div class="button-row">
+        <a class="button button--primary" href={withBase(`/episodes/${posts[0].slug}/`)}>Read the latest episode</a>
+        <a class="button" href={withBase('/explore/')}>Explore the graph</a>
+      </div>
+    </div>
+    {
+      retraction && retracted && (
+        <a class="exhibit" href={withBase(`/claims/${retracted.id}/`)}>
+          <span class="exhibit__label">Most recent retraction</span>
+          <span class="exhibit__claim">{retracted.label}</span>
+          <Stamp status={claimStatus(graph, retracted.id)} large />
+          <span class="exhibit__note">
+            {entityLabel(graph, retraction.by)} {stance(retraction.stance).verb} it in episode {retraction.episode}.
+            {retraction.note && ` “${retraction.note}”`}
+          </span>
+        </a>
+      )
+    }
+  </section>
+
+  <section>
+    <h2>Latest changes of position</h2>
+    <PositionTable graph={graph} assessments={recent.slice(0, 5)} showClaim />
+    <p class="small" style="margin-top:0.75rem">
+      <a href={withBase('/beliefs/')}>See all {graph.claims.length} things we have believed</a>
+    </p>
+  </section>
+
+  <section>
+    <h2>Episodes</h2>
+    <ol class="entry-list" reversed>
+      {
+        posts.map((post) => (
+          <li>
+            <span class="entry-no">Episode {post.episode}</span>
+            <div>
+              <h3>
+                <a href={withBase(`/episodes/${post.slug}/`)}>{post.title}</a>
+              </h3>
+              <p>{post.summary}</p>
+              <p class="quiet small">
+                {formatDate(post.published)}
+                {post.sample && <span class="tag">Sample</span>}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section>
+    <h2>Or follow one thing through the series</h2>
+    <p class="measure quiet">Every recurring object, routine and idea has a page that collects its appearances, its names and what has been claimed about it.</p>
+    <ul class="chips">
+      {
+        followable.map((e) => (
+          <li>
+            <Thing graph={graph} id={e.id} />
+          </li>
+        ))
+      }
+      <li><a class="chip" href={withBase('/things/')}>All {graph.entities.length} things</a></li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 2rem 3rem;
+    align-items: center;
+    padding: clamp(0.5rem, 3vw, 2rem) 0 1rem;
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .exhibit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.5rem 1.5rem;
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: 6px 6px 0 var(--rule-soft);
+  }
+  .exhibit:hover {
+    border-color: var(--blue);
+  }
+  .exhibit__label {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+  .exhibit__claim {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-decoration: line-through;
+    text-decoration-color: var(--withdrawn);
+    text-decoration-thickness: 3px;
+  }
+  .exhibit__note {
+    font-size: 0.97rem;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 52rem) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

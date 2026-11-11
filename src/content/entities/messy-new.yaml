@@ -1,0 +1,7 @@
+label: Messy New
+type: object
+description: >
+  A 3D-printed sloth. Printed, not sewn. Status: complicated.
+relations:
+  - predicate: isA
+    object: sloth

@@ -1,0 +1,11 @@
+---
+import { STATUS_LABELS, type ClaimStatus } from '../lib/graph/stances.ts';
+
+interface Props {
+  status: ClaimStatus;
+  large?: boolean;
+}
+const { status, large = false } = Astro.props;
+---
+
+<span class:list={['stamp', { 'stamp--large': large }]} data-status={status}>{STATUS_LABELS[status]}</span>

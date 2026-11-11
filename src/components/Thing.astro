@@ -1,0 +1,27 @@
+---
+import type { CompiledGraph } from '../lib/graph/compile.ts';
+import { withBase } from '../lib/paths.ts';
+
+interface Props {
+  graph: CompiledGraph;
+  id: string;
+  /** Render as plain inline link text rather than a chip. */
+  inline?: boolean;
+}
+const { graph, id, inline = false } = Astro.props;
+const entity = graph.entities.find((e) => e.id === id);
+---
+
+{
+  entity ? (
+    inline ? (
+      <a href={withBase(`/things/${id}/`)}>{entity.label}</a>
+    ) : (
+      <a class="chip" data-type={entity.type} href={withBase(`/things/${id}/`)}>
+        {entity.label}
+      </a>
+    )
+  ) : (
+    <span>{id}</span>
+  )
+}

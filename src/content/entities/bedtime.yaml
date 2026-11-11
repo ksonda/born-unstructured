@@ -1,0 +1,10 @@
+label: bedtime
+type: routine
+description: >
+  Goes smoothly when at least one Messy Muppy and at least one Flat Muppy are in the bed.
+  Anything else is an incident.
+relations:
+  - predicate: requires
+    object: messy-muppy
+  - predicate: requires
+    object: flat-muppy

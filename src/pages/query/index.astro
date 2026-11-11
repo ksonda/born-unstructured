@@ -1,0 +1,27 @@
+---
+import SparqlPlayground from '../../components/query/SparqlPlayground.svelte';
+import Base from '../../layouts/Base.astro';
+import { prefixes } from '../../lib/graph/jsonld.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+import { sparqlExamples } from '../../lib/sparql/examples.ts';
+
+const graph = await getSiteGraph();
+const examples = sparqlExamples(graph.site.idBase, graph.site.vocabBase);
+---
+
+<Base title="Query with SPARQL" description="Run SPARQL against the published knowledge graph, in your browser.">
+  <h1>Query with SPARQL</h1>
+  <p class="lede">
+    For readers who would rather ask in triples. Queries run in your browser against the published records, the same file you can{' '}
+    <a href={withBase('/data/')}>download</a>.
+  </p>
+  <p class="small quiet measure">
+    New to this? <a href={withBase('/ask/')}>Ask the household</a> answers the same questions without the syntax. The terms are listed in{' '}
+    <a href={withBase('/vocab/')}>the vocabulary</a>.
+  </p>
+  <div style="margin-top:2rem">
+    <SparqlPlayground client:only="svelte" examples={examples} dataUrl={withBase('/data/graph.nq')} base={withBase('')} prefixes={prefixes(graph)} />
+    <noscript><p class="panel">The query page needs JavaScript. The dataset itself is on the <a href={withBase('/data/')}>data page</a>.</p></noscript>
+  </div>
+</Base>

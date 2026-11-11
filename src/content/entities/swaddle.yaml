@@ -1,0 +1,7 @@
+label: the swaddle
+type: object
+description: A square of muslin and a folding technique from a video. Effective for somewhere between four minutes and a whole night.
+aliases:
+  - the burrito
+  - label: the escape room
+    since: 5

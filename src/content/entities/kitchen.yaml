@@ -1,0 +1,6 @@
+label: the kitchen
+type: place
+description: The only room where the lights are already on. Most of the research is conducted here.
+aliases:
+  - label: the lab
+    since: 4

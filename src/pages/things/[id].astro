@@ -1,0 +1,180 @@
+---
+import ClaimCard from '../../components/ClaimCard.astro';
+import Thing from '../../components/Thing.astro';
+import Base from '../../layouts/Base.astro';
+import { capitalise, TYPE_LABELS } from '../../lib/format.ts';
+import { nodeFor } from '../../lib/graph/jsonld.ts';
+import { pathFor } from '../../lib/graph/routes.ts';
+import { stance } from '../../lib/graph/stances.ts';
+import { claimsAssessedBy, claimsInvolving, entityLabel, entityTimeline, type TimelineEvent } from '../../lib/graph/views.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+export async function getStaticPaths() {
+  const graph = await getSiteGraph();
+  return graph.entities.map((entity) => ({ params: { id: entity.id } }));
+}
+
+const graph = await getSiteGraph();
+const entity = graph.entities.find((e) => e.id === Astro.params.id)!;
+const timeline = entityTimeline(graph, entity.id);
+const episodes = [...new Set(timeline.map((e) => e.episode))];
+const about = claimsInvolving(graph, entity.id);
+const assessed = entity.type === 'person' ? claimsAssessedBy(graph, entity.id).filter((c) => !about.includes(c)) : [];
+const predicateLabel = (id: string) => graph.predicates.find((p) => p.id === id)?.label ?? id;
+const incoming = graph.entities.flatMap((other) =>
+  other.relations.filter((r) => r.object === entity.id).map((r) => ({ subject: other.id, predicate: r.predicate })),
+);
+const first = graph.posts.find((p) => p.episode === entity.mentionedIn[0])!;
+const eventsIn = (episode: number) => timeline.filter((e): e is Exclude<TimelineEvent, { kind: 'appearance' }> => e.episode === episode && e.kind !== 'appearance');
+---
+
+<Base title={capitalise(entity.label)} description={entity.description} jsonld={nodeFor(graph, entity.id)}>
+  <p class="quiet"><span class="dot" data-type={entity.type}>{TYPE_LABELS[entity.type].one}</span></p>
+  <h1>{capitalise(entity.label)}</h1>
+  {entity.description && <p class="lede">{entity.description}</p>}
+
+  <dl class="form">
+    {
+      entity.aliases.length > 0 && (
+        <>
+          <dt>Also known as</dt>
+          <dd>
+            {entity.aliases.map((a, i) => (
+              <>
+                {i > 0 && <br />}
+                {a.label}
+                <span class="quiet small"> since episode {a.since}</span>
+              </>
+            ))}
+          </dd>
+        </>
+      )
+    }
+    <dt>First appeared</dt>
+    <dd>
+      <a href={withBase(`/episodes/${first.slug}/`)}>Episode {first.episode}, {first.title}</a>
+    </dd>
+    <dt>Appears in</dt>
+    <dd>{entity.mentionedIn.length} of {graph.posts.length} episodes</dd>
+    {
+      (entity.relations.length > 0 || incoming.length > 0) && (
+        <>
+          <dt>Household facts</dt>
+          <dd>
+            {entity.relations.map((r) => (
+              <div>
+                {capitalise(predicateLabel(r.predicate))} <Thing graph={graph} id={r.object} inline />
+              </div>
+            ))}
+            {incoming.map((r) => (
+              <div>
+                <Thing graph={graph} id={r.subject} inline /> {predicateLabel(r.predicate)} it
+              </div>
+            ))}
+          </dd>
+        </>
+      )
+    }
+    <dt>Identifier</dt>
+    <dd class="identifier">{graph.site.idBase}{entity.id}</dd>
+  </dl>
+
+  <div class="button-row">
+    <a class="button button--primary" href={withBase(`/explore/?focus=${entity.id}`)}>Explore its connections</a>
+  </div>
+
+  {
+    about.length > 0 && (
+      <section>
+        <h2>What has been claimed about it</h2>
+        <ul class="claim-list measure">
+          {about.map((c) => (
+            <li>
+              <ClaimCard graph={graph} id={c.id} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    assessed.length > 0 && (
+      <section>
+        <h2>Other claims {entity.label} has weighed in on</h2>
+        <ul class="claim-list measure">
+          {assessed.map((c) => (
+            <li>
+              <ClaimCard graph={graph} id={c.id} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section>
+    <h2>Biography</h2>
+    <ol class="timeline">
+      {
+        episodes.map((episode) => {
+          const post = graph.posts.find((p) => p.episode === episode)!;
+          const events = eventsIn(episode);
+          return (
+            <li>
+              <div class="when">
+                <a href={withBase(`/episodes/${post.slug}/`)}>Episode {episode}</a>
+              </div>
+              <ul>
+                {episode === entity.mentionedIn[0] && (
+                  <li>
+                    <span class="event-kind">First appearance</span>
+                    <br />
+                    {post.title}
+                  </li>
+                )}
+                {events.map((event) => (
+                  <li>
+                    {event.kind === 'alias' && (
+                      <>
+                        <span class="event-kind">New name</span>
+                        <br />
+                        Starts being called {event.label}
+                      </>
+                    )}
+                    {event.kind === 'observation' && (
+                      <>
+                        <span class="event-kind">Observed by {entityLabel(graph, event.observation.observedBy)}</span>
+                        <br />
+                        <a href={withBase(pathFor(graph, event.observation.id)!)}>{event.observation.text}</a>
+                      </>
+                    )}
+                    {event.kind === 'claim' && (
+                      <>
+                        <span class="event-kind">Claim proposed by {entityLabel(graph, event.claim.attributedTo)}</span>
+                        <br />
+                        <a href={withBase(`/claims/${event.claim.id}/`)}>{event.claim.label}</a>
+                      </>
+                    )}
+                    {event.kind === 'assessment' && (
+                      <>
+                        <span class="event-kind">Position</span>
+                        <br />
+                        {entityLabel(graph, event.assessment.by)}{' '}
+                        <span class="stance" data-polarity={stance(event.assessment.stance).polarity}>
+                          {stance(event.assessment.stance).verb}
+                        </span>{' '}
+                        <a href={withBase(pathFor(graph, event.assessment.id)!)}>{event.claim.label}</a>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </section>
+</Base>

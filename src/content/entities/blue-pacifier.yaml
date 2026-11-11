@@ -1,0 +1,12 @@
+label: the blue pacifier
+type: object
+description: >
+  One of two pacifiers from the same packet. Identical to the green one in every respect
+  the adults can detect.
+aliases:
+  - label: the only acceptable pacifier
+    since: 3
+  - label: Old Blue
+    since: 4
+  - label: the asset
+    since: 5

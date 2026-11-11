@@ -1,0 +1,12 @@
+label: Dad
+type: person
+description: >
+  Writes these installments. Proposes most of the theories and has withdrawn a growing share of them.
+aliases:
+  - label: the Night Shift
+    since: 4
+relations:
+  - predicate: parentOf
+    object: the-authority
+  - predicate: parentOf
+    object: baby

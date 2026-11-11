@@ -1,0 +1,34 @@
+---
+/**
+ * Identifier resolution. Every record's IRI is {site}/id/{id}; this page
+ * sends a browser on to the page that describes it.
+ *
+ * On Cloudflare Pages the generated _redirects file answers the same request
+ * with a real 303 before this page is ever served. This is the fallback for
+ * every other host.
+ */
+import { routeTable } from '../../lib/graph/routes.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+export async function getStaticPaths() {
+  const graph = await getSiteGraph();
+  return Object.entries(routeTable(graph)).map(([id, path]) => ({ params: { id }, props: { path } }));
+}
+
+const target = withBase(Astro.props.path);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting to {target}</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={new URL(target, Astro.site)} />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <p>This identifier is described at <a href={target}>{target}</a>.</p>
+  </body>
+</html>

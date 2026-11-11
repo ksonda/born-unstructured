@@ -1,0 +1,10 @@
+label: lovey 03
+type: object
+description: >
+  A blankie-style sloth. One of several of the same model that look identical to every adult
+  who has examined them. The identifier is deliberately meaningless.
+relations:
+  - predicate: isA
+    object: muppy
+  - predicate: fills
+    object: flat-muppy

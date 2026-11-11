@@ -1,0 +1,12 @@
+label: the Naming Authority
+type: person
+description: >
+  Almost four. Built the household's naming system for sloths and is the only person who can
+  admit a new muppy to it. Cannot read yet.
+aliases:
+  - the almost-four-year-old
+  - the kid
+  - the authority
+relations:
+  - predicate: namingAuthorityFor
+    object: muppy

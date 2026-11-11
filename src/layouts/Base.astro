@@ -1,0 +1,89 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/public-sans';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import { SITE } from '../site.config.ts';
+import { withBase } from '../lib/paths.ts';
+import { getSiteGraph } from '../lib/site-graph.ts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** A JSON-LD document describing the page's subject. */
+  jsonld?: object | null;
+  /** Use the full width of the window, for the explorer. */
+  wide?: boolean;
+}
+
+const { title, description = SITE.description, jsonld, wide = false } = Astro.props;
+const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const nav = [
+  { href: '/episodes/', label: 'Episodes' },
+  { href: '/explore/', label: 'Explore' },
+  { href: '/beliefs/', label: 'Things we believed' },
+];
+const footer = [
+  { href: '/ask/', label: 'Ask the household' },
+  { href: '/things/', label: 'All things' },
+  { href: '/query/', label: 'Query with SPARQL' },
+  { href: '/data/', label: 'Data' },
+  { href: '/vocab/', label: 'Vocabulary' },
+  { href: '/rss.xml', label: 'RSS' },
+];
+const here = Astro.url.pathname;
+
+const samples = (await getSiteGraph()).posts.filter((post) => post.sample).map((post) => post.episode);
+const sampleNote =
+  samples.length === 0
+    ? 'The household is real. So is the graph.'
+    : `Episode${samples.length === 1 ? '' : 's'} ${samples.length > 2 ? `${samples[0]} to ${samples[samples.length - 1]}` : samples.join(' and ')} ${samples.length === 1 ? 'is a made-up sample' : 'are made-up samples'}. The graph is real.`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href={withBase('/rss.xml')} />
+    <link rel="alternate" type="application/ld+json" title="Knowledge graph" href={withBase('/data/graph.jsonld')} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    {jsonld && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonld)} />}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="wordmark" href={withBase('/')}>{SITE.title}</a>
+        <nav class="site-nav" aria-label="Main">
+          {
+            nav.map((item) => (
+              <a href={withBase(item.href)} aria-current={here.startsWith(withBase(item.href)) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+    <main class:list={[{ wide }]}>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>{sampleNote}</span>
+        <nav aria-label="More">
+          {footer.map((item) => <a href={withBase(item.href)}>{item.label}</a>)}
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

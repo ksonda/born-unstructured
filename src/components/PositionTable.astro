@@ -1,0 +1,61 @@
+---
+/**
+ * The record of who thought what, and when. One row per assessment, oldest first.
+ */
+import type { Assessment, CompiledGraph } from '../lib/graph/compile.ts';
+import { stance } from '../lib/graph/stances.ts';
+import { entityLabel, postFor } from '../lib/graph/views.ts';
+import { withBase } from '../lib/paths.ts';
+
+interface Props {
+  graph: CompiledGraph;
+  assessments: Assessment[];
+  /** Show which claim each row is about. Used when rows span several claims. */
+  showClaim?: boolean;
+}
+const { graph, assessments, showClaim = false } = Astro.props;
+---
+
+<div class="ledger-wrap">
+  <table class="ledger ledger--stack">
+    <thead>
+      <tr>
+        <th scope="col">Episode</th>
+        <th scope="col">Person</th>
+        {showClaim && <th scope="col">Claim</th>}
+        <th scope="col">Recorded position</th>
+        <th scope="col">Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        assessments.map((a) => {
+          const post = postFor(graph, a.post)!;
+          const s = stance(a.stance);
+          const claim = graph.claims.find((c) => c.id === a.claim)!;
+          return (
+            <tr id={a.id}>
+              <td class="num" data-label="Episode">
+                <a href={withBase(`/episodes/${post.slug}/`)}>{a.episode}</a>
+              </td>
+              <td data-label="Person">
+                <a href={withBase(`/things/${a.by}/`)}>{entityLabel(graph, a.by)}</a>
+              </td>
+              {showClaim && (
+                <td data-label="Claim">
+                  <a href={withBase(`/claims/${claim.id}/`)}>{claim.label}</a>
+                </td>
+              )}
+              <td>
+                <span class="stance" data-polarity={s.polarity}>
+                  {s.label}
+                </span>
+              </td>
+              <td class="quiet">{a.note}</td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>

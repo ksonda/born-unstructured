@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/paths.ts';
+---
+
+<Base title="No such record">
+  <h1>No such record</h1>
+  <p class="lede">Nothing has been published at this address. It may have been a theory.</p>
+  <div class="button-row">
+    <a class="button button--primary" href={withBase('/episodes/')}>Read the episodes</a>
+    <a class="button" href={withBase('/things/')}>Browse all things</a>
+  </div>
+</Base>

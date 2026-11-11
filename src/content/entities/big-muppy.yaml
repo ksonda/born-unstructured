@@ -1,0 +1,7 @@
+label: Big Muppy
+type: object
+description: >
+  A similar sloth, but an actual stuffed animal rather than a blankie. It has volume.
+relations:
+  - predicate: isA
+    object: muppy

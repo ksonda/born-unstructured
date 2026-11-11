@@ -1,0 +1,6 @@
+# An example of a private entity. It is validated like any other, but it never
+# reaches a page, an index or an export, and a post that refers to it will not build.
+label: Grandma
+type: person
+description: Has theories of her own. Not yet cleared for publication.
+public: false

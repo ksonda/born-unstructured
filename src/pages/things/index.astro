@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import { TYPE_LABELS } from '../../lib/format.ts';
+import { ENTITY_TYPES } from '../../lib/graph/schema.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+const graph = await getSiteGraph();
+const groups = ENTITY_TYPES.map((type) => ({
+  type,
+  entities: graph.entities.filter((e) => e.type === type).sort((a, b) => a.label.localeCompare(b.label)),
+})).filter((g) => g.entities.length);
+---
+
+<Base title="All things" description="Every recurring person, object, routine, concept and place in the series.">
+  <h1>All things</h1>
+  <p class="lede">Every recurring person, object, routine, idea and place. Each has a permanent page.</p>
+  {
+    groups.map((group) => (
+      <section>
+        <h2>{TYPE_LABELS[group.type].many}</h2>
+        <ul class="thing-index">
+          {group.entities.map((e) => (
+            <li>
+              <a class="dot" data-type={e.type} href={withBase(`/things/${e.id}/`)}>
+                {e.label}
+              </a>
+              {e.aliases.length > 0 && <span class="quiet small">also {e.aliases.map((a) => a.label).join(', ')}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .thing-index {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .thing-index li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.1rem 0.9rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .thing-index a {
+    font-weight: 600;
+  }
+</style>

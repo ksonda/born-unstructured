@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import { prefixes } from '../../lib/graph/jsonld.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+const graph = await getSiteGraph();
+const counts = [
+  ['Episodes', graph.posts.length],
+  ['Things', graph.entities.length],
+  ['Observations', graph.observations.length],
+  ['Claims', graph.claims.length],
+  ['Assessments', graph.assessments.length],
+];
+const files = [
+  { href: '/data/graph.jsonld', name: 'graph.jsonld', what: 'JSON-LD. The source of the other two.' },
+  { href: '/data/graph.ttl', name: 'graph.ttl', what: 'Turtle, for reading.' },
+  { href: '/data/graph.nq', name: 'graph.nq', what: 'N-Quads, sorted, one statement per line.' },
+];
+---
+
+<Base title="Data" description="Download the knowledge graph behind the series.">
+  <h1>Data</h1>
+  <p class="lede">The whole record as RDF, rebuilt with every episode. It contains only what has been published.</p>
+
+  <h2>Download</h2>
+  <div class="ledger-wrap measure">
+    <table class="ledger">
+      <tbody>
+        {
+          files.map((file) => (
+            <tr>
+              <td>
+                <a class="mono" href={withBase(file.href)}>{file.name}</a>
+              </td>
+              <td>{file.what}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:0.75rem">
+    <a href={withBase('/query/')}>Query it in your browser with SPARQL</a>, or read <a href={withBase('/vocab/')}>the vocabulary</a>.
+  </p>
+
+  <h2>What is in it</h2>
+  <dl class="form">
+    {
+      counts.map(([label, count]) => (
+        <>
+          <dt>{label}</dt>
+          <dd>{count}</dd>
+        </>
+      ))
+    }
+  </dl>
+
+  <h2>How it is modelled</h2>
+  <div class="measure">
+    <p>
+      An <strong>observation</strong> is one person's report of something that happened. A <strong>claim</strong> is an interpretation. An{' '}
+      <strong>assessment</strong> is one person's position on one claim as of one episode.
+    </p>
+    <p>
+      Claims with a subject, predicate and object are typed <code>rdf:Statement</code>, which describes a triple without asserting it. The
+      dataset records that Dad said walking helps. It does not say that walking helps.
+    </p>
+    <p>
+      Assessments are never edited. A change of mind is a new assessment with a higher <code>bu:sequence</code>, so the current position is
+      always the latest one per person, and every earlier position stays queryable.
+    </p>
+  </div>
+
+  <h2>Namespaces</h2>
+  <dl class="form">
+    {
+      Object.entries(prefixes(graph)).map(([prefix, iri]) => (
+        <>
+          <dt class="mono">{prefix}:</dt>
+          <dd class="identifier">{iri}</dd>
+        </>
+      ))
+    }
+  </dl>
+  <p class="measure quiet small">
+    Every <code>id:</code> identifier resolves. For example, <a href={withBase('/id/blue-pacifier/')}>{graph.site.idBase}blue-pacifier</a> redirects to the blue pacifier's page.
+  </p>
+</Base>

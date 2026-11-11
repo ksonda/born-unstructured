@@ -1,0 +1,23 @@
+---
+import AskHousehold from '../../components/ask/AskHousehold.svelte';
+import Base from '../../layouts/Base.astro';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+import { SITE } from '../../site.config.ts';
+
+const graph = await getSiteGraph();
+const present = new Set(graph.entities.map((e) => e.id));
+const household = SITE.household.filter((id) => present.has(id));
+const sagas = SITE.sagas.filter((saga) => saga.entities.some((id) => present.has(id)));
+---
+
+<Base title="Ask the household" description="Standing questions about the record, answered from the graph.">
+  <h1>Ask the household</h1>
+  <p class="lede">Standing questions, answered from the record. Pick an earlier episode to see what the answer used to be.</p>
+  <div style="margin-top:2rem">
+    <AskHousehold client:load graph={graph} base={withBase('')} household={household} sagas={sagas} />
+  </div>
+  <p class="small quiet" style="margin-top:2.5rem">
+    Want to phrase your own? <a href={withBase('/query/')}>Query the graph with SPARQL</a>.
+  </p>
+</Base>

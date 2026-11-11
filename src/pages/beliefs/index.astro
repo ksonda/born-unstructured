@@ -1,0 +1,55 @@
+---
+import ClaimCard from '../../components/ClaimCard.astro';
+import Base from '../../layouts/Base.astro';
+import { beliefs } from '../../lib/graph/queries.ts';
+import { withBase } from '../../lib/paths.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+const graph = await getSiteGraph();
+const all = beliefs(graph);
+const groups = [
+  { status: 'held', title: 'Currently held', blurb: 'Somebody believes these and nobody has objected. Yet.' },
+  { status: 'disputed', title: 'Disputed', blurb: 'One of us believes these. The other has reviewed the evidence.' },
+  { status: 'withdrawn', title: 'Previously held', blurb: 'Believed at the time, sometimes strongly. Kept on file.' },
+  { status: 'unassessed', title: 'Open questions', blurb: 'Raised, with nobody yet prepared to commit either way.' },
+]
+  .map((group) => ({ ...group, claims: all.filter((b) => b.status === group.status) }))
+  .filter((group) => group.claims.length);
+---
+
+<Base title="Things we believed" description="Every theory the household has held about the baby, and what became of it.">
+  <h1>Things we believed</h1>
+  <p class="lede">
+    Every theory anyone in the household has put forward, with each person's latest position. As of episode {graph.latestEpisode}.
+  </p>
+  <p class="small">
+    <a href={withBase('/ask/')}>Ask what we believed after an earlier episode</a>
+  </p>
+
+  {
+    groups.map((group) => (
+      <section>
+        <h2>
+          {group.title} <span class="count">{group.claims.length}</span>
+        </h2>
+        <p class="measure quiet">{group.blurb}</p>
+        <ul class="claim-list measure">
+          {group.claims.map((b) => (
+            <li>
+              <ClaimCard graph={graph} id={b.claim.id} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .count {
+    font-weight: 500;
+    color: var(--ink-soft);
+    font-size: 0.8em;
+    margin-left: 0.2em;
+  }
+</style>

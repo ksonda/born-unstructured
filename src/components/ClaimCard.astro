@@ -1,0 +1,39 @@
+---
+import type { CompiledGraph } from '../lib/graph/compile.ts';
+import { stance } from '../lib/graph/stances.ts';
+import { claimStatus, entityLabel, latestPositions } from '../lib/graph/views.ts';
+import { withBase } from '../lib/paths.ts';
+import Stamp from './Stamp.astro';
+
+interface Props {
+  graph: CompiledGraph;
+  id: string;
+}
+const { graph, id } = Astro.props;
+const claim = graph.claims.find((c) => c.id === id)!;
+const status = claimStatus(graph, id);
+const positions = latestPositions(graph, id);
+---
+
+<article class="claim-card" data-status={status}>
+  <div class="claim-card__head">
+    <h3><a href={withBase(`/claims/${id}/`)}>{claim.label}</a></h3>
+    <Stamp status={status} />
+  </div>
+  <ul>
+    {
+      positions.map((p) => {
+        const s = stance(p.stance);
+        return (
+          <li>
+            {entityLabel(graph, p.by)}:{' '}
+            <span class="stance" data-polarity={s.polarity}>
+              {s.label.toLowerCase()}
+            </span>
+            <span class="quiet">, episode {p.episode}</span>
+          </li>
+        );
+      })
+    }
+  </ul>
+</article>

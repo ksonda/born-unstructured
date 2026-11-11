@@ -1,0 +1,42 @@
+{
+  "name": "born-unstructured",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A newborn-parenting blog backed by a real RDF knowledge graph.",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "check": "astro check",
+    "graph": "node scripts/graph-report.ts",
+    "new": "node scripts/new-episode.ts",
+    "samples:remove": "node scripts/remove-samples.ts"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/svelte": "^9.1.5",
+    "@comunica/query-sparql-rdfjs-lite": "^5.4.1",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/public-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.4.11",
+    "cytoscape": "^3.35.0",
+    "jsonld": "^9.0.0",
+    "n3": "^2.13.12",
+    "svelte": "^5.57.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/jsonld": "^1.5.15",
+    "@types/n3": "^1.26.6",
+    "gray-matter": "^4.0.3",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0",
+    "yaml": "^2.9.1"
+  }
+}

@@ -1,0 +1,259 @@
+---
+title: "Not All Sloths Are Muppies"
+episode: 1
+published: 2026-11-11
+summary: "A legacy schema inventory of the household's sloths, taken before the newborn arrives. Two of the four turn out to be jobs."
+
+# The individual loveys are never named in the prose, so they are listed here.
+mentions: [lovey-01, lovey-02, lovey-03, lovey-04]
+
+observations:
+  - id: observation-01
+    text: "To any adult the loveys look the same. To the almost-four-year-old they very much do not."
+    observedBy: dad
+    about: [the-authority, messy-muppy, flat-muppy]
+  - id: observation-02
+    text: "A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident."
+    observedBy: dad
+    about: [bedtime, messy-muppy, flat-muppy]
+  - id: observation-03
+    text: "Big Muppy is a stuffed animal, not a blankie. It is a muppy anyway, because the authority said so."
+    observedBy: dad
+    about: [big-muppy, muppy, the-authority]
+  - id: observation-04
+    text: "The 3D-printed sloth is called Messy New. Not New Muppy, and not Printed Muppy."
+    observedBy: dad
+    about: [messy-new, the-authority]
+
+claims:
+  - id: claim-nose-role
+    label: "The nose determines the role"
+    short: "the nose decides the role"
+    description: >
+      Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a
+      flattened one can be Flat Muppy. Within a role they are interchangeable. Across roles they are not.
+    about: [messy-muppy, flat-muppy, the-authority]
+    attributedTo: dad
+  - id: claim-messy-lineage
+    label: "\"Messy\" has become a lineage, not a description of a nose"
+    short: "named for the Messy line"
+    subject: messy-new
+    predicate: namedAfter
+    object: messy-muppy
+    attributedTo: dad
+  - id: claim-messy-new-muppy
+    label: "Messy New is a muppy"
+    short: "is a muppy?"
+    subject: messy-new
+    predicate: isA
+    object: muppy
+    about: [the-authority]
+    attributedTo: dad
+  - id: claim-newborn-muppy
+    label: "The newborn gets a muppy"
+    short: "gets a muppy?"
+    about: [baby, muppy, the-authority]
+    attributedTo: dad
+
+assessments:
+  - id: assessment-01
+    claim: claim-nose-role
+    by: dad
+    stance: endorses
+    evidence: [observation-01, observation-02]
+    note: "Took an embarrassingly long time to understand."
+  - id: assessment-02
+    claim: claim-messy-lineage
+    by: dad
+    stance: tentative
+    evidence: [observation-04]
+    note: "A working theory."
+  - id: assessment-03
+    claim: claim-messy-new-muppy
+    by: dad
+    stance: undecided
+    evidence: [observation-03]
+    note: "It's a sloth. It's in the Messy line. It came out of a printer. Leaving it to the authority."
+  - id: assessment-04
+    claim: claim-newborn-muppy
+    by: dad
+    stance: undecided
+    note: "I don't know. That's what the graph is for."
+---
+
+## Before the new user arrives
+
+We are about to have a newborn. Everyone tells you to prepare the older sibling, and we are. [Our almost-four-year-old](thing:the-authority) has questions. Most of them are about logistics.
+
+But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority. The naming authority is not yet four.
+
+Some context on me: I work on data infrastructure, mostly water data. A large share of my job is getting different organizations to agree that a thing is the same thing, and to call it by an identifier that won't change next year. It is slow and political and occasionally works. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
+
+So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog will track the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. It's called *Born Unstructured* because that's how everyone arrives. Episode 1 is the sloths.
+
+## Meet the muppies
+
+The central entity in our household is [the muppy](thing:muppy). If you don't have a small child: a muppy is a lovey, which is the specific soft object a kid needs in order to sleep.[^2] The word "specific" is doing a lot of work there. Keep an eye on it.
+
+All of our muppies are [sloths](thing:sloth). Here is the current registry, as dictated by the naming authority:
+
+| Name | What it is | How you tell it apart |
+| --- | --- | --- |
+| [Messy Muppy](thing:messy-muppy) | A role, not a single lovey. Any of several identical-looking blankie-style sloths can fill it | The nose is, in the household's technical vocabulary, "all messed up" |
+| [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey | The nose has been chewed flat |
+| [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
+| [Messy New](thing:messy-new) | A 3D-printed sloth | Printed, not sewn. Status: complicated |
+
+Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are a few loveys in the house qualified for each shift. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
+
+So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science, and the person who built it can't read yet.
+
+## Sloth, muppy, Messy Muppy
+
+There are at least three different kinds of thing in that table, and the kid keeps them straight without effort.
+
+**"Sloth" is a concept.** It's the animal kind. Sloths exist whether or not anyone in this house owns one.
+
+**"Muppy" is a household category.** Being a muppy is not the same as being a sloth. A sloth becomes a muppy by being admitted to the system, and only one person does the admitting. Not all sloths are muppies. All muppies, so far, are sloths.
+
+**"Messy Muppy" is a role.** Not a species, not a brand, and, it turns out, not any particular object. It's a slot that has to be filled at [bedtime](thing:bedtime), or car ride time, and several loveys are qualified to fill it.
+
+To be clear, the kid can tell every one of these loveys apart. They are not, to the kid, the same lovey.[^3] But for the job, any qualified one will do. It works like an on-call rotation: everyone on the team is a distinct person, and the pager doesn't care which of them picks up. It just needs somebody. Each bedtime, each car ride, the shift gets filled fresh.
+
+<!-- TODO: the screenshot you marked in the draft goes here. Put the image in src/assets/ and use ![alt text](../../assets/name.png). -->
+
+And then there are two more things. One is the physical lovey actually on duty tonight. The other is the *name* "Messy Muppy", a string of letters that is none of the above. Philosophers have been drawing distinctions like this for about a hundred and thirty years.[^3] Data people mostly learn them the hard way.
+
+In water data, the version of this problem is that a river, the name of the river, and the line in a GIS file that someone digitized decades ago are three different things. Plenty of systems treat them as one. Then the river gets renamed, or the line gets redrawn, and everything downstream (sorry) breaks.
+
+A knowledge graph makes you be explicit. The concept, the category, the object, and the name each get their own node, and the relationships between them are stated rather than assumed.[^4] Big Muppy is a nice test case. It's a stuffed animal, not a blankie, so it doesn't match Messy Muppy feature for feature. [It's a muppy anyway, because it's close enough to the prototype and because the authority said so.](obs:observation-03)[^5]
+
+## Flat Muppy and the identity problem
+
+Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are several loveys in this house, all the same model, that look identical to every adult who has examined them. Some of them are Messy Muppies. Some are Flat Muppies. Bedtime goes smoothly when at least one of each is in the bed.
+
+To the kid this is not complicated. [The nose determines the role.](claim:claim-nose-role) Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a flattened one can be Flat Muppy. Within a role they're interchangeable. Across roles they absolutely are not. [A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident.](obs:observation-02)
+
+Most databases would get this wrong in one of two directions. One is to merge all the identical-looking loveys into one record, because the product description matches. The other is to treat every lovey as unique and lose the fact that they're interchangeable for the one purpose that matters. A knowledge graph won't make either assumption on its own; you have to say what's the same and what's different.[^6]
+
+The kid is running a three-layer model: the category (muppy), the role (Messy or Flat), and the individual lovey. Each layer needs its own identity, and the individual loveys need identifiers that don't depend on which role they happen to be in this week.[^7]
+
+This is a very familiar pattern from my day job. A stream gage monitoring site keeps the same identifier for decades, while the physical sensor on the bridge gets swapped out when it fails. Nobody asks for data from the sensor. They ask for data from the site. Messy Muppy is the site. Whichever lovey is on duty tonight is the sensor.[^8]
+
+It also quietly fixes the complaint I was going to make about descriptive names. "Messy" and "Flat" look like the kind of names that break when the thing they describe changes. But they don't name loveys. They name roles, and the nose is the qualifying criterion. If a Messy Muppy's nose gets chewed flat, nothing in the system becomes inaccurate. That lovey just changes jobs. This is more elegant than some schemas I've reviewed professionally.
+
+## Messy New, or how a name becomes a type
+
+Then there's Messy New, a 3D-printed sloth, and this is where the system gets genuinely sophisticated.
+
+Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](obs:observation-04) My working theory is that ["Messy" has stopped being a description of a nose and become something more like a lineage](claim:claim-messy-lineage). The Messy Muppies came first. Messy New is a new thing in the Messy line. The adjective has been promoted to a type.
+
+Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it in under four years with no committee.
+
+[Whether Messy New is a muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. It's a sloth. It's in the Messy line. It came out of a printer. I'm treating it as an open question and leaving it to the authority.
+
+Which brings us to the newborn. In a few weeks a new person arrives who will, at some point, need a lovey. The questions write themselves:
+
+- [Does the newborn get a muppy](claim:claim-newborn-muppy), or does the category stay closed?
+- If a new muppy is admitted, who names it? The authority, or whoever is holding the baby when the subject comes up?
+- Babies chew things. Chewing is, historically, how names happen around here. What does that do to the registry?
+- What happens the first time the baby grabs whichever lovey is on Messy duty?
+
+I don't know. That's what the graph is for.
+
+## The graph so far
+
+Here's the registry as a graph. Solid lines are things the authority has confirmed. Dashed lines are open questions.
+
+::graph::
+
+Every node in that picture gets a stable identifier in the published graph, and every name is just a label hung on it.[^10] When a nose changes, a lovey moves between roles and nothing else has to. The bedtime rule, at least one Messy and at least one Flat, can be written down as a constraint and checked. When the newborn arrives, they get a node too. What they get attached to is above my pay grade.
+
+This is version 1 of the muppy registry. I expect breaking changes.
+
+Next episode: Montessori laundry. A place for everything, everything in its place, and nothing folded.
+
+## Notes
+
+For readers who want the longer version. Each note links back to where it came from.
+
+[^1]: **Knowledge graphs and RDF.** A knowledge graph stores information as a web of small statements, each with three parts: a subject, a predicate, and an object. "Messy Muppy, is a, muppy." "Flat Muppy, has nose condition, chewed flat." RDF (the Resource Description Framework) is the W3C standard for writing those statements down so that systems built by different people can read them.
+
+    The important trick is that subjects and predicates are named with web addresses rather than plain words. "Muppy" in my graph and "muppy" in yours can then be declared the same thing, or kept apart, on purpose rather than by accident. That's why RDF shows up in libraries, the life sciences, and government data: places where many institutions describe overlapping things and nobody controls the whole vocabulary. The [W3C RDF Primer](https://www.w3.org/TR/rdf11-primer/) is the readable starting point.
+
+[^2]: **Transitional objects.** The pediatrician and psychoanalyst D. W. Winnicott coined "transitional object" in 1953 for the blanket or soft toy a young child attaches to. His argument, roughly, was that the object sits between the child's inner world and the outside one, and helps with the work of tolerating separation.
+
+    Whatever you make of the psychoanalytic framing, the usual parental report is that the attachment is to *that* object, and an identical backup gets rejected as an impostor. Our household runs a variation. The attachment is to the role: any qualified lovey will do, but only a qualified one, and the qualifications are invisible to adults. Either way it's a strong position on identity, and children arrive at it without reading any philosophy.
+
+[^3]: **Names are not things.** Gottlob Frege's 1892 paper "On Sense and Reference" used the Morning Star and the Evening Star: two names, two ways of presenting something, one planet. Ogden and Richards' *The Meaning of Meaning* (1923) drew it as a triangle of symbol (the word), thought (the concept), and referent (the thing), with no direct line between the word and the thing.
+
+    A related distinction: philosophers separate numerical identity (being one and the same thing) from qualitative identity (being exactly alike). Two loveys of the same model are qualitatively identical, at least to adults, and numerically distinct. The kid tracks numerical identity without effort, then sets it aside when filling a role. That's roughly what a good data model does too: keep the individuals distinct, and state separately what they're interchangeable for.
+
+    In data modeling the practical version is: give each thing its own identity, and attach names to it as properties. RDF has a property for this, rdfs:label. The SKOS vocabulary adds prefLabel (the main name), altLabel (other names), and hiddenLabel (misspellings you still want search to find). A muppy can carry all three without any confusion about which muppy it is.
+
+[^4]: **Concepts versus classes.** There are two common ways to model a "kind of thing" in RDF, and they behave differently. SKOS (Simple Knowledge Organization System) treats "sloth" and "muppy" as concepts in a vocabulary, connected by broader and narrower links. This is how thesauri and library subject headings work. It's forgiving: saying muppy is narrower than sloth tells a search tool to look in both places, and not much more.
+
+    OWL (the Web Ontology Language) treats them as classes with logical membership. Saying every muppy is a sloth lets a reasoner conclude Messy Muppy is a sloth without being told. That's powerful, and also a commitment: if the authority ever admits a non-sloth lovey, the ontology is wrong. For a household governed by a preschooler, I lean SKOS. See the [SKOS Reference](https://www.w3.org/TR/skos-reference/) and the [OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
+
+[^5]: **Fuzzy categories.** Classical definitions say a thing belongs to a category if it meets a list of necessary and sufficient conditions. Eleanor Rosch's research in the 1970s showed that people don't actually categorize that way. We judge membership by resemblance to a prototype: a robin is a more birdlike bird than a penguin, though both are birds.
+
+    Wittgenstein made a related point earlier with "family resemblance": the things we call games share overlapping features, but no single feature that all of them have. Big Muppy is a family-resemblance muppy. Sloth, soft, loved, not a blankie. Formal ontologies struggle with this, which is part of why lighter vocabularies like SKOS exist.
+
+[^6]: **The open world.** Knowledge graphs built on OWL make two assumptions that surprise people coming from relational databases. The open world assumption says a fact missing from the graph is unknown, not false. The graph doesn't know whether Messy New is a muppy, and won't conclude that it isn't.
+
+    The second is that there's no unique name assumption: two different identifiers might refer to the same thing unless someone says otherwise. To capture what the kid knows, you have to state it, with owl:differentFrom. The opposite statement, owl:sameAs, is famously overused on the web. Halpin and colleagues' 2010 paper "When owl:sameAs isn't the same" is a thorough, slightly exasperated tour of what goes wrong.
+
+[^7]: **Identifiers that mean nothing.** Tim Berners-Lee's 1998 note [Cool URIs don't change](https://www.w3.org/Provider/Style/URI) argues that a web address should stay valid indefinitely, and that the way to achieve this is to leave anything changeable out of it: names, departments, file formats, topics.
+
+    Geographic names illustrate why. The U.S. has a federal Board on Geographic Names to standardize them, and they still change. A system that uses the name as its key breaks when that happens. A system that uses an opaque identifier and stores the name as a label just updates the label. Persistent identifiers for water features are what [Geoconnex](https://geoconnex.us) provides, which is the project I work on. The household equivalent would be issuing each lovey a serial number, which I suspect would not be well received.
+
+[^8]: **Roles and the things that fill them.** Data models that hold up over time usually separate a role from whatever currently fills it. The W3C [Organization Ontology](https://www.w3.org/TR/vocab-org/) distinguishes a Post (treasurer, say) from the person who holds it. The W3C [sensor ontology, SOSA/SSN](https://www.w3.org/TR/vocab-ssn/), distinguishes a platform from the sensors it hosts. Monitoring networks do the same thing in practice: the site identifier persists, the hardware rotates.
+
+    The older version of the question is the ship of Theseus, preserved in Athens with its rotting planks replaced one by one: is it the same ship? Libraries answer it with FRBR (IFLA, 1998), which separates a work, an expression, a manifestation (a published edition), and an item (the copy on your shelf). Each lovey is an item. The roles sit above the items, and chewing can move an item from one role to another, which is more than Plutarch had to deal with.
+
+[^9]: **When a name becomes a category.** Trademark lawyers call it genericide: a brand becomes so common that it turns into the ordinary word for the product, and the owner loses exclusive rights. Aspirin, escalator, and thermos all went this way in the U.S. Linguists see the same drift without the lawsuits, as proper names becoming common nouns.
+
+    In a knowledge graph you'd model the lineage explicitly. Messy New gets a relationship back to Messy Muppy (something like "named after") rather than a name you have to parse to understand. Parsing meaning out of names is one of the oldest bad habits in data management. The kid has, to be fair, made it look elegant.
+
+[^10]: **What the graph looks like.** Here is the registry as RDF, in the Turtle syntax, plus the bedtime rule written as a [SHACL](https://www.w3.org/TR/shacl/) shape, the W3C standard for checking that data meets constraints. The namespace is a placeholder and the lovey headcount is illustrative. The individual loveys get opaque identifiers, the roles get nodes of their own, and each lovey points at the role it currently fills. A bedtime with no Flat Muppy fails validation, which matches the observed behavior of the user.
+
+    ```turtle
+    @prefix h:    <https://example.org/household/> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix owl:  <http://www.w3.org/2002/07/owl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix sh:   <http://www.w3.org/ns/shacl#> .
+
+    h:sloth a skos:Concept ; skos:prefLabel "sloth" .
+    h:muppy a skos:Concept ; skos:prefLabel "muppy" ;
+        skos:broader h:sloth .
+
+    # Roles
+    h:role-messy a h:Role ; rdfs:label "Messy Muppy" ;
+        h:criterion "nose all messed up" .
+    h:role-flat a h:Role ; rdfs:label "Flat Muppy" ;
+        h:criterion "nose chewed flat" .
+
+    # The loveys: same model, identical to adults
+    h:lovey-01 h:kind h:muppy ; h:fills h:role-messy .
+    h:lovey-02 h:kind h:muppy ; h:fills h:role-messy .
+    h:lovey-03 h:kind h:muppy ; h:fills h:role-flat .
+    h:lovey-04 h:kind h:muppy ; h:fills h:role-flat .
+    h:lovey-01 owl:differentFrom h:lovey-02, h:lovey-03, h:lovey-04 .
+
+    h:big-muppy rdfs:label "Big Muppy" ; h:kind h:muppy .
+    h:messy-new rdfs:label "Messy New" ; h:kind h:sloth ;
+        h:namedAfter h:role-messy .
+
+    # Bedtime needs at least one of each role
+    h:BedtimeShape a sh:NodeShape ;
+        sh:targetClass h:Bedtime ;
+        sh:property [
+            sh:path h:hasLovey ;
+            sh:qualifiedValueShape [ sh:path h:fills ; sh:hasValue h:role-messy ] ;
+            sh:qualifiedMinCount 1 ] ;
+        sh:property [
+            sh:path h:hasLovey ;
+            sh:qualifiedValueShape [ sh:path h:fills ; sh:hasValue h:role-flat ] ;
+            sh:qualifiedMinCount 1 ] .
+    ```

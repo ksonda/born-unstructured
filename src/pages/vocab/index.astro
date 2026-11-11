@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import { vocabulary } from '../../lib/graph/jsonld.ts';
+import { getSiteGraph } from '../../lib/site-graph.ts';
+
+const graph = await getSiteGraph();
+const terms = vocabulary(graph);
+const sections = [
+  { title: 'Classes', terms: terms.filter((t) => t.kind === 'class') },
+  { title: 'Properties', terms: terms.filter((t) => t.kind === 'property') },
+  { title: 'Stances', terms: terms.filter((t) => t.kind === 'stance') },
+];
+---
+
+<Base title="Vocabulary" description="The small RDF vocabulary this site defines for itself.">
+  <h1>Vocabulary</h1>
+  <p class="lede">The terms this site defines for itself. Everything else is borrowed from RDF, RDFS, SKOS, PROV, Dublin Core and schema.org.</p>
+  <p class="identifier">Namespace: {graph.site.vocabBase}</p>
+
+  {
+    sections.map((section) => (
+      <section>
+        <h2>{section.title}</h2>
+        <div class="ledger-wrap">
+          <table class="ledger ledger--stack">
+            <thead>
+              <tr>
+                <th scope="col">Term</th>
+                <th scope="col">Label</th>
+                <th scope="col">Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              {section.terms.map((term) => (
+                <tr id={term.term}>
+                  <td class="mono">bu:{term.term}</td>
+                  <td>{term.label}</td>
+                  <td>{term.comment}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))
+  }
+</Base>

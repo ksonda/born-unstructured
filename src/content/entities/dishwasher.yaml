@@ -1,0 +1,11 @@
+label: the dishwasher
+type: object
+description: >
+  A kitchen appliance that washes dishes for about two hours and makes a low, steady noise
+  while it does. Opinions differ on which of these is its main function.
+aliases:
+  - label: the only reliable appliance
+    since: 5
+relations:
+  - predicate: locatedIn
+    object: kitchen
