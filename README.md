@@ -22,24 +22,20 @@ Requires Node 22.23.4 or newer (the minimum for Astro 7).
 | `npm run check` | Type-checks the Astro, Svelte and TypeScript files. |
 | `npm run graph` | Validates the content and prints what the graph currently says, without building. |
 | `npm run new -- "Title"` | Scaffolds the next episode as a draft, with the next free record IDs filled in. |
-| `npm run samples:remove` | Deletes the made-up sample episodes and everything that only existed for them. |
+| `npm run samples:remove` | Deletes any episode marked `sample: true` and everything that only existed for it. |
 
-## What is in here now
+## What is published
 
-- **Episode 1, "Not All Sloths Are Muppies"**, is the real one. It models the muppy registry: `sloth` and `muppy` as concepts, `Messy Muppy` and `Flat Muppy` as roles, the individual loveys as objects that currently fill a role, and two open questions for the naming authority.
-- **Episodes 2 to 5 are made-up samples** (`sample: true` in their frontmatter). They exist to show a theory being proposed, questioned, narrowed and withdrawn across several installments, which one real episode cannot show yet. They carry a banner on the site and a note in the footer.
+The site is live at **https://ksonda.github.io/born-unstructured/**. Every push to `main` is tested, built and published by GitHub Actions.
+
+Episode 1, "Not All Sloths Are Muppies", is the only episode so far. It models the muppy registry: `sloth` and `muppy` as concepts, `Messy Muppy` and `Flat Muppy` as roles, the individual loveys as objects that currently fill a role, and two open questions for the naming authority.
 
 Two things in episode 1 need your eye:
 
 1. **The lovey headcount.** `lovey-01` to `lovey-04` (two per role) come from the illustrative Turtle in the episode's last note. Edit or delete the files in `src/content/entities/` to match the house.
 2. **The screenshot.** The draft had a `<screenshot>` placeholder after the on-call paragraph. It is an HTML comment in the Markdown now, which the site does not publish.
 
-When the real episodes can stand alone:
-
-```bash
-npm run samples:remove -- --dry-run   # see what would go
-npm run samples:remove
-```
+The first commit in the history also holds four made-up sample episodes (a walking theory, two pacifiers and a laminated Schedule) that showed a claim being proposed, questioned, narrowed and withdrawn over several installments. They were removed before the first deploy. `git show bb9f9d1 --stat` lists them if you want to see how a multi-episode storyline is recorded.
 
 ## How the pieces connect
 
@@ -64,37 +60,37 @@ That creates `src/content/posts/00N-the-title-of-the-episode.md` as a draft. An 
 
 ```yaml
 ---
-title: "We Have Discovered a Reliable Method, Once"
-episode: 2
-published: 2026-12-11
+title: "Not All Sloths Are Muppies"
+episode: 1
+published: 2026-11-11
 summary: "One or two sentences for the episode list and the RSS feed."
 
 observations:                 # something that happened, as one person reports it
-  - id: observation-05
-    text: "He fell asleep on lap four of the kitchen walking circuit."
+  - id: observation-04
+    text: "The 3D-printed sloth is called Messy New. Not New Muppy, and not Printed Muppy."
     observedBy: dad
-    about: [baby, walking, kitchen]
+    about: [messy-new, the-authority]
 
 claims:                       # an interpretation. Recording it does not assert it.
-  - id: claim-walking
-    label: "Walking helps him settle"
-    short: "walking helps"    # a few words for the graph edge
-    subject: baby             # optional triple form; leave all three out if it does not fit
-    predicate: settlesWith
-    object: walking
+  - id: claim-messy-lineage
+    label: "\"Messy\" has become a lineage, not a description of a nose"
+    short: "named for the Messy line"   # a few words for the graph edge
+    subject: messy-new        # optional triple form; leave all three out if it does not fit
+    predicate: namedAfter
+    object: messy-muppy
     attributedTo: dad
 
 assessments:                  # one person's position on one claim, as of this episode
-  - id: assessment-05
-    claim: claim-walking
+  - id: assessment-02
+    claim: claim-messy-lineage
     by: dad
     stance: tentative
-    evidence: [observation-05]
-    note: "Tested once."
+    evidence: [observation-04]
+    note: "A working theory."
 ---
 ```
 
-**Changing your mind is a new assessment. Never edit an old one.** A later episode adds `stance: withdraws` for the same claim and person, and the claim's page, the person's current position, the "Things we believed" list, the explorer and the RDF all follow from that one record. If the proposition itself changes, add a new claim with `refines: claim-walking`.
+**Changing your mind is a new assessment. Never edit an old one.** A later episode adds `stance: withdraws` for the same claim and person, and the claim's page, the person's current position, the "Things we believed" list, the explorer and the RDF all follow from that one record. If the proposition itself changes, add a new claim with `refines:` pointing at the old one.
 
 Stances: `tentative`, `endorses`, `strongly-endorses`, `qualifies`, `questions`, `disputes`, `undecided`, `withdraws`. A claim whose only positions are `undecided` shows as an open question.
 
@@ -102,9 +98,9 @@ Stances: `tentative`, `endorses`, `strongly-endorses`, `qualifies`, `questions`,
 
 | Write | What it does |
 | --- | --- |
-| `[the blue pacifier](thing:blue-pacifier)` | Links to the thing's permanent page and counts as a mention. |
-| `[walking helps](claim:claim-walking)` | Links to the claim's history. |
-| `[He fell asleep on lap four.](obs:observation-05)` | Marks the passage an observation comes from, so evidence can link back to the exact sentence. |
+| `[the muppy](thing:muppy)` | Links to the thing's permanent page and counts as a mention. |
+| `[The nose determines the role.](claim:claim-nose-role)` | Links to the claim's history. |
+| `[It's an incident.](obs:observation-02)` | Marks the passage an observation comes from, so evidence can link back to the exact sentence. |
 | `Some sentence.[^1]` and `[^1]: **Title.** The longer version.` | A footnote. They are gathered at the end with links back. Indent continuation paragraphs and code blocks by four spaces. |
 | `::graph::` on a line of its own | Puts the episode's graph at that point in the prose instead of at the foot of the page. |
 | `<!-- a note to yourself -->` | Stays in the Markdown and out of the published page. |
@@ -116,20 +112,20 @@ Stances: `tentative`, `endorses`, `strongly-endorses`, `qualifies`, `questions`,
 Each recurring thing is one file in `src/content/entities/`. The file name is its identifier.
 
 ```yaml
-label: the blue pacifier
-type: object          # person, object, role, routine, concept or place
+label: bedtime
+type: routine         # person, object, role, routine, concept or place
 description: >
-  One of two pacifiers from the same packet.
+  Goes smoothly when at least one Messy Muppy and at least one Flat Muppy are in the bed.
 aliases:
-  - the asset             # in use from the thing's first appearance
-  - label: Old Blue       # in use from the episode given
-    since: 4
+  - lights out            # in use from the thing's first appearance
+  - label: the handover   # in use from the episode given
+    since: 3
 relations:            # plain household facts, asserted without attribution
-  - predicate: locatedIn
-    object: kitchen
+  - predicate: requires
+    object: messy-muppy
 ```
 
-Keep identifiers stable when names change: add an alias, never rename the file. A thing is published only once an episode mentions it, and `public: false` keeps one out entirely (see `grandma.yaml`).
+Keep identifiers stable when names change: add an alias, never rename the file. A thing is published only once an episode mentions it, and `public: false` keeps one out entirely (see `grandma.yaml`). The aliases in the example above are made up to show the syntax.
 
 Predicates for claims and relations are declared once in `src/content/vocab/predicates.yaml`, with a label that reads naturally between a subject and an object.
 
@@ -169,18 +165,21 @@ In RDF, a claim with a subject, predicate and object is an `rdf:Statement`: the 
 
 ## Stable identifiers
 
-Every record's IRI is `{SITE_URL}/id/{id}`. On Cloudflare Pages the generated `_redirects` file answers those with a `303 See Other` to the page that describes the record. On any other host a static page at the same address does a client-side redirect.
+Every record's IRI is `https://ksonda.github.io/born-unstructured/id/{id}`. GitHub Pages cannot send a `303 See Other`, so each of those addresses is a small static page that redirects the browser to the page describing the record. (The build also writes a `_redirects` file with real 303s, which Cloudflare Pages and Netlify would honor if the site ever moved there.)
 
-**Set `SITE_URL` to the real address before the first public deploy and do not change it afterwards.** Every identifier in the published graph is minted under it. Until then it defaults to `https://born-unstructured.example`.
+**The address is part of every identifier in the published graph.** It is set in `astro.config.mjs`. Moving the site to another domain changes every IRI, so if that day comes, keep the old addresses redirecting. `SITE_URL` overrides the address for a local experiment:
 
-## Deploying to Cloudflare Pages
+```bash
+SITE_URL=http://localhost:4321 npm run build
+```
 
-1. Push the repository to GitHub.
-2. In Cloudflare, create a Pages project connected to the repository.
-3. Build command `npm run build`, output directory `dist`.
-4. Add the environment variable `SITE_URL` (for example `https://bornunstructured.com`), for production and preview.
+## Deployment
 
-Every push to `main` publishes, and every pull request gets a preview deployment. `.github/workflows/ci.yml` runs the tests and the build on each push and pull request. `public/_headers` sets the content types and CORS header for the data files.
+`.github/workflows/deploy.yml` runs on every push to `main`: tests first, then the Astro build, then publication to GitHub Pages. The repository's Pages source is set to "GitHub Actions" (Settings, Pages). `.github/workflows/ci.yml` runs the tests and a build on pull requests.
+
+The site is served from `/born-unstructured/`, so every internal link goes through `withBase()` in `src/lib/paths.ts`. Use it for any new link in a component or page. Links written in Markdown with `thing:`, `claim:` and `obs:` are handled for you.
+
+To publish an episode: write it, run `npm test`, commit, push.
 
 ## Project layout
 
@@ -206,6 +205,7 @@ src/components/ask/       Ask the household
 src/components/query/     SPARQL playground
 src/pages/                Routes, including the data endpoints
 scripts/                  graph report, new episode, remove samples
+.github/workflows/        deploy.yml (test, build, publish), ci.yml (pull requests)
 tests/                    Compiler, views, real content and RDF export
 ```
 

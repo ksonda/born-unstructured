@@ -5,6 +5,7 @@ import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
 
 const graph = await getSiteGraph();
+const example = graph.entities.find((e) => e.type !== 'person') ?? graph.entities[0];
 const counts = [
   ['Episodes', graph.posts.length],
   ['Things', graph.entities.length],
@@ -64,7 +65,7 @@ const files = [
     </p>
     <p>
       Claims with a subject, predicate and object are typed <code>rdf:Statement</code>, which describes a triple without asserting it. The
-      dataset records that Dad said walking helps. It does not say that walking helps.
+      dataset records that Dad thinks Messy New is named after Messy Muppy. It does not say that it is.
     </p>
     <p>
       Assessments are never edited. A change of mind is a new assessment with a higher <code>bu:sequence</code>, so the current position is
@@ -84,6 +85,6 @@ const files = [
     }
   </dl>
   <p class="measure quiet small">
-    Every <code>id:</code> identifier resolves. For example, <a href={withBase('/id/blue-pacifier/')}>{graph.site.idBase}blue-pacifier</a> redirects to the blue pacifier's page.
+    Every <code>id:</code> identifier resolves. For example, <a href={withBase(`/id/${example.id}/`)}>{graph.site.idBase}{example.id}</a> leads to the page for {example.label}.
   </p>
 </Base>

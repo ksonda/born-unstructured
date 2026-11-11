@@ -103,27 +103,26 @@ ORDER BY ?withdrawnIn`),
     },
     {
       id: 'saga',
-      title: 'The complete pacifier saga',
-      note: 'Every observation about either pacifier, in the order it was published.',
+      title: 'The muppy registry, in full',
+      note: 'Every observation about a muppy, a role or Messy New, in the order it was published.',
       query: q(`
 SELECT DISTINCT ?episode ?observer ?what WHERE {
   ?observation a bu:Observation ;
                dcterms:description ?what ;
                prov:wasAttributedTo ?observer ;
                bu:episodeNumber ?episode ;
-               schema:about ?pacifier .
-  FILTER (?pacifier IN (id:blue-pacifier, id:green-pacifier))
+               schema:about ?thing .
+  FILTER (?thing IN (id:muppy, id:messy-muppy, id:flat-muppy, id:big-muppy, id:messy-new))
 }
 ORDER BY ?episode ?what`),
     },
     {
       id: 'names',
-      title: 'Objects with suspiciously many names',
-      note: 'Objects ranked by the number of aliases on record.',
+      title: 'Things with suspiciously many names',
+      note: 'Everything ranked by the number of other names on record.',
       query: q(`
 SELECT ?thing ?label (COUNT(?alias) AS ?names) (GROUP_CONCAT(?alias; separator=" / ") AS ?aliases) WHERE {
-  ?thing a bu:Object ;
-         rdfs:label ?label ;
+  ?thing rdfs:label ?label ;
          skos:altLabel ?alias .
 }
 GROUP BY ?thing ?label
@@ -144,7 +143,7 @@ ASK {
     },
     {
       id: 'crying',
-      title: 'Why is he crying?',
+      title: 'Why is the baby crying?',
       note: 'The permanent query. It has been run after every episode and has never returned a row.',
       query: q(`
 SELECT ?cause WHERE {

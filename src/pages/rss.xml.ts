@@ -9,7 +9,7 @@ export async function GET(context: APIContext) {
   return rss({
     title: SITE.title,
     description: SITE.description,
-    site: context.site!,
+    site: new URL(withBase('/'), context.site!).href,
     items: [...graph.posts].reverse().map((post) => ({
       title: `Episode ${post.episode}: ${post.title}`,
       description: post.summary,

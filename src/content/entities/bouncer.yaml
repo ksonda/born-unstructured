@@ -1,6 +1,0 @@
-label: the bouncer
-type: object
-description: A reclined seat for a baby. Lives on the kitchen floor, beside the dishwasher, for reasons that became clear later.
-relations:
-  - predicate: locatedIn
-    object: kitchen

@@ -16,6 +16,5 @@ export const SITE = {
       title: 'The muppy registry, in full',
       entities: ['muppy', 'messy-muppy', 'flat-muppy', 'big-muppy', 'messy-new'],
     },
-    { id: 'pacifiers', title: 'The complete pacifier saga', entities: ['blue-pacifier', 'green-pacifier'] },
   ],
 };

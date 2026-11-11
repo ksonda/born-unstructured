@@ -24,6 +24,9 @@ const observation = `observation-${pad(highest(posts.flatMap((p) => p.data.obser
 const assessment = `assessment-${pad(highest(posts.flatMap((p) => p.data.assessments.map((a) => a.id))) + 1)}`;
 const claims = posts.flatMap((p) => p.data.claims.map((c) => `#   ${c.id}: ${c.label}`));
 const things = entities.filter((e) => e.data.public).map((e) => e.id);
+const lastClaim = posts.flatMap((p) => p.data.claims).at(-1)?.id ?? 'claim-something';
+const person = entities.find((e) => e.data.public && e.data.type === 'person')?.id ?? 'someone';
+const thing = entities.find((e) => e.data.public && e.data.type !== 'person')?.id ?? 'something';
 
 const slug = title
   .toLowerCase()
@@ -53,32 +56,35 @@ ${claims.join('\n')}
 observations:
   - id: ${observation}
     text: "What happened, in one sentence."
-    observedBy: dad
-    about: [baby]
+    observedBy: ${person}
+    about: [${thing}]
 
 # A new theory. Leave out subject, predicate and object if it does not fit in three parts.
 # claims:
 #   - id: claim-something
 #     label: "The theory, as a sentence"
 #     short: "a few words for the graph"
-#     subject: baby
-#     predicate: settlesWith
-#     object: walking
-#     attributedTo: dad
+#     subject: ${thing}
+#     predicate: requires          # declared in src/content/vocab/predicates.yaml
+#     object: ${thing}
+#     attributedTo: ${person}
 
 # A position on a claim, new or old. Changing your mind is a new assessment; never edit an old one.
 # Stances: tentative, endorses, strongly-endorses, qualifies, questions, disputes, undecided, withdraws
 assessments:
   - id: ${assessment}
-    claim: claim-walking
-    by: dad
+    claim: ${lastClaim}
+    by: ${person}
     stance: tentative
     evidence: [${observation}]
     note: "Optional. One dry sentence."
 ---
 
-Write the story here. Link recurring things as [the blue pacifier](thing:blue-pacifier) and
-theories as [walking helps](claim:claim-walking).
+Write the story here. Link recurring things as [some words](thing:${thing}) and
+theories as [some words](claim:${lastClaim}).
+
+Footnotes are [^1] in the text and "[^1]: **Title.** The longer version." at the end.
+A line containing only ::graph:: puts this episode's picture at that point.
 
 Mark the sentence an observation comes from like this: [what happened](obs:${observation}).
 `,

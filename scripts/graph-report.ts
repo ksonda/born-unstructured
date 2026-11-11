@@ -15,7 +15,7 @@ const contentDir = fileURLToPath(new URL('../src/content', import.meta.url));
 
 try {
   const { graph, warnings } = compileGraph(loadContent(contentDir), {
-    siteUrl: process.env.SITE_URL ?? 'https://born-unstructured.example',
+    siteUrl: process.env.SITE_URL ?? 'https://ksonda.github.io/born-unstructured',
   });
 
   console.log(

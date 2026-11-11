@@ -1,12 +1,8 @@
 label: the Baby
 type: person
 description: >
-  The newest member of the household. The subject of most observations on this site and the
-  author of none of them. Has not been consulted about the methodology.
+  Arriving in a few weeks. Will be the subject of most observations on this site and the author
+  of none of them. Has not been consulted about the methodology.
 aliases:
   - the newborn
   - the new user
-  - label: the Subject
-    since: 2
-  - label: Small Management
-    since: 3

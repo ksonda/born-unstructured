@@ -1,18 +1,6 @@
 # Every predicate used in a claim or a relation is declared here once.
 # The label should read naturally between a subject and an object.
 
-- id: settlesWith
-  label: settles with
-  description: The subject calms down, or falls asleep, in the presence of the object.
-
-- id: acceptsOnly
-  label: accepts only
-  description: The subject will take the object and no substitute.
-
-- id: willFollow
-  label: will follow
-  description: The subject is expected to comply with the object at some future date.
-
 - id: requires
   label: requires
   description: The subject does not work unless the object is also present.
@@ -40,15 +28,3 @@
 - id: parentOf
   label: is a parent of
   description: The subject is a parent of the object.
-
-- id: locatedIn
-  label: is kept in
-  description: The subject is normally found in the object.
-
-- id: takesPlaceIn
-  label: takes place in
-  description: The subject is carried out in the object.
-
-- id: substituteFor
-  label: is offered instead of
-  description: The subject is what you reach for when the object cannot be found.

@@ -5,7 +5,7 @@ import Thing from '../components/Thing.astro';
 import Base from '../layouts/Base.astro';
 import { formatDate } from '../lib/format.ts';
 import { stance } from '../lib/graph/stances.ts';
-import { claimStatus, entityLabel } from '../lib/graph/views.ts';
+import { claimStatus, claimsInvolving, entityLabel, observationsAbout } from '../lib/graph/views.ts';
 import { withBase } from '../lib/paths.ts';
 import { getSiteGraph } from '../lib/site-graph.ts';
 import { SITE } from '../site.config.ts';
@@ -15,12 +15,20 @@ const posts = [...graph.posts].reverse();
 const recent = [...graph.assessments].sort((a, b) => b.sequence - a.sequence);
 
 // The hero is the most recent retraction, because nothing describes the series better.
+// Until somebody retracts something, it is the most recent question nobody will commit to.
 const retraction = recent.find((a) => a.stance === 'withdraws');
 const retracted = retraction && graph.claims.find((c) => c.id === retraction.claim);
+const open = !retraction ? recent.find((a) => a.stance === 'undecided' && claimStatus(graph, a.claim) === 'unassessed') : undefined;
+const opened = open && graph.claims.find((c) => c.id === open.claim);
 
+// The things with the most on file come first.
+const weight = (id: string) => {
+  const e = graph.entities.find((x) => x.id === id)!;
+  return e.mentionedIn.length + e.aliases.length + claimsInvolving(graph, id).length + observationsAbout(graph, id).length;
+};
 const followable = graph.entities
   .filter((e) => e.type !== 'person')
-  .sort((a, b) => b.mentionedIn.length + b.aliases.length - (a.mentionedIn.length + a.aliases.length))
+  .sort((a, b) => weight(b.id) - weight(a.id))
   .slice(0, 6);
 ---
 
@@ -43,6 +51,19 @@ const followable = graph.entities
           <span class="exhibit__note">
             {entityLabel(graph, retraction.by)} {stance(retraction.stance).verb} it in episode {retraction.episode}.
             {retraction.note && ` “${retraction.note}”`}
+          </span>
+        </a>
+      )
+    }
+    {
+      open && opened && (
+        <a class="exhibit exhibit--open" href={withBase(`/claims/${opened.id}/`)}>
+          <span class="exhibit__label">Most recent open question</span>
+          <span class="exhibit__claim">{opened.label}</span>
+          <Stamp status="unassessed" large />
+          <span class="exhibit__note">
+            {entityLabel(graph, open.by)} {stance(open.stance).label.toLowerCase()}, as of episode {open.episode}.
+            {open.note && ` “${open.note}”`}
           </span>
         </a>
       )
@@ -136,6 +157,9 @@ const followable = graph.entities
     text-decoration: line-through;
     text-decoration-color: var(--withdrawn);
     text-decoration-thickness: 3px;
+  }
+  .exhibit--open .exhibit__claim {
+    text-decoration: none;
   }
   .exhibit__note {
     font-size: 0.97rem;

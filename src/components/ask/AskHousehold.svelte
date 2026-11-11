@@ -37,7 +37,7 @@
     { id: 'disagree', label: 'Where the parents disagree' },
     { id: 'beliefs', label: `What we believed after episode ${episode}` },
     { id: 'names', label: 'Objects with suspiciously many names' },
-    { id: 'crying', label: 'Why is he crying?' },
+    { id: 'crying', label: 'Why is the baby crying?' },
   ]);
 
   const person = $derived(question.startsWith('withdrawn-') ? question.slice('withdrawn-'.length) : null);

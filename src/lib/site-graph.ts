@@ -19,7 +19,8 @@ async function load(): Promise<CompiledGraph> {
       entities: entities.map((entity) => ({ id: entity.id, data: entity.data })),
       predicates: predicates.map((predicate) => predicate.data),
     },
-    { siteUrl: import.meta.env.SITE ?? 'http://localhost:4321' },
+    // The site's address including any base path, e.g. https://ksonda.github.io/born-unstructured
+    { siteUrl: new URL(import.meta.env.BASE_URL, import.meta.env.SITE ?? 'http://localhost:4321').href },
   );
   for (const warning of warnings) console.warn(`[graph] ${warning}`);
   return graph;

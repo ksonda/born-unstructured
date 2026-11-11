@@ -4,7 +4,7 @@
    * URL, so any view can be shared and the Back button does what a reader
    * expects. The children only draw.
    *
-   *   /explore/?focus=blue-pacifier&through=3&select=claim-blue-only
+   *   /explore/?focus=muppy&through=1&select=claim-messy-new-muppy
    *
    * focus    the entity at the centre
    * through  show the record as it stood after this episode (omitted = latest)

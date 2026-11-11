@@ -1,10 +1,8 @@
 label: Dad
 type: person
 description: >
-  Writes these installments. Proposes most of the theories and has withdrawn a growing share of them.
-aliases:
-  - label: the Night Shift
-    since: 4
+  Writes these installments and proposes most of the theories in them. Works on data
+  infrastructure, mostly water data.
 relations:
   - predicate: parentOf
     object: the-authority
