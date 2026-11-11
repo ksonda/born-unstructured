@@ -44,7 +44,7 @@ Everything downstream is generated. `src/lib/graph/compile.ts` is the one place 
 npm run new -- "The Title of the Post"
 ```
 
-That creates `src/content/posts/the-title-of-the-post.md` as a draft. The file name is the post's slug and identifier. A post is prose plus up to three kinds of record in the frontmatter:
+That creates `src/content/posts/the-title-of-the-post.md` as a draft. The file name is the post's slug and identifier. Posts are ordered by date; two posts from the same day go in file-name order, and a numeric prefix such as `00-` sets that order without becoming part of the slug. A post is prose plus up to three kinds of record in the frontmatter:
 
 ```yaml
 ---
@@ -90,6 +90,8 @@ Stances: `tentative`, `endorses`, `strongly-endorses`, `qualifies`, `questions`,
 | `[the muppy](thing:muppy)` | Links to the thing's permanent page and counts as a mention. |
 | `[The nose determines the role.](claim:claim-nose-role)` | Links to the claim's history. |
 | `[It's an incident.](obs:observation-02)` | Marks the passage an observation comes from, so evidence can link back to the exact sentence. |
+| `[the README](post:readme)` | Links to another published post by its slug. The build fails if there is no such post. |
+| `[Things We Believed](page:beliefs)` | Links to a section of the site: `posts`, `things`, `beliefs`, `explore`, `ask`, `query`, `data` or `vocab`. |
 | `Some sentence.[^1]` and `[^1]: **Title.** The longer version.` | A footnote. They are gathered at the end with links back. Indent continuation paragraphs and code blocks by four spaces. |
 | `::graph::` on a line of its own | Puts the post's graph at that point in the prose instead of at the foot of the page. |
 | `<!-- a note to yourself -->` | Stays in the Markdown and out of the published page. |
@@ -166,7 +168,7 @@ SITE_URL=http://localhost:4321 npm run build
 
 `.github/workflows/deploy.yml` runs on every push to `main`: tests first, then the Astro build, then publication to GitHub Pages. The repository's Pages source is set to "GitHub Actions" (Settings, Pages). `.github/workflows/ci.yml` runs the tests and a build on pull requests.
 
-The site is served from `/born-unstructured/`, so every internal link goes through `withBase()` in `src/lib/paths.ts`. Use it for any new link in a component or page. Links written in Markdown with `thing:`, `claim:` and `obs:` are handled for you.
+The site is served from `/born-unstructured/`, so every internal link goes through `withBase()` in `src/lib/paths.ts`. Use it for any new link in a component or page. Links written in Markdown with `thing:`, `claim:`, `obs:`, `post:` and `page:` are handled for you.
 
 To publish a post: write it, run `npm test`, commit, push.
 
@@ -187,7 +189,7 @@ src/lib/graph/
   jsonld.ts, rdf.ts       JSON-LD, N-Quads, Turtle and the vocabulary
   routes.ts               Where each record lives on the site
   load-fs.ts              Loads content without Astro, for tests and scripts
-src/lib/prose.ts          thing:, claim:, obs: links and the ::graph:: marker
+src/lib/prose.ts          thing:, claim:, obs:, post:, page: links and the ::graph:: marker
 src/lib/sparql/           Web Worker and example queries
 src/components/graph/     Explorer: search, canvas, details, timeline, list
 src/components/ask/       Ask the household

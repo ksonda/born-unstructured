@@ -154,21 +154,28 @@ export class GraphValidationError extends Error {
 
 // -------------------------------------------------------------- helpers ----
 
-const PROSE_LINK = /\]\(\s*(thing|claim|obs):([^)\s]+)\s*\)/g;
+const PROSE_LINK = /\]\(\s*(thing|claim|obs|post|page):([^)\s]+)\s*\)/g;
+
+/** Site sections that [text](page:name) may point at. */
+export const SITE_PAGES = ['posts', 'things', 'beliefs', 'explore', 'ask', 'query', 'data', 'vocab'] as const;
 
 export interface ProseLinks {
   things: string[];
   claims: string[];
   observations: string[];
+  posts: string[];
+  pages: string[];
 }
 
-/** Finds [text](thing:id), [text](claim:id) and [text](obs:id) links in Markdown. */
+/** Finds [text](thing:id), [text](claim:id), [text](obs:id), [text](post:slug) and [text](page:name) links in Markdown. */
 export function extractProseLinks(body: string): ProseLinks {
-  const found: ProseLinks = { things: [], claims: [], observations: [] };
+  const found: ProseLinks = { things: [], claims: [], observations: [], posts: [], pages: [] };
   for (const match of body.matchAll(PROSE_LINK)) {
     const [, scheme, target] = match;
     if (scheme === 'thing') found.things.push(target);
     else if (scheme === 'claim') found.claims.push(target);
+    else if (scheme === 'post') found.posts.push(target);
+    else if (scheme === 'page') found.pages.push(target);
     else found.observations.push(target);
   }
   return found;
@@ -223,6 +230,9 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     }
   };
 
+  // Posts may link to any other published post, earlier or later.
+  const publishedSlugs = new Set(published.map((post) => slugFromFile(post.id)));
+
   const posts: Post[] = [];
   const observations: Observation[] = [];
   const claims: Claim[] = [];
@@ -245,6 +255,14 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
 
     for (const id of data.mentions) if (requireEntity(id, where, 'mentioned entity')) mention(id);
     for (const id of links.things) if (requireEntity(id, where, 'linked thing')) mention(id);
+    for (const slug of unique(links.posts)) {
+      if (!publishedSlugs.has(slug)) problems.push(`${where}: the prose links to post "${slug}", which is not a published post`);
+    }
+    for (const name of unique(links.pages)) {
+      if (!(SITE_PAGES as readonly string[]).includes(name)) {
+        problems.push(`${where}: the prose links to page "${name}", which is not one of ${SITE_PAGES.join(', ')}`);
+      }
+    }
 
     const ownObservations = new Set(data.observations.map((o) => o.id));
     for (const id of unique(links.observations)) {

@@ -98,9 +98,9 @@ describe('compileGraph', () => {
 });
 
 describe('extractProseLinks', () => {
-  it('finds the three link schemes and ignores ordinary links', () => {
-    const links = extractProseLinks('[a](thing:x) [b](claim:y) [c](obs:z) [d](https://example.org) [e](/things/x/)');
-    expect(links).toEqual({ things: ['x'], claims: ['y'], observations: ['z'] });
+  it('finds the link schemes and ignores ordinary links', () => {
+    const links = extractProseLinks('[a](thing:x) [b](claim:y) [c](obs:z) [d](https://example.org) [e](/things/x/) [f](post:p) [g](page:beliefs)');
+    expect(links).toEqual({ things: ['x'], claims: ['y'], observations: ['z'], posts: ['p'], pages: ['beliefs'] });
   });
 });
 
@@ -139,6 +139,9 @@ describe('prose markers', () => {
     const html = '<p><a href="thing:baby">The Baby</a> <a href="claim:c-1">a theory</a> <a href="obs:o-1">a <em>sight</em></a><!-- note to self --></p>';
     expect(resolveGraphLinks(html, (path) => `/base${path}`)).toBe(
       '<p><a class="ref ref-thing" href="/base/things/baby/">The Baby</a> <a class="ref ref-claim" href="/base/claims/c-1/">a theory</a> <span class="passage" id="o-1">a <em>sight</em></span></p>',
+    );
+    expect(resolveGraphLinks('<a href="post:readme">README</a> <a href="page:beliefs">beliefs</a>', (path) => `/base${path}`)).toBe(
+      '<a href="/base/posts/readme/">README</a> <a href="/base/beliefs/">beliefs</a>',
     );
   });
 });

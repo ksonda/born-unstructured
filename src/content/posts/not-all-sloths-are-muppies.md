@@ -88,7 +88,7 @@ But I've come to think the real onboarding problem runs the other way. [The newb
 
 I work on data infrastructure. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
 
-So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog tracks the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. How that works is in the [README](https://github.com/ksonda/born-unstructured#readme). It's called *Born Unstructured* because that's how everyone arrives. First, the sloths.
+So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog tracks the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. How that works is in the [README](post:readme). It's called *Born Unstructured* because that's how everyone arrives. First, the sloths.
 
 ## Meet the muppies
 
