@@ -69,7 +69,7 @@
     id="entity-search"
     type="search"
     autocomplete="off"
-    placeholder="Try &ldquo;Old Blue&rdquo; or &ldquo;dishwasher&rdquo;"
+    placeholder="Try &ldquo;the kid&rdquo; or &ldquo;muppy&rdquo;"
     role="combobox"
     aria-expanded={open && hits.length > 0}
     aria-controls="entity-search-results"
