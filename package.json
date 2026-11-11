@@ -14,8 +14,7 @@
     "test": "vitest run",
     "check": "astro check",
     "graph": "node scripts/graph-report.ts",
-    "new": "node scripts/new-episode.ts",
-    "samples:remove": "node scripts/remove-samples.ts"
+    "new": "node scripts/new-post.ts"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

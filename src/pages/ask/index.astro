@@ -13,7 +13,7 @@ const sagas = SITE.sagas.filter((saga) => saga.entities.some((id) => present.has
 
 <Base title="Ask the household" description="Standing questions about the record, answered from the graph.">
   <h1>Ask the household</h1>
-  <p class="lede">Standing questions, answered from the record. Pick an earlier episode to see what the answer used to be.</p>
+  <p class="lede">Standing questions, answered from the record. Pick an earlier date to see what the answer used to be.</p>
   <div style="margin-top:2rem">
     <AskHousehold client:load graph={graph} base={withBase('')} household={household} sagas={sagas} />
   </div>

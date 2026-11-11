@@ -21,7 +21,7 @@ describe('positions and status', () => {
     expect(claimStatus(graph, 'claim-walking')).toBe('withdrawn');
   });
 
-  it('answers as of an earlier episode without rewriting history', () => {
+  it('answers as of an earlier post without rewriting history', () => {
     const then = cutoff(graph, 1);
     expect(claimStatus(then, 'claim-walking')).toBe('held');
     expect(latestPositions(then, 'claim-walking').map((p) => p.stance)).toEqual(['strongly-endorses']);
@@ -63,7 +63,7 @@ describe('household questions', () => {
   it('lists what a person endorsed and later withdrew', () => {
     const [row] = withdrawalsBy(graph, 'dad');
     expect(row.endorsed.stance).toBe('strongly-endorses');
-    expect(row.withdrawn.episode).toBe(2);
+    expect(row.withdrawn.seq).toBe(2);
     expect(withdrawalsBy(graph, 'mom')).toEqual([]);
     expect(withdrawalsBy(cutoff(graph, 1), 'dad')).toEqual([]);
   });
@@ -84,15 +84,15 @@ describe('household questions', () => {
 
 describe('timelines and routes', () => {
   it('builds an entity biography in publication order', () => {
-    const kinds = entityTimeline(graph, 'walking').map((e) => `${e.episode}:${e.kind}`);
+    const kinds = entityTimeline(graph, 'walking').map((e) => `${e.seq}:${e.kind}`);
     expect(kinds).toEqual(['1:appearance', '1:observation', '1:claim', '1:assessment', '2:appearance', '2:alias', '2:assessment', '2:assessment']);
   });
 
   it('gives every record a page', () => {
     expect(pathFor(graph, 'walking')).toBe('/things/walking/');
     expect(pathFor(graph, 'claim-walking')).toBe('/claims/claim-walking/');
-    expect(pathFor(graph, 'episode-02')).toBe('/episodes/second/');
-    expect(pathFor(graph, 'obs-1')).toBe('/episodes/first/#obs-1');
+    expect(pathFor(graph, 'second')).toBe('/posts/second/');
+    expect(pathFor(graph, 'obs-1')).toBe('/posts/first/#obs-1');
     expect(pathFor(graph, 'a-3')).toBe('/claims/claim-walking/#a-3');
     expect(Object.keys(routeTable(graph))).toHaveLength(4 + 2 + 1 + 1 + 3);
   });

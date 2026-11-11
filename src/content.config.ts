@@ -2,7 +2,7 @@ import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { entitySchema, postSchema, predicateSchema } from './lib/graph/schema.ts';
 
-/** Installments. The frontmatter carries each episode's additions to the graph. */
+/** Posts. The frontmatter carries each post's additions to the graph. */
 const posts = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/posts' }),
   schema: postSchema,

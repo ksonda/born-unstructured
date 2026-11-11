@@ -3,7 +3,7 @@
  * path with withBase() from src/lib/paths.ts when rendering a link.
  */
 import type { CompiledGraph } from './compile.ts';
-import { indexById } from './views.ts';
+import { indexById, throughParam } from './views.ts';
 
 export function pathFor(graph: CompiledGraph, id: string): string | null {
   const found = indexById(graph).get(id);
@@ -14,10 +14,10 @@ export function pathFor(graph: CompiledGraph, id: string): string | null {
     case 'claim':
       return `/claims/${id}/`;
     case 'post':
-      return `/episodes/${found.record.slug}/`;
+      return `/posts/${found.record.slug}/`;
     case 'observation': {
       const post = graph.posts.find((p) => p.id === found.record.post)!;
-      return found.record.hasPassage ? `/episodes/${post.slug}/#${id}` : `/episodes/${post.slug}/#record`;
+      return found.record.hasPassage ? `/posts/${post.slug}/#${id}` : `/posts/${post.slug}/#record`;
     }
     case 'assessment':
       return `/claims/${found.record.claim}/#${id}`;
@@ -48,6 +48,6 @@ export function explorerPath(graph: CompiledGraph, id: string, through?: number)
   } else {
     return null;
   }
-  if (through !== undefined) params.set('through', String(through));
+  if (through !== undefined && through < graph.latestSeq) params.set('through', throughParam(graph, through));
   return `/explore/?${params.toString()}`;
 }

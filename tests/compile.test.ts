@@ -15,15 +15,15 @@ const problemsOf = (run: () => unknown): string[] => {
 };
 
 describe('compileGraph', () => {
-  it('normalises records and attaches their source episode', () => {
+  it('normalises records and attaches their source post', () => {
     const { graph, warnings } = compileGraph(fixture(), options);
     expect(warnings).toEqual([]);
     expect(graph.site.idBase).toBe('https://example.test/id/');
     expect(graph.posts.map((p) => [p.id, p.slug])).toEqual([
-      ['episode-01', 'first'],
-      ['episode-02', 'second'],
+      ['first', 'first'],
+      ['second', 'second'],
     ]);
-    expect(graph.claims[0]).toMatchObject({ post: 'episode-01', episode: 1, about: ['baby', 'walking'] });
+    expect(graph.claims[0]).toMatchObject({ post: 'first', seq: 1, about: ['baby', 'walking'] });
     expect(graph.assessments.map((a) => a.sequence)).toEqual([1, 2, 3]);
     expect(graph.observations[0].hasPassage).toBe(true);
   });
@@ -48,11 +48,11 @@ describe('compileGraph', () => {
     input.posts.push({
       id: '003-draft',
       body: '',
-      data: postSchema.parse({ title: 'Draft', episode: 3, published: '2026-01-15', summary: 'Not yet.', draft: true }),
+      data: postSchema.parse({ title: 'Draft', published: '2026-01-15', summary: 'Not yet.', draft: true }),
     });
     const { graph } = compileGraph(input, options);
     expect(graph.entities.map((e) => e.id)).not.toContain('secret');
-    expect(graph.latestEpisode).toBe(2);
+    expect(graph.latestSeq).toBe(2);
     expect(JSON.stringify(graph)).not.toContain('Secret');
   });
 
@@ -71,11 +71,11 @@ describe('compileGraph', () => {
     expect(problems).toHaveLength(4);
     expect(problems.join('\n')).toMatch(/"a-1" is already used by an assessment/);
     expect(problems.join('\n')).toMatch(/assessor "walking" must be a person/);
-    expect(problems.join('\n')).toMatch(/"claim-nope", which is not a claim published by this episode/);
-    expect(problems.join('\n')).toMatch(/"obs-9", which is not an observation published by this episode/);
+    expect(problems.join('\n')).toMatch(/"claim-nope", which is not a claim published by this post or an earlier one/);
+    expect(problems.join('\n')).toMatch(/"obs-9", which is not an observation published by this post or an earlier one/);
   });
 
-  it('does not let an episode assess a claim from its own future', () => {
+  it('does not let a post assess a claim from its own future', () => {
     const input = fixture();
     const [first, second] = input.posts;
     first.data.assessments.push({ id: 'a-0', claim: 'claim-later', by: 'mom', stance: 'endorses', evidence: [] });
@@ -105,23 +105,29 @@ describe('extractProseLinks', () => {
 });
 
 describe('names that have not happened yet', () => {
-  it('leaves out an alias whose episode is not published', () => {
+  it('leaves out an alias dated after the latest post', () => {
     const input = fixture();
     input.posts[1].data.draft = true;
     const { graph, warnings } = compileGraph(input, options);
     expect(graph.entities.find((e) => e.id === 'walking')!.aliases.map((a) => a.label)).toEqual(['laps']);
-    expect(warnings.join('\n')).toMatch(/alias "the circuit" starts in episode 2/);
+    expect(warnings.join('\n')).toMatch(/alias "the circuit" starts on 2026-01-05, after the latest post/);
   });
 });
 
-describe('sample episodes and prose markers', () => {
-  it('carries the sample flag through to the compiled post', () => {
+describe('ordering', () => {
+  it('orders posts by date, whatever their file names', () => {
     const input = fixture();
-    input.posts[1].data.sample = true;
+    input.posts.reverse();
+    input.posts[0].id = 'zzz-second';
     const { graph } = compileGraph(input, options);
-    expect(graph.posts.map((p) => p.sample)).toEqual([false, true]);
+    expect(graph.posts.map((p) => [p.title, p.seq])).toEqual([
+      ['First', 1],
+      ['Second', 2],
+    ]);
   });
+});
 
+describe('prose markers', () => {
   it('finds the ::graph:: marker and splits the prose around it', () => {
     expect(hasGraphMarker('Before.\n\n::graph::\n\nAfter.')).toBe(true);
     expect(hasGraphMarker('Write ::graph:: on its own line.')).toBe(false);

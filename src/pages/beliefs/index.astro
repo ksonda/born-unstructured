@@ -2,6 +2,7 @@
 import ClaimCard from '../../components/ClaimCard.astro';
 import Base from '../../layouts/Base.astro';
 import { beliefs } from '../../lib/graph/queries.ts';
+import { dateOf } from '../../lib/graph/views.ts';
 import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
 
@@ -20,10 +21,10 @@ const groups = [
 <Base title="Things we believed" description="Every theory the household has held about the baby, and what became of it.">
   <h1>Things we believed</h1>
   <p class="lede">
-    Every theory anyone in the household has put forward, with each person's latest position. As of episode {graph.latestEpisode}.
+    Every theory anyone in the household has put forward, with each person's latest position. As of {dateOf(graph, graph.latestSeq)}.
   </p>
   <p class="small">
-    <a href={withBase('/ask/')}>Ask what we believed after an earlier episode</a>
+    <a href={withBase('/ask/')}>Ask what we believed at an earlier date</a>
   </p>
 
   {

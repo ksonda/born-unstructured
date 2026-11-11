@@ -1,6 +1,6 @@
 /**
  * Checks the real content in src/content, and the RDF that comes out of it.
- * If this file fails after you add an episode, the message says what to fix.
+ * If this file fails after you add a post, the message says what to fix.
  */
 import { fileURLToPath } from 'node:url';
 import { Parser, Store, DataFactory } from 'n3';
@@ -22,13 +22,14 @@ describe('the published content', () => {
     expect(graph.posts.length).toBeGreaterThan(0);
   });
 
-  it('numbers episodes consecutively from 1', () => {
-    expect(graph.posts.map((p) => p.episode)).toEqual(graph.posts.map((_, i) => i + 1));
+  it('gives every post its own date order', () => {
+    const dates = graph.posts.map((p) => p.published);
+    expect(dates).toEqual([...dates].sort());
   });
 
   it('routes every identifier to a page', () => {
     for (const [id, path] of Object.entries(routeTable(graph))) {
-      expect(path, id).toMatch(/^\/(things|claims|episodes)\//);
+      expect(path, id).toMatch(/^\/(things|claims|posts)\//);
     }
   });
 });
@@ -42,7 +43,7 @@ describe('the RDF export', async () => {
     expect(typed('Observation')).toBe(graph.observations.length);
     expect(typed('Claim')).toBe(graph.claims.length);
     expect(typed('Assessment')).toBe(graph.assessments.length);
-    expect(typed('Episode')).toBe(graph.posts.length);
+    expect(typed('Post')).toBe(graph.posts.length);
   });
 
   it('never asserts a claimed triple as a fact', () => {

@@ -11,10 +11,10 @@ export async function GET(context: APIContext) {
     description: SITE.description,
     site: new URL(withBase('/'), context.site!).href,
     items: [...graph.posts].reverse().map((post) => ({
-      title: `Episode ${post.episode}: ${post.title}`,
+      title: post.title,
       description: post.summary,
       pubDate: new Date(`${post.published}T12:00:00Z`),
-      link: withBase(`/episodes/${post.slug}/`),
+      link: withBase(`/posts/${post.slug}/`),
     })),
   });
 }

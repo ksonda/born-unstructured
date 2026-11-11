@@ -7,7 +7,7 @@ import { getSiteGraph } from '../../lib/site-graph.ts';
 const graph = await getSiteGraph();
 const example = graph.entities.find((e) => e.type !== 'person') ?? graph.entities[0];
 const counts = [
-  ['Episodes', graph.posts.length],
+  ['Posts', graph.posts.length],
   ['Things', graph.entities.length],
   ['Observations', graph.observations.length],
   ['Claims', graph.claims.length],
@@ -20,9 +20,9 @@ const files = [
 ];
 ---
 
-<Base title="Data" description="Download the knowledge graph behind the series.">
+<Base title="Data" description="Download the knowledge graph behind the blog.">
   <h1>Data</h1>
-  <p class="lede">The whole record as RDF, rebuilt with every episode. It contains only what has been published.</p>
+  <p class="lede">The whole record as RDF, rebuilt with every post. It contains only what has been published.</p>
 
   <h2>Download</h2>
   <div class="ledger-wrap measure">
@@ -61,7 +61,7 @@ const files = [
   <div class="measure">
     <p>
       An <strong>observation</strong> is one person's report of something that happened. A <strong>claim</strong> is an interpretation. An{' '}
-      <strong>assessment</strong> is one person's position on one claim as of one episode.
+      <strong>assessment</strong> is one person's position on one claim as of one post.
     </p>
     <p>
       Claims with a subject, predicate and object are typed <code>rdf:Statement</code>, which describes a triple without asserting it. The

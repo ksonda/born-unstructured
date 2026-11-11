@@ -3,9 +3,9 @@ import PositionTable from '../components/PositionTable.astro';
 import Stamp from '../components/Stamp.astro';
 import Thing from '../components/Thing.astro';
 import Base from '../layouts/Base.astro';
-import { formatDate } from '../lib/format.ts';
+import { shortDate } from '../lib/format.ts';
 import { stance } from '../lib/graph/stances.ts';
-import { claimStatus, claimsInvolving, entityLabel, observationsAbout } from '../lib/graph/views.ts';
+import { claimStatus, claimsInvolving, dateOf, entityLabel, observationsAbout } from '../lib/graph/views.ts';
 import { withBase } from '../lib/paths.ts';
 import { getSiteGraph } from '../lib/site-graph.ts';
 import { SITE } from '../site.config.ts';
@@ -14,7 +14,7 @@ const graph = await getSiteGraph();
 const posts = [...graph.posts].reverse();
 const recent = [...graph.assessments].sort((a, b) => b.sequence - a.sequence);
 
-// The hero is the most recent retraction, because nothing describes the series better.
+// The hero is the most recent retraction, because nothing describes the blog better.
 // Until somebody retracts something, it is the most recent question nobody will commit to.
 const retraction = recent.find((a) => a.stance === 'withdraws');
 const retracted = retraction && graph.claims.find((c) => c.id === retraction.claim);
@@ -38,7 +38,7 @@ const followable = graph.entities
       <h1>Everything one household has believed, on the record.</h1>
       <p class="lede">{SITE.description}</p>
       <div class="button-row">
-        <a class="button button--primary" href={withBase(`/episodes/${posts[0].slug}/`)}>Read the latest episode</a>
+        <a class="button button--primary" href={withBase(`/posts/${posts[0].slug}/`)}>Read the latest post</a>
         <a class="button" href={withBase('/explore/')}>Explore the graph</a>
       </div>
     </div>
@@ -49,7 +49,7 @@ const followable = graph.entities
           <span class="exhibit__claim">{retracted.label}</span>
           <Stamp status={claimStatus(graph, retracted.id)} large />
           <span class="exhibit__note">
-            {entityLabel(graph, retraction.by)} {stance(retraction.stance).verb} it in episode {retraction.episode}.
+            {entityLabel(graph, retraction.by)} {stance(retraction.stance).verb} it on {dateOf(graph, retraction.seq)}.
             {retraction.note && ` “${retraction.note}”`}
           </span>
         </a>
@@ -62,7 +62,7 @@ const followable = graph.entities
           <span class="exhibit__claim">{opened.label}</span>
           <Stamp status="unassessed" large />
           <span class="exhibit__note">
-            {entityLabel(graph, open.by)} {stance(open.stance).label.toLowerCase()}, as of episode {open.episode}.
+            {entityLabel(graph, open.by)} {stance(open.stance).label.toLowerCase()}, as of {dateOf(graph, open.seq)}.
             {open.note && ` “${open.note}”`}
           </span>
         </a>
@@ -79,21 +79,17 @@ const followable = graph.entities
   </section>
 
   <section>
-    <h2>Episodes</h2>
+    <h2>Posts</h2>
     <ol class="entry-list" reversed>
       {
         posts.map((post) => (
           <li>
-            <span class="entry-no">Episode {post.episode}</span>
+            <span class="entry-no">{shortDate(post.published)}</span>
             <div>
               <h3>
-                <a href={withBase(`/episodes/${post.slug}/`)}>{post.title}</a>
+                <a href={withBase(`/posts/${post.slug}/`)}>{post.title}</a>
               </h3>
               <p>{post.summary}</p>
-              <p class="quiet small">
-                {formatDate(post.published)}
-                {post.sample && <span class="tag">Sample</span>}
-              </p>
             </div>
           </li>
         ))
@@ -102,7 +98,7 @@ const followable = graph.entities
   </section>
 
   <section>
-    <h2>Or follow one thing through the series</h2>
+    <h2>Or follow one thing across posts</h2>
     <p class="measure quiet">Every recurring object, routine and idea has a page that collects its appearances, its names and what has been claimed about it.</p>
     <ul class="chips">
       {

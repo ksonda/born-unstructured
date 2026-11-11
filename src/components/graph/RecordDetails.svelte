@@ -7,6 +7,7 @@
     citationsOf,
     claimStatus,
     claimsInvolving,
+    dateOf,
     entityLabel,
     evidenceFor,
     indexById,
@@ -74,7 +75,7 @@
         <li>
           {observation.text}
           <span class="meta">
-            {entityLabel(graph, observation.observedBy)}, episode {observation.episode}.
+            {entityLabel(graph, observation.observedBy)}, {dateOf(graph, observation.seq)}.
             <a href={href(observation.id)}>Read the passage</a>
           </span>
         </li>
@@ -91,7 +92,7 @@
   <p><span class="stamp" data-status={status}>{STATUS_LABELS[status]}</span></p>
   <p class="meta">
     Proposed by {entityLabel(graph, claim.attributedTo)} in
-    <a href={href(claim.post)}>episode {claim.episode}{post ? `, ${post.title}` : ''}</a>
+    <a href={href(claim.post)}>{post ? post.title : 'a post'}</a>, {dateOf(graph, claim.seq)}
   </p>
   {#if claim.description}<p>{claim.description}</p>{/if}
 
@@ -102,7 +103,7 @@
       <li>
         {entityLabel(graph, position.by)}: <span class="stance" data-polarity={s.polarity}>{s.label.toLowerCase()}</span>
         <span class="meta">
-          Episode {position.episode}.{position.note ? ` “${position.note}”` : ''}
+          {dateOf(graph, position.seq)}.{position.note ? ` “${position.note}”` : ''}
         </span>
       </li>
     {/each}
@@ -115,7 +116,7 @@
         <li>
           {observation.text}
           <span class="meta">
-            {entityLabel(graph, observation.observedBy)}, episode {observation.episode}.
+            {entityLabel(graph, observation.observedBy)}, {dateOf(graph, observation.seq)}.
             <a href={href(observation.id)}>Read the passage</a>
           </span>
         </li>
@@ -131,7 +132,7 @@
   {@const citations = citationsOf(graph, observation.id)}
   <p class="kind">Observation</p>
   <h2 class="quote">{observation.text}</h2>
-  <p class="meta">Observed by {entityLabel(graph, observation.observedBy)} in episode {observation.episode}</p>
+  <p class="meta">Observed by {entityLabel(graph, observation.observedBy)} on {dateOf(graph, observation.seq)}</p>
   <ul class="chips">
     {#each observation.about as about (about)}
       <li><button type="button" class="chip" onclick={() => onselect(about)}>{entityLabel(graph, about)}</button></li>

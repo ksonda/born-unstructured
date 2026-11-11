@@ -31,8 +31,8 @@ const alias = z.union([
   z
     .object({
       label: z.string(),
-      /** Episode in which the name was first used. Defaults to the entity's first appearance. */
-      since: z.number().int().positive().optional(),
+      /** Date the name came into use. It shows from the first post published on or after it. Defaults to the entity's first appearance. */
+      since: z.coerce.date().optional(),
     })
     .strict(),
 ]);
@@ -102,16 +102,13 @@ const assessment = z
   })
   .strict();
 
-/** Frontmatter of a Markdown installment in src/content/posts/. */
+/** Frontmatter of a Markdown post in src/content/posts/. */
 export const postSchema = z
   .object({
     title: z.string(),
-    episode: z.number().int().positive(),
     published: z.coerce.date(),
     summary: z.string(),
     draft: z.boolean().default(false),
-    /** Marks a made-up placeholder episode. It gets a banner on the site and is easy to find and delete. */
-    sample: z.boolean().default(false),
     /** Extra entities to index. Anything linked in the prose or used in a record is added automatically. */
     mentions: z.array(id).default([]),
     observations: z.array(observation).default([]),

@@ -360,6 +360,10 @@ textarea {
   background: var(--highlight);
 }
 
+.ledger .date {
+  white-space: nowrap;
+}
+
 .ledger .num {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -654,7 +658,7 @@ a.chip:hover {
   padding: 1.1rem 0;
   border-bottom: 1px solid var(--rule);
   display: grid;
-  grid-template-columns: 5.5rem 1fr;
+  grid-template-columns: 7.5rem 1fr;
   gap: 0.25rem 1rem;
 }
 
@@ -762,7 +766,7 @@ a.chip:hover {
 
 .timeline > li {
   display: grid;
-  grid-template-columns: 5.5rem 1fr;
+  grid-template-columns: 7.5rem 1fr;
   gap: 1rem;
   padding: 0.9rem 0;
   border-top: 1px solid var(--rule);

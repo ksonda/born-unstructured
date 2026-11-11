@@ -1,7 +1,7 @@
 import type { CompileInput } from '../src/lib/graph/compile.ts';
 import { entitySchema, postSchema, predicateSchema } from '../src/lib/graph/schema.ts';
 
-/** A two-episode household small enough to reason about in a test. */
+/** A two-post household small enough to reason about in a test. */
 export function fixture(): CompileInput {
   const entity = (id: string, data: object) => ({ id, data: entitySchema.parse(data) });
   return {
@@ -10,7 +10,7 @@ export function fixture(): CompileInput {
       entity('baby', { label: 'the Baby', type: 'person' }),
       entity('dad', { label: 'Dad', type: 'person', relations: [{ predicate: 'parentOf', object: 'baby' }] }),
       entity('mom', { label: 'Mom', type: 'person' }),
-      entity('walking', { label: 'walking', type: 'routine', aliases: ['laps', { label: 'the circuit', since: 2 }] }),
+      entity('walking', { label: 'walking', type: 'routine', aliases: ['laps', { label: 'the circuit', since: '2026-01-05' }] }),
       entity('secret', { label: 'Secret', type: 'object', public: false }),
     ],
     posts: [
@@ -19,7 +19,6 @@ export function fixture(): CompileInput {
         body: '[The Baby](thing:baby) slept. [He fell asleep](obs:obs-1). So [walking works](claim:claim-walking).',
         data: postSchema.parse({
           title: 'First',
-          episode: 1,
           published: '2026-01-01',
           summary: 'One.',
           observations: [{ id: 'obs-1', text: 'He fell asleep.', observedBy: 'dad', about: ['baby', 'walking'] }],
@@ -32,7 +31,6 @@ export function fixture(): CompileInput {
         body: 'It stopped working.',
         data: postSchema.parse({
           title: 'Second',
-          episode: 2,
           published: '2026-01-08',
           summary: 'Two.',
           assessments: [

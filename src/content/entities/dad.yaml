@@ -1,8 +1,7 @@
 label: Dad
 type: person
 description: >
-  Writes these installments and proposes most of the theories in them. Works on data
-  infrastructure, mostly water data.
+  Writes the posts and proposes most of the theories in them.
 relations:
   - predicate: parentOf
     object: the-authority

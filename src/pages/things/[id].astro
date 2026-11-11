@@ -2,11 +2,11 @@
 import ClaimCard from '../../components/ClaimCard.astro';
 import Thing from '../../components/Thing.astro';
 import Base from '../../layouts/Base.astro';
-import { capitalise, TYPE_LABELS } from '../../lib/format.ts';
+import { capitalise, shortDate, TYPE_LABELS } from '../../lib/format.ts';
 import { nodeFor } from '../../lib/graph/jsonld.ts';
 import { pathFor } from '../../lib/graph/routes.ts';
 import { stance } from '../../lib/graph/stances.ts';
-import { claimsAssessedBy, claimsInvolving, entityLabel, entityTimeline, type TimelineEvent } from '../../lib/graph/views.ts';
+import { claimsAssessedBy, claimsInvolving, dateOf, entityLabel, entityTimeline, type TimelineEvent } from '../../lib/graph/views.ts';
 import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
 
@@ -18,15 +18,15 @@ export async function getStaticPaths() {
 const graph = await getSiteGraph();
 const entity = graph.entities.find((e) => e.id === Astro.params.id)!;
 const timeline = entityTimeline(graph, entity.id);
-const episodes = [...new Set(timeline.map((e) => e.episode))];
+const seqs = [...new Set(timeline.map((e) => e.seq))];
 const about = claimsInvolving(graph, entity.id);
 const assessed = entity.type === 'person' ? claimsAssessedBy(graph, entity.id).filter((c) => !about.includes(c)) : [];
 const predicateLabel = (id: string) => graph.predicates.find((p) => p.id === id)?.label ?? id;
 const incoming = graph.entities.flatMap((other) =>
   other.relations.filter((r) => r.object === entity.id).map((r) => ({ subject: other.id, predicate: r.predicate })),
 );
-const first = graph.posts.find((p) => p.episode === entity.mentionedIn[0])!;
-const eventsIn = (episode: number) => timeline.filter((e): e is Exclude<TimelineEvent, { kind: 'appearance' }> => e.episode === episode && e.kind !== 'appearance');
+const first = graph.posts.find((p) => p.seq === entity.mentionedIn[0])!;
+const eventsIn = (seq: number) => timeline.filter((e): e is Exclude<TimelineEvent, { kind: 'appearance' }> => e.seq === seq && e.kind !== 'appearance');
 ---
 
 <Base title={capitalise(entity.label)} description={entity.description} jsonld={nodeFor(graph, entity.id)}>
@@ -44,7 +44,7 @@ const eventsIn = (episode: number) => timeline.filter((e): e is Exclude<Timeline
               <>
                 {i > 0 && <br />}
                 {a.label}
-                <span class="quiet small"> since episode {a.since}</span>
+                <span class="quiet small"> since {dateOf(graph, a.since)}</span>
               </>
             ))}
           </dd>
@@ -53,10 +53,10 @@ const eventsIn = (episode: number) => timeline.filter((e): e is Exclude<Timeline
     }
     <dt>First appeared</dt>
     <dd>
-      <a href={withBase(`/episodes/${first.slug}/`)}>Episode {first.episode}, {first.title}</a>
+      <a href={withBase(`/posts/${first.slug}/`)}>{first.title}</a>, {shortDate(first.published)}
     </dd>
     <dt>Appears in</dt>
-    <dd>{entity.mentionedIn.length} of {graph.posts.length} episodes</dd>
+    <dd>{entity.mentionedIn.length} of {graph.posts.length} {graph.posts.length === 1 ? 'post' : 'posts'}</dd>
     {
       (entity.relations.length > 0 || incoming.length > 0) && (
         <>
@@ -118,16 +118,16 @@ const eventsIn = (episode: number) => timeline.filter((e): e is Exclude<Timeline
     <h2>Biography</h2>
     <ol class="timeline">
       {
-        episodes.map((episode) => {
-          const post = graph.posts.find((p) => p.episode === episode)!;
-          const events = eventsIn(episode);
+        seqs.map((seq) => {
+          const post = graph.posts.find((p) => p.seq === seq)!;
+          const events = eventsIn(seq);
           return (
             <li>
               <div class="when">
-                <a href={withBase(`/episodes/${post.slug}/`)}>Episode {episode}</a>
+                <a href={withBase(`/posts/${post.slug}/`)}>{shortDate(post.published)}</a>
               </div>
               <ul>
-                {episode === entity.mentionedIn[0] && (
+                {seq === entity.mentionedIn[0] && (
                   <li>
                     <span class="event-kind">First appearance</span>
                     <br />

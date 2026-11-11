@@ -6,7 +6,6 @@ import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
 import { SITE } from '../site.config.ts';
 import { withBase } from '../lib/paths.ts';
-import { getSiteGraph } from '../lib/site-graph.ts';
 
 interface Props {
   title?: string;
@@ -22,7 +21,7 @@ const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const nav = [
-  { href: '/episodes/', label: 'Episodes' },
+  { href: '/posts/', label: 'Posts' },
   { href: '/explore/', label: 'Explore' },
   { href: '/beliefs/', label: 'Things we believed' },
 ];
@@ -34,13 +33,9 @@ const footer = [
   { href: '/vocab/', label: 'Vocabulary' },
   { href: '/rss.xml', label: 'RSS' },
 ];
+const source = { href: 'https://github.com/ksonda/born-unstructured#readme', label: 'How it works' };
 const here = Astro.url.pathname;
 
-const samples = (await getSiteGraph()).posts.filter((post) => post.sample).map((post) => post.episode);
-const sampleNote =
-  samples.length === 0
-    ? 'The household is real. So is the graph.'
-    : `Episode${samples.length === 1 ? '' : 's'} ${samples.length > 2 ? `${samples[0]} to ${samples[samples.length - 1]}` : samples.join(' and ')} ${samples.length === 1 ? 'is a made-up sample' : 'are made-up samples'}. The graph is real.`;
 ---
 
 <!doctype html>
@@ -79,9 +74,10 @@ const sampleNote =
     </main>
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <span>{sampleNote}</span>
+        <span>The household is real. So is the graph.</span>
         <nav aria-label="More">
           {footer.map((item) => <a href={withBase(item.href)}>{item.label}</a>)}
+          <a href={source.href}>{source.label}</a>
         </nav>
       </div>
     </footer>

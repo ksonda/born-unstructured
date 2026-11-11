@@ -1,6 +1,5 @@
 ---
 title: "Not All Sloths Are Muppies"
-episode: 1
 published: 2026-11-11
 summary: "A legacy schema inventory of the household's sloths, taken before the newborn arrives. Two of the four turn out to be jobs."
 
@@ -87,9 +86,9 @@ We are about to have a newborn. Everyone tells you to prepare the older sibling,
 
 But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority. The naming authority is not yet four.
 
-Some context on me: I work on data infrastructure, mostly water data. A large share of my job is getting different organizations to agree that a thing is the same thing, and to call it by an identifier that won't change next year. It is slow and political and occasionally works. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
+I work on data infrastructure. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
 
-So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog will track the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. It's called *Born Unstructured* because that's how everyone arrives. Episode 1 is the sloths.
+So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog tracks the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. How that works is in the [README](https://github.com/ksonda/born-unstructured#readme). It's called *Born Unstructured* because that's how everyone arrives. First, the sloths.
 
 ## Meet the muppies
 
@@ -138,7 +137,7 @@ Most databases would get this wrong in one of two directions. One is to merge al
 
 The kid is running a three-layer model: the category (muppy), the role (Messy or Flat), and the individual lovey. Each layer needs its own identity, and the individual loveys need identifiers that don't depend on which role they happen to be in this week.[^7]
 
-This is a very familiar pattern from my day job. A stream gage monitoring site keeps the same identifier for decades, while the physical sensor on the bridge gets swapped out when it fails. Nobody asks for data from the sensor. They ask for data from the site. Messy Muppy is the site. Whichever lovey is on duty tonight is the sensor.[^8]
+This is a familiar pattern in environmental monitoring. A stream gage monitoring site keeps the same identifier for decades, while the physical sensor on the bridge gets swapped out when it fails. Nobody asks for data from the sensor. They ask for data from the site. Messy Muppy is the site. Whichever lovey is on duty tonight is the sensor.[^8]
 
 It also quietly fixes the complaint I was going to make about descriptive names. "Messy" and "Flat" look like the kind of names that break when the thing they describe changes. But they don't name loveys. They name roles, and the nose is the qualifying criterion. If a Messy Muppy's nose gets chewed flat, nothing in the system becomes inaccurate. That lovey just changes jobs. This is more elegant than some schemas I've reviewed professionally.
 
@@ -171,7 +170,7 @@ Every node in that picture gets a stable identifier in the published graph, and 
 
 This is version 1 of the muppy registry. I expect breaking changes.
 
-Next episode: Montessori laundry. A place for everything, everything in its place, and nothing folded.
+Next up: Montessori laundry. A place for everything, everything in its place, and nothing folded.
 
 ## Notes
 
@@ -205,7 +204,7 @@ For readers who want the longer version. Each note links back to where it came f
 
 [^7]: **Identifiers that mean nothing.** Tim Berners-Lee's 1998 note [Cool URIs don't change](https://www.w3.org/Provider/Style/URI) argues that a web address should stay valid indefinitely, and that the way to achieve this is to leave anything changeable out of it: names, departments, file formats, topics.
 
-    Geographic names illustrate why. The U.S. has a federal Board on Geographic Names to standardize them, and they still change. A system that uses the name as its key breaks when that happens. A system that uses an opaque identifier and stores the name as a label just updates the label. Persistent identifiers for water features are what [Geoconnex](https://geoconnex.us) provides, which is the project I work on. The household equivalent would be issuing each lovey a serial number, which I suspect would not be well received.
+    Geographic names illustrate why. The U.S. has a federal Board on Geographic Names to standardize them, and they still change. A system that uses the name as its key breaks when that happens. A system that uses an opaque identifier and stores the name as a label just updates the label. [Geoconnex](https://geoconnex.us) does this for U.S. water features. The household equivalent would be issuing each lovey a serial number, which I suspect would not be well received.
 
 [^8]: **Roles and the things that fill them.** Data models that hold up over time usually separate a role from whatever currently fills it. The W3C [Organization Ontology](https://www.w3.org/TR/vocab-org/) distinguishes a Post (treasurer, say) from the person who holds it. The W3C [sensor ontology, SOSA/SSN](https://www.w3.org/TR/vocab-ssn/), distinguishes a platform from the sensors it hosts. Monitoring networks do the same thing in practice: the site identifier persists, the hardware rotates.
 

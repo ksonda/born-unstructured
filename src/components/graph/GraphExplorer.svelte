@@ -4,10 +4,10 @@
    * URL, so any view can be shared and the Back button does what a reader
    * expects. The children only draw.
    *
-   *   /explore/?focus=muppy&through=1&select=claim-messy-new-muppy
+   *   /explore/?focus=muppy&through=2026-11-11&select=claim-messy-new-muppy
    *
    * focus    the entity at the centre
-   * through  show the record as it stood after this episode (omitted = latest)
+   * through  show the record as it stood on this date, e.g. 2026-11-11 (omitted = latest)
    * select   the record shown in the details panel
    * expand   nodes whose every connection is drawn
    * hide     entity types (and "claims") to leave out
@@ -18,7 +18,8 @@
   import type { CompiledGraph } from '../../lib/graph/compile.ts';
   import { neighbourhood } from '../../lib/graph/neighborhood.ts';
   import { ENTITY_TYPES, type EntityType } from '../../lib/graph/schema.ts';
-  import { cutoff, indexById } from '../../lib/graph/views.ts';
+  import { shortDate } from '../../lib/format.ts';
+  import { cutoff, dateOf, indexById, parseThrough, throughParam } from '../../lib/graph/views.ts';
   import ConnectionList from './ConnectionList.svelte';
   import EntitySearch from './EntitySearch.svelte';
   import GraphCanvas from './GraphCanvas.svelte';
@@ -56,14 +57,14 @@
 
   const typeNames: Record<EntityType, string> = { person: 'People', object: 'Objects', role: 'Roles', routine: 'Routines', concept: 'Concepts', place: 'Places' };
 
-  const episode = $derived(full ? Math.min(through ?? full.latestEpisode, full.latestEpisode) : 0);
-  const graph = $derived(full ? cutoff(full, episode) : null);
+  const seq = $derived(full ? Math.min(through ?? full.latestSeq, full.latestSeq) : 0);
+  const graph = $derived(full ? cutoff(full, seq) : null);
   const index = $derived(graph ? indexById(graph) : new Map());
   const picture = $derived(
     graph ? neighbourhood(graph, { focus, expanded, hiddenTypes, showClaims, showObservations, provenance }) : { nodes: [], edges: [] },
   );
   const focusEntity = $derived(graph?.entities.find((e) => e.id === focus));
-  /** The focus exists in the full record but had not appeared by the chosen episode. */
+  /** The focus exists in the full record but had not appeared by the chosen date. */
   const notYet = $derived(!focusEntity ? full?.entities.find((e) => e.id === focus) : undefined);
   const shown = $derived(selected && index.has(selected) ? selected : focus);
   const hiddenOf = (id: string) => picture.nodes.find((n) => n.id === id)?.hidden ?? 0;
@@ -75,7 +76,7 @@
     const list = (key: string) => (params.get(key) ?? '').split(',').filter(Boolean);
     focus = params.get('focus') || defaultFocus;
     selected = params.get('select');
-    through = params.has('through') ? Math.max(1, Number(params.get('through')) || 1) : null;
+    through = full ? parseThrough(full, params.get('through')) : null;
     expanded = list('expand');
     hiddenTypes = list('hide').filter((t): t is EntityType => (ENTITY_TYPES as readonly string[]).includes(t));
     showClaims = !list('hide').includes('claims');
@@ -88,7 +89,7 @@
   function writeUrl(push = false) {
     const params = new URLSearchParams();
     params.set('focus', focus);
-    if (through !== null && full && through < full.latestEpisode) params.set('through', String(through));
+    if (through !== null && full && through < full.latestSeq) params.set('through', throughParam(full, through));
     if (selected && selected !== focus) params.set('select', selected);
     if (expanded.length) params.set('expand', expanded.join(','));
     const hide = [...hiddenTypes, ...(showClaims ? [] : ['claims'])];
@@ -127,6 +128,8 @@
       })
       .then((data: CompiledGraph) => {
         full = data;
+        // "through" names a date, which needs the posts to resolve.
+        readUrl();
         normaliseFocus();
         writeUrl();
       })
@@ -175,8 +178,8 @@
 
   function setThrough(value: number) {
     if (!full) return;
-    const clamped = Math.max(1, Math.min(full.latestEpisode, value));
-    through = clamped === full.latestEpisode ? null : clamped;
+    const clamped = Math.max(1, Math.min(full.latestSeq, value));
+    through = clamped === full.latestSeq ? null : clamped;
     writeUrl();
   }
 
@@ -203,18 +206,18 @@
       <div class="control">
         <label for="through">Show the record as of</label>
         <div class="stepper">
-          <button type="button" class="button" aria-label="Earlier episode" disabled={episode <= 1} onclick={() => setThrough(episode - 1)}>&minus;</button>
-          <select id="through" value={episode} onchange={(event) => setThrough(Number(event.currentTarget.value))}>
+          <button type="button" class="button" aria-label="Earlier post" disabled={seq <= 1} onclick={() => setThrough(seq - 1)}>&minus;</button>
+          <select id="through" value={seq} onchange={(event) => setThrough(Number(event.currentTarget.value))}>
             {#each full.posts as post (post.id)}
-              <option value={post.episode}>Episode {post.episode}{post.episode === full.latestEpisode ? ' (latest)' : ''}</option>
+              <option value={post.seq}>{shortDate(post.published)}{post.seq === full.latestSeq ? ' (latest)' : ''}</option>
             {/each}
           </select>
           <button
             type="button"
             class="button"
-            aria-label="Later episode"
-            disabled={episode >= full.latestEpisode}
-            onclick={() => setThrough(episode + 1)}>+</button
+            aria-label="Later post"
+            disabled={seq >= full.latestSeq}
+            onclick={() => setThrough(seq + 1)}>+</button
           >
         </div>
       </div>
@@ -289,10 +292,10 @@
       {#if notYet}
         <div class="panel">
           <p>
-            <strong>{notYet.label}</strong> does not appear until episode {notYet.mentionedIn[0]}, so there is nothing to show as of episode {episode}.
+            <strong>{notYet.label}</strong> does not appear until {dateOf(full, notYet.mentionedIn[0])}, so there is nothing to show as of {dateOf(full, seq)}.
           </p>
           <button type="button" class="button button--primary" onclick={() => setThrough(notYet.mentionedIn[0])}>
-            Jump to episode {notYet.mentionedIn[0]}
+            Jump to {dateOf(full, notYet.mentionedIn[0])}
           </button>
         </div>
       {:else if picture.nodes.length === 0}

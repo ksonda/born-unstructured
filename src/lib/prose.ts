@@ -7,7 +7,7 @@
  *
  * and one placement marker:
  *
- *   ::graph::                                  -> on a line of its own: put the episode's picture here
+ *   ::graph::                                  -> on a line of its own: put the post's picture here
  *
  * It works on rendered HTML, so it does not depend on which Markdown
  * processor Astro is configured with.
@@ -27,7 +27,7 @@ export function resolveGraphLinks(html: string, withBase: (path: string) => stri
 
 export const GRAPH_MARKER = /<p>\s*::graph::\s*<\/p>/;
 
-/** True when the Markdown source asks for the episode's picture inside the prose. */
+/** True when the Markdown source asks for the post's picture inside the prose. */
 export function hasGraphMarker(markdown: string): boolean {
   return /^::graph::\s*$/m.test(markdown);
 }

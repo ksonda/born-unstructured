@@ -6,7 +6,8 @@ import Base from '../../layouts/Base.astro';
 import { nodeFor } from '../../lib/graph/jsonld.ts';
 import { explorerPath, pathFor } from '../../lib/graph/routes.ts';
 import { stance } from '../../lib/graph/stances.ts';
-import { claimHistory, claimStatus, entityLabel, evidenceFor, citationsOf, latestPositions, postFor, refinementsOf } from '../../lib/graph/views.ts';
+import { shortDate } from '../../lib/format.ts';
+import { claimHistory, claimStatus, dateOf, entityLabel, evidenceFor, citationsOf, latestPositions, postFor, refinementsOf } from '../../lib/graph/views.ts';
 import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
 
@@ -31,7 +32,7 @@ const others = claim.about.filter((id) => id !== claim.subject && id !== claim.o
 <Base title={claim.label} description={`${entityLabel(graph, claim.attributedTo)}'s claim, and what has happened to it since.`} jsonld={nodeFor(graph, claim.id)}>
   <p class="quiet">
     Claim, proposed by <Thing graph={graph} id={claim.attributedTo} inline /> in{' '}
-    <a href={withBase(`/episodes/${post.slug}/`)}>episode {post.episode}</a>
+    <a href={withBase(`/posts/${post.slug}/`)}>{post.title}</a>, {shortDate(post.published)}
   </p>
   <h1 class:list={[{ struck: status === 'withdrawn' }]}>{claim.label}</h1>
   <p class="status"><Stamp status={status} large /></p>
@@ -73,7 +74,7 @@ const others = claim.about.filter((id) => id !== claim.subject && id !== claim.o
             <span class="stance" data-polarity={stance(p.stance).polarity}>
               {stance(p.stance).label.toLowerCase()}
             </span>
-            <span class="quiet">, as of episode {p.episode}</span>
+            <span class="quiet">, as of {dateOf(graph, p.seq)}</span>
           </div>
         ))
       }
@@ -128,7 +129,7 @@ const others = claim.about.filter((id) => id !== claim.subject && id !== claim.o
               <li id={`evidence-${o.id}`}>
                 <p>{o.text}</p>
                 <p class="quiet small">
-                  Observed by {entityLabel(graph, o.observedBy)} in episode {source.episode}. Cited by{' '}
+                  Observed by {entityLabel(graph, o.observedBy)} on {shortDate(source.published)}. Cited by{' '}
                   {citedBy.map((a, i) => (
                     <>
                       {i > 0 && ', '}

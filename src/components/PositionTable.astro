@@ -4,6 +4,7 @@
  */
 import type { Assessment, CompiledGraph } from '../lib/graph/compile.ts';
 import { stance } from '../lib/graph/stances.ts';
+import { shortDate } from '../lib/format.ts';
 import { entityLabel, postFor } from '../lib/graph/views.ts';
 import { withBase } from '../lib/paths.ts';
 
@@ -20,7 +21,7 @@ const { graph, assessments, showClaim = false } = Astro.props;
   <table class="ledger ledger--stack">
     <thead>
       <tr>
-        <th scope="col">Episode</th>
+        <th scope="col">Date</th>
         <th scope="col">Person</th>
         {showClaim && <th scope="col">Claim</th>}
         <th scope="col">Recorded position</th>
@@ -35,8 +36,8 @@ const { graph, assessments, showClaim = false } = Astro.props;
           const claim = graph.claims.find((c) => c.id === a.claim)!;
           return (
             <tr id={a.id}>
-              <td class="num" data-label="Episode">
-                <a href={withBase(`/episodes/${post.slug}/`)}>{a.episode}</a>
+              <td class="date" data-label="Date">
+                <a href={withBase(`/posts/${post.slug}/`)}>{shortDate(post.published)}</a>
               </td>
               <td data-label="Person">
                 <a href={withBase(`/things/${a.by}/`)}>{entityLabel(graph, a.by)}</a>

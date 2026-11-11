@@ -2,14 +2,15 @@
   /**
    * "Ask the household": the questions readers want answered, as buttons.
    * Every answer is computed from the same compiled graph as the rest of the
-   * site (src/lib/graph/queries.ts), as of whichever episode is chosen.
+   * site (src/lib/graph/queries.ts), as of whichever date is chosen.
    */
   import { onMount } from 'svelte';
   import type { CompiledGraph } from '../../lib/graph/compile.ts';
   import { beliefs, disagreements, manyNames, saga, whyIsHeCrying, withdrawalsBy } from '../../lib/graph/queries.ts';
   import { pathFor } from '../../lib/graph/routes.ts';
   import { stance, STATUS_LABELS, type ClaimStatus } from '../../lib/graph/stances.ts';
-  import { cutoff, entityLabel } from '../../lib/graph/views.ts';
+  import { shortDate } from '../../lib/format.ts';
+  import { cutoff, dateOf, entityLabel, parseThrough, throughParam } from '../../lib/graph/views.ts';
 
   interface Props {
     graph: CompiledGraph;
@@ -26,8 +27,9 @@
   let through = $state<number | null>(null);
   let question = $state(`withdrawn-${household[0]}`);
 
-  const episode = $derived(Math.min(through ?? full.latestEpisode, full.latestEpisode));
-  const graph = $derived(cutoff(full, episode));
+  const seq = $derived(Math.min(through ?? full.latestSeq, full.latestSeq));
+  const graph = $derived(cutoff(full, seq));
+  const asOf = $derived(dateOf(full, seq));
   const href = (id: string) => base + (pathFor(full, id) ?? '/');
   const name = (id: string) => entityLabel(full, id);
 
@@ -35,8 +37,8 @@
     ...household.map((person) => ({ id: `withdrawn-${person}`, label: `Things ${name(person)} subsequently withdrew` })),
     ...sagas.map((s) => ({ id: `saga-${s.id}`, label: s.title })),
     { id: 'disagree', label: 'Where the parents disagree' },
-    { id: 'beliefs', label: `What we believed after episode ${episode}` },
-    { id: 'names', label: 'Objects with suspiciously many names' },
+    { id: 'beliefs', label: `What we believed as of ${asOf}` },
+    { id: 'names', label: 'Things with suspiciously many names' },
     { id: 'crying', label: 'Why is the baby crying?' },
   ]);
 
@@ -47,7 +49,7 @@
   function sync() {
     const params = new URLSearchParams();
     params.set('q', question);
-    if (through !== null && through < full.latestEpisode) params.set('through', String(through));
+    if (through !== null && through < full.latestSeq) params.set('through', throughParam(full, through));
     window.history.replaceState(null, '', `${window.location.pathname}?${params}`);
   }
 
@@ -55,7 +57,8 @@
     const params = new URLSearchParams(window.location.search);
     const wanted = params.get('q');
     if (wanted && questions.some((q) => q.id === wanted)) question = wanted;
-    if (params.has('through')) through = Math.max(1, Number(params.get('through')) || full.latestEpisode);
+    through = parseThrough(full, params.get('through'));
+    if (through !== null && through >= full.latestSeq) through = null;
   });
 
   function ask(id: string) {
@@ -64,7 +67,7 @@
   }
 
   function setThrough(value: number) {
-    through = value >= full.latestEpisode ? null : value;
+    through = value >= full.latestSeq ? null : value;
     sync();
   }
 </script>
@@ -72,9 +75,9 @@
 <div class="ask">
   <div class="asof">
     <label for="ask-through">Answer as of</label>
-    <select id="ask-through" value={episode} onchange={(event) => setThrough(Number(event.currentTarget.value))}>
+    <select id="ask-through" value={seq} onchange={(event) => setThrough(Number(event.currentTarget.value))}>
       {#each full.posts as post (post.id)}
-        <option value={post.episode}>Episode {post.episode}: {post.title}{post.episode === full.latestEpisode ? ' (latest)' : ''}</option>
+        <option value={post.seq}>{shortDate(post.published)}: {post.title}{post.seq === full.latestSeq ? ' (latest)' : ''}</option>
       {/each}
     </select>
   </div>
@@ -96,14 +99,14 @@
             <li>
               <a class="claim struck" href={href(row.claim.id)}>{row.claim.label}</a>
               <span class="meta">
-                {stance(row.endorsed.stance).label} in episode {row.endorsed.episode}{row.endorsed.note ? ` (“${row.endorsed.note}”)` : ''}.
-                <a href={href(row.withdrawn.id)}>Withdrawn in episode {row.withdrawn.episode}</a>{row.withdrawn.note ? `: “${row.withdrawn.note}”` : '.'}
+                {stance(row.endorsed.stance).label} on {dateOf(full, row.endorsed.seq)}{row.endorsed.note ? ` (“${row.endorsed.note}”)` : ''}.
+                <a href={href(row.withdrawn.id)}>Withdrawn on {dateOf(full, row.withdrawn.seq)}</a>{row.withdrawn.note ? `: “${row.withdrawn.note}”` : '.'}
               </span>
             </li>
           {/each}
         </ul>
       {:else}
-        <p class="empty">No retractions on file for {name(person)} as of episode {episode}.</p>
+        <p class="empty">No retractions on file for {name(person)} as of {asOf}.</p>
       {/if}
     {:else if sagaConfig}
       {@const events = saga(graph, sagaConfig.entities)}
@@ -111,7 +114,7 @@
         <ol class="rows">
           {#each events as event, i (i)}
             <li class="event">
-              <span class="episode">{i === 0 || events[i - 1].episode !== event.episode ? `Episode ${event.episode}` : ''}</span>
+              <span class="when">{i === 0 || events[i - 1].seq !== event.seq ? dateOf(full, event.seq) : ''}</span>
               <span>
                 {#if event.kind === 'observation'}
                   {event.observation.text}
@@ -131,7 +134,7 @@
           {/each}
         </ol>
       {:else}
-        <p class="empty">Nothing had happened yet as of episode {episode}.</p>
+        <p class="empty">Nothing had happened yet as of {asOf}.</p>
       {/if}
     {:else if question === 'disagree'}
       {@const rows = disagreements(graph)}
@@ -144,14 +147,14 @@
                 <span class="meta">
                   {name(position.by)}:
                   <span class="stance" data-polarity={stance(position.stance).polarity}>{stance(position.stance).label.toLowerCase()}</span>,
-                  episode {position.episode}{position.note ? `. “${position.note}”` : ''}
+                  {dateOf(full, position.seq)}{position.note ? `. “${position.note}”` : ''}
                 </span>
               {/each}
             </li>
           {/each}
         </ul>
       {:else}
-        <p class="empty">As of episode {episode} the parents agreed about everything. It did not last.</p>
+        <p class="empty">As of {asOf} the parents agreed about everything.</p>
       {/if}
     {:else if question === 'beliefs'}
       {@const all = beliefs(graph)}
@@ -175,7 +178,7 @@
         {/if}
       {/each}
     {:else if question === 'names'}
-      {@const rows = manyNames(graph, 'object')}
+      {@const rows = manyNames(graph)}
       {#if rows.length}
         <ol class="rows">
           {#each rows as entity (entity.id)}
@@ -188,17 +191,17 @@
           {/each}
         </ol>
       {:else}
-        <p class="empty">As of episode {episode} every object still had exactly one name.</p>
+        <p class="empty">As of {asOf} everything still had exactly one name.</p>
       {/if}
     {:else if question === 'crying'}
       {@const outcome = whyIsHeCrying(graph)}
       <p class="verdict">0 results</p>
       <p class="measure">
         Searched {outcome.searched.observations} observations, {outcome.searched.claims} claims and {outcome.searched.assessments} assessments
-        across {outcome.searched.episodes} {outcome.searched.episodes === 1 ? 'episode' : 'episodes'}. The query completed successfully.
+        across {outcome.searched.posts} {outcome.searched.posts === 1 ? 'post' : 'posts'}. The query completed successfully.
       </p>
       <p class="measure quiet">
-        This question has been asked after every episode and has never returned a row. The result is reproducible.
+        This question has been asked after every post and has never returned a row. The result is reproducible.
         <a href={`${base}/query/?example=crying`}>Run it yourself in SPARQL</a>
       </p>
     {/if}
@@ -284,7 +287,7 @@
     grid-template-columns: 5.25rem 1fr;
     gap: 0.75rem;
   }
-  .episode {
+  .when {
     font-family: var(--font-display);
     font-weight: 700;
   }

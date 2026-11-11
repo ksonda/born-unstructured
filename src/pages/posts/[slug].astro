@@ -1,19 +1,19 @@
 ---
 import { getCollection, render } from 'astro:content';
-import EpisodeGraph from '../../components/graph/EpisodeGraph.svelte';
+import PostGraph from '../../components/graph/PostGraph.svelte';
 import GraphProse from '../../components/GraphProse.astro';
 import PositionTable from '../../components/PositionTable.astro';
 import Stamp from '../../components/Stamp.astro';
 import Thing from '../../components/Thing.astro';
 import Base from '../../layouts/Base.astro';
-import { formatDate } from '../../lib/format.ts';
+import { formatDate, shortDate } from '../../lib/format.ts';
 import { slugFromFile } from '../../lib/graph/compile.ts';
 import { nodeFor } from '../../lib/graph/jsonld.ts';
-import { episodeView } from '../../lib/graph/neighborhood.ts';
+import { postView } from '../../lib/graph/neighborhood.ts';
 import { explorerPath, pathFor } from '../../lib/graph/routes.ts';
 import { hasGraphMarker } from '../../lib/prose.ts';
 import { stance } from '../../lib/graph/stances.ts';
-import { claimHistory, claimStatus, contributionOf, cutoff, entityLabel, postFor } from '../../lib/graph/views.ts';
+import { claimHistory, claimStatus, contributionOf, cutoff, dateOf, entityLabel, postFor } from '../../lib/graph/views.ts';
 import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
 
@@ -31,9 +31,9 @@ const graph = await getSiteGraph();
 const post = postFor(graph, postId)!;
 const { Content } = await render(entry);
 
-// The local picture shows the record as it stood when this episode came out.
-const asOf = cutoff(graph, post.episode);
-const view = episodeView(asOf, post.id);
+// The local picture shows the record as it stood when this post came out.
+const asOf = cutoff(graph, post.seq);
+const view = postView(asOf, post.id);
 const labelOf = (id: string) =>
   graph.entities.find((e) => e.id === id)?.label ?? graph.claims.find((c) => c.id === id)?.label ?? id;
 const links = Object.fromEntries(
@@ -45,7 +45,7 @@ const links = Object.fromEntries(
       {
         label: labelOf(id),
         page: withBase(pathFor(graph, id)!),
-        explore: withBase(explorerPath(graph, id, post.episode) ?? '/explore/'),
+        explore: withBase(explorerPath(graph, id, post.seq) ?? '/explore/'),
       },
     ]),
 );
@@ -57,43 +57,34 @@ const touched = [...new Set([...added.claims.map((c) => c.id), ...added.assessme
 const threads = touched
   .map((claim) => ({
     claim,
-    earlier: claim.episode < post.episode ? postFor(graph, claim.post)! : null,
-    later: claimHistory(graph, claim.id).filter((a) => a.episode > post.episode),
+    earlier: claim.seq < post.seq ? postFor(graph, claim.post)! : null,
+    later: claimHistory(graph, claim.id).filter((a) => a.seq > post.seq),
   }))
   .filter((t) => t.earlier || t.later.length);
 
-// An episode can place its picture inside the prose with a ::graph:: line.
+// A post can place its picture inside the prose with a ::graph:: line.
 const graphInProse = view.nodes.length > 0 && hasGraphMarker(entry.body ?? '');
 
-const previous = graph.posts.find((p) => p.episode === post.episode - 1);
-const next = graph.posts.find((p) => p.episode === post.episode + 1);
+const previous = graph.posts.find((p) => p.seq === post.seq - 1);
+const next = graph.posts.find((p) => p.seq === post.seq + 1);
 ---
 
 <Base title={post.title} description={post.summary} jsonld={nodeFor(graph, post.id)}>
   <article>
-    <header class="episode-head">
-      <p class="quiet">Episode {post.episode}, {formatDate(post.published)}</p>
+    <header class="post-head">
+      <p class="quiet">{formatDate(post.published)}</p>
       <h1>{post.title}</h1>
     </header>
-
-    {
-      post.sample && (
-        <p class="notice measure">
-          <strong>Sample episode.</strong> This installment is made up. It is here to show how claims, evidence and
-          changes of mind accumulate across the series, and it will be replaced by the real thing.
-        </p>
-      )
-    }
 
     <GraphProse>
       <Content />
       <Fragment slot="graph">
-        <EpisodeGraph client:visible view={view} links={links} />
+        <PostGraph client:visible view={view} links={links} />
       </Fragment>
     </GraphProse>
 
     <section id="record" class="record">
-      <h2>This episode's contribution to human knowledge</h2>
+      <h2>This post's contribution to human knowledge</h2>
 
       {
         added.observations.length > 0 && (
@@ -145,14 +136,14 @@ const next = graph.posts.find((p) => p.episode === post.episode + 1);
     {
       view.nodes.length > 0 && (
         <section>
-          <h2>{graphInProse ? 'In this episode' : 'How it connects'}</h2>
+          <h2>{graphInProse ? 'In this post' : 'How it connects'}</h2>
           {!graphInProse && (
             <>
               <p class="measure quiet">
-                The things in this episode and the claims it touched, as the record stood on {formatDate(post.published)}.
+                The things in this post and the claims it touched, as the record stood on {formatDate(post.published)}.
                 Solid lines are household facts. Dashed lines are somebody's theory.
               </p>
-              <EpisodeGraph client:visible view={view} links={links} />
+              <PostGraph client:visible view={view} links={links} />
             </>
           )}
           <ul class="chips">
@@ -178,14 +169,12 @@ const next = graph.posts.find((p) => p.episode === post.episode + 1);
                   {earlier && (
                     <li>
                       First proposed in{' '}
-                      <a href={withBase(`/episodes/${earlier.slug}/`)}>
-                        episode {earlier.episode}, {earlier.title}
-                      </a>
+                      <a href={withBase(`/posts/${earlier.slug}/`)}>{earlier.title}</a>, {shortDate(earlier.published)}
                     </li>
                   )}
                   {later.map((a) => (
                     <li>
-                      Later, in <a href={withBase(pathFor(graph, a.id)!)}>episode {a.episode}</a>: {entityLabel(graph, a.by)}{' '}
+                      Later, on <a href={withBase(pathFor(graph, a.id)!)}>{dateOf(graph, a.seq)}</a>: {entityLabel(graph, a.by)}{' '}
                       <span class="stance" data-polarity={stance(a.stance).polarity}>
                         {stance(a.stance).verb}
                       </span>{' '}
@@ -200,11 +189,11 @@ const next = graph.posts.find((p) => p.episode === post.episode + 1);
       )
     }
 
-    <nav class="pager" aria-label="Episodes">
+    <nav class="pager" aria-label="Posts">
       {
         previous ? (
-          <a href={withBase(`/episodes/${previous.slug}/`)}>
-            <span class="quiet small">Previous episode</span>
+          <a href={withBase(`/posts/${previous.slug}/`)}>
+            <span class="quiet small">Previous post</span>
             <br />
             {previous.title}
           </a>
@@ -214,8 +203,8 @@ const next = graph.posts.find((p) => p.episode === post.episode + 1);
       }
       {
         next && (
-          <a class="pager__next" href={withBase(`/episodes/${next.slug}/`)}>
-            <span class="quiet small">Next episode</span>
+          <a class="pager__next" href={withBase(`/posts/${next.slug}/`)}>
+            <span class="quiet small">Next post</span>
             <br />
             {next.title}
           </a>
@@ -226,13 +215,13 @@ const next = graph.posts.find((p) => p.episode === post.episode + 1);
 </Base>
 
 <style>
-  .episode-head {
+  .post-head {
     margin-bottom: 2rem;
   }
-  .episode-head p {
+  .post-head p {
     margin-bottom: 0.4rem;
   }
-  .episode-head h1 {
+  .post-head h1 {
     max-width: 18ch;
   }
   .record {

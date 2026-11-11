@@ -32,12 +32,12 @@ export function sparqlExamples(idBase: string, vocabBase: string): SparqlExample
       title: 'Where everyone currently stands',
       note: 'The latest assessment per person per claim: the one with no later assessment after it.',
       query: q(`
-SELECT ?claim ?claimLabel ?person ?stance ?episode WHERE {
+SELECT ?claim ?claimLabel ?person ?stance ?date WHERE {
   ?a a bu:Assessment ;
      bu:assesses ?claim ;
      prov:wasAttributedTo ?person ;
      bu:stance ?stance ;
-     bu:episodeNumber ?episode ;
+     schema:datePublished ?date ;
      bu:sequence ?seq .
   ?claim rdfs:label ?claimLabel .
   FILTER NOT EXISTS {
@@ -84,37 +84,37 @@ ORDER BY ?label`),
       title: 'Things Dad subsequently withdrew',
       note: 'Claims with an earlier strong endorsement and a later withdrawal by the same person.',
       query: q(`
-SELECT ?claimLabel ?endorsedIn ?withdrawnIn ?note WHERE {
+SELECT ?claimLabel ?endorsedOn ?withdrawnOn ?note WHERE {
   ?before bu:assesses ?claim ;
           prov:wasAttributedTo id:dad ;
           bu:stance bu:StronglyEndorses ;
-          bu:episodeNumber ?endorsedIn ;
+          schema:datePublished ?endorsedOn ;
           bu:sequence ?s1 .
   ?after bu:assesses ?claim ;
          prov:wasAttributedTo id:dad ;
          bu:stance bu:Withdraws ;
-         bu:episodeNumber ?withdrawnIn ;
+         schema:datePublished ?withdrawnOn ;
          bu:sequence ?s2 .
   ?claim rdfs:label ?claimLabel .
   OPTIONAL { ?after rdfs:comment ?note }
   FILTER (?s2 > ?s1)
 }
-ORDER BY ?withdrawnIn`),
+ORDER BY ?withdrawnOn`),
     },
     {
       id: 'saga',
       title: 'The muppy registry, in full',
       note: 'Every observation about a muppy, a role or Messy New, in the order it was published.',
       query: q(`
-SELECT DISTINCT ?episode ?observer ?what WHERE {
+SELECT DISTINCT ?date ?observer ?what WHERE {
   ?observation a bu:Observation ;
                dcterms:description ?what ;
                prov:wasAttributedTo ?observer ;
-               bu:episodeNumber ?episode ;
+               schema:datePublished ?date ;
                schema:about ?thing .
   FILTER (?thing IN (id:muppy, id:messy-muppy, id:flat-muppy, id:big-muppy, id:messy-new))
 }
-ORDER BY ?episode ?what`),
+ORDER BY ?date ?what`),
     },
     {
       id: 'names',
@@ -144,7 +144,7 @@ ASK {
     {
       id: 'crying',
       title: 'Why is the baby crying?',
-      note: 'The permanent query. It has been run after every episode and has never returned a row.',
+      note: 'The permanent query. It has been run after every post and has never returned a row.',
       query: q(`
 SELECT ?cause WHERE {
   id:baby bu:criesBecause ?cause .

@@ -1,7 +1,7 @@
 ---
 import type { CompiledGraph } from '../lib/graph/compile.ts';
 import { stance } from '../lib/graph/stances.ts';
-import { claimStatus, entityLabel, latestPositions } from '../lib/graph/views.ts';
+import { claimStatus, dateOf, entityLabel, latestPositions } from '../lib/graph/views.ts';
 import { withBase } from '../lib/paths.ts';
 import Stamp from './Stamp.astro';
 
@@ -30,7 +30,7 @@ const positions = latestPositions(graph, id);
             <span class="stance" data-polarity={s.polarity}>
               {s.label.toLowerCase()}
             </span>
-            <span class="quiet">, episode {p.episode}</span>
+            <span class="quiet">, {dateOf(graph, p.seq)}</span>
           </li>
         );
       })

@@ -54,7 +54,7 @@ export interface ViewOptions {
 }
 
 interface Full {
-  nodes: Map<string, Omit<ViewNode, 'ring' | 'hidden'> & { episode: number }>;
+  nodes: Map<string, Omit<ViewNode, 'ring' | 'hidden'> & { seq: number }>;
   edges: ViewEdge[];
 }
 
@@ -70,7 +70,7 @@ function fullView(graph: CompiledGraph, options: ViewOptions): Full {
 
   for (const e of graph.entities) {
     if (hiddenTypes.has(e.type)) continue;
-    nodes.set(e.id, { id: e.id, label: e.label, kind: 'entity', variant: e.type, episode: e.mentionedIn[e.mentionedIn.length - 1] });
+    nodes.set(e.id, { id: e.id, label: e.label, kind: 'entity', variant: e.type, seq: e.mentionedIn[e.mentionedIn.length - 1] });
   }
   for (const e of graph.entities) {
     for (const r of e.relations) {
@@ -100,7 +100,7 @@ function fullView(graph: CompiledGraph, options: ViewOptions): Full {
       const about = c.about.filter((id) => nodes.has(id));
       if (about.length === 0) continue;
       claimNodes.add(c.id);
-      nodes.set(c.id, { id: c.id, label: shorten(c.short), kind: 'claim', variant: status, episode: c.episode });
+      nodes.set(c.id, { id: c.id, label: shorten(c.short), kind: 'claim', variant: status, seq: c.seq });
       for (const id of about) {
         const role = id === c.subject ? 'subject' : id === c.object ? predicateLabel(c.predicate!) : '';
         const outward = id === c.object;
@@ -140,7 +140,7 @@ function fullView(graph: CompiledGraph, options: ViewOptions): Full {
     for (const o of graph.observations) {
       const about = o.about.filter((id) => nodes.has(id));
       if (about.length === 0) continue;
-      nodes.set(o.id, { id: o.id, label: shorten(o.text, 38), kind: 'observation', variant: 'observation', episode: o.episode });
+      nodes.set(o.id, { id: o.id, label: shorten(o.text, 38), kind: 'observation', variant: 'observation', seq: o.seq });
       for (const id of about) {
         edges.push({ id: `obs:${o.id}:${id}`, source: o.id, target: id, label: '', kind: 'about', record: o.id, status: null });
       }
@@ -196,7 +196,7 @@ export function neighbourhood(graph: CompiledGraph, options: ViewOptions): Graph
   } else {
     // Most recently active connections first; the rest wait behind "Expand connections".
     const direct = [...(adjacent.get(options.focus) ?? [])].sort(
-      (a, b) => full.nodes.get(b)!.episode - full.nodes.get(a)!.episode || a.localeCompare(b),
+      (a, b) => full.nodes.get(b)!.seq - full.nodes.get(a)!.seq || a.localeCompare(b),
     );
     for (const id of direct) {
       if (visible.size > limit) break;
@@ -229,7 +229,7 @@ export function neighbourhood(graph: CompiledGraph, options: ViewOptions): Graph
   const nodes: ViewNode[] = [...visible]
     .sort((a, b) => a.localeCompare(b))
     .map((id) => {
-      const { episode: _episode, ...node } = full.nodes.get(id)!;
+      const { seq: _seq, ...node } = full.nodes.get(id)!;
       return {
         ...node,
         ring: ring.get(id) ?? 2,
@@ -240,8 +240,8 @@ export function neighbourhood(graph: CompiledGraph, options: ViewOptions): Graph
   return { nodes, edges, centre: options.focus };
 }
 
-/** The handful of things one installment is about, with the claims it touched. */
-export function episodeView(graph: CompiledGraph, postId: string): GraphView {
+/** The handful of things one post is about, with the claims it touched. */
+export function postView(graph: CompiledGraph, postId: string): GraphView {
   const post = graph.posts.find((p) => p.id === postId);
   if (!post) return { nodes: [], edges: [] };
   const touched = new Set([
@@ -266,7 +266,7 @@ export function episodeView(graph: CompiledGraph, postId: string): GraphView {
   const ids = [...keep].filter((id) => degree.has(id)).sort((a, b) => a.localeCompare(b));
   if (ids.length === 0) return { nodes: [], edges: [] };
 
-  // Arrange around whichever thing the episode has most to say about.
+  // Arrange around whichever thing the post has most to say about.
   const centre = ids.reduce((best, id) => (degree.get(id)! > degree.get(best)! ? id : best), ids[0]);
   const ring = new Map<string, number>([[centre, 0]]);
   const queue = [centre];
@@ -281,7 +281,7 @@ export function episodeView(graph: CompiledGraph, postId: string): GraphView {
     }
   }
   const nodes: ViewNode[] = ids.map((id) => {
-    const { episode: _episode, ...node } = full.nodes.get(id)!;
+    const { seq: _seq, ...node } = full.nodes.get(id)!;
     return { ...node, ring: ring.get(id) ?? 1, hidden: 0 };
   });
   return { nodes, edges, centre };

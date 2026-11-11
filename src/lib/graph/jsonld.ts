@@ -5,7 +5,7 @@
  *  - A claim is a resource. When it has a subject, predicate and object it is
  *    also an rdf:Statement, which describes the triple without asserting it.
  *    "The baby settles with walking" never appears as a bare fact.
- *  - An assessment is one person's position on one claim in one episode.
+ *  - An assessment is one person's position on one claim, as of one post.
  *    Positions are never updated in place; a change of mind is a new record.
  *  - Relations declared in the entity registry ARE asserted as bare triples.
  *    Those are household facts ("the dishwasher is in the kitchen"), not theories.
@@ -54,7 +54,6 @@ export function jsonLdContext(graph: CompiledGraph): Node {
     assesses: ref('bu:assesses'),
     stance: ref('bu:stance'),
     evidence: ref('bu:evidence'),
-    episodeNumber: { '@id': 'bu:episodeNumber', '@type': 'xsd:integer' },
     sequence: { '@id': 'bu:sequence', '@type': 'xsd:integer' },
     polarity: 'bu:polarity',
     subClassOf: ref('rdfs:subClassOf'),
@@ -99,21 +98,20 @@ export function vocabulary(graph: CompiledGraph): VocabTerm[] {
     { term: 'Routine', kind: 'class', label: 'Routine', comment: 'Something the household does repeatedly, in the hope that it works.' },
     { term: 'Concept', kind: 'class', label: 'Concept', comment: 'An idea the household talks about as though it were a thing.' },
     { term: 'Place', kind: 'class', label: 'Place', comment: 'A location in or near the home.' },
-    { term: 'Episode', kind: 'class', label: 'Episode', comment: 'A published installment.', extra: { subClassOf: 'schema:BlogPosting' } },
+    { term: 'Post', kind: 'class', label: 'Post', comment: 'A published blog post.', extra: { subClassOf: 'schema:BlogPosting' } },
     { term: 'Observation', kind: 'class', label: 'Observation', comment: 'One person’s report of a particular occurrence.' },
     { term: 'Claim', kind: 'class', label: 'Claim', comment: 'An interpretation or proposition. Recording a claim does not assert it.' },
-    { term: 'Assessment', kind: 'class', label: 'Assessment', comment: 'One person’s position on a claim as of one episode.' },
+    { term: 'Assessment', kind: 'class', label: 'Assessment', comment: 'One person’s position on a claim as of one post.' },
     { term: 'Stance', kind: 'class', label: 'Stance', comment: 'A position a person can take on a claim.', extra: { subClassOf: 'skos:Concept' } },
   ];
   const properties: VocabTerm[] = [
-    { term: 'sourcePost', kind: 'property', label: 'source post', comment: 'The episode in which a record was published.' },
-    { term: 'firstAppearedIn', kind: 'property', label: 'first appeared in', comment: 'The first episode to mention an entity.' },
+    { term: 'sourcePost', kind: 'property', label: 'source post', comment: 'The post in which a record was published.' },
+    { term: 'firstAppearedIn', kind: 'property', label: 'first appeared in', comment: 'The first post to mention an entity.' },
     { term: 'assesses', kind: 'property', label: 'assesses', comment: 'The claim an assessment takes a position on.' },
     { term: 'stance', kind: 'property', label: 'stance', comment: 'The position taken in an assessment.' },
     { term: 'evidence', kind: 'property', label: 'evidence', comment: 'An observation cited in support of an assessment.' },
     { term: 'refines', kind: 'property', label: 'refines', comment: 'An earlier claim that this claim narrows or replaces.', extra: { subPropertyOf: 'prov:wasDerivedFrom' } },
-    { term: 'episodeNumber', kind: 'property', label: 'episode number', comment: 'Position of an episode in the series, or the episode in which a record was published.' },
-    { term: 'sequence', kind: 'property', label: 'sequence', comment: 'Position of an assessment in publication order across the whole series.' },
+    { term: 'sequence', kind: 'property', label: 'sequence', comment: 'Position of an assessment in publication order across all posts.' },
     { term: 'polarity', kind: 'property', label: 'polarity', comment: 'Whether a stance supports, doubts, leaves open or retracts a claim.' },
   ];
   const predicates: VocabTerm[] = graph.predicates.map((p) => ({
@@ -148,6 +146,7 @@ function vocabNodes(graph: CompiledGraph): Node[] {
 
 function recordNodes(graph: CompiledGraph): Node[] {
   const page = (id: string) => graph.site.url + pathFor(graph, id)!;
+  const postFor = (postId: string) => graph.posts.find((p) => p.id === postId)!.published;
   const nodes: Node[] = [];
 
   for (const e of graph.entities) {
@@ -157,7 +156,7 @@ function recordNodes(graph: CompiledGraph): Node[] {
       label: e.label,
       altLabel: e.aliases.map((a) => a.label),
       description: e.description,
-      firstAppearedIn: `id:${graph.posts.find((p) => p.episode === e.mentionedIn[0])!.id}`,
+      firstAppearedIn: `id:${graph.posts.find((p) => p.seq === e.mentionedIn[0])!.id}`,
       page: page(e.id),
     };
     for (const relation of e.relations) {
@@ -172,11 +171,10 @@ function recordNodes(graph: CompiledGraph): Node[] {
     nodes.push(
       tidy({
         '@id': `id:${p.id}`,
-        '@type': ['bu:Episode', 'schema:BlogPosting'],
-        label: `Episode ${p.episode}: ${p.title}`,
+        '@type': ['bu:Post', 'schema:BlogPosting'],
+        label: p.title,
         headline: p.title,
         description: p.summary,
-        episodeNumber: p.episode,
         datePublished: p.published,
         mentions: p.mentions.map((m) => `id:${m}`),
         page: page(p.id),
@@ -193,7 +191,7 @@ function recordNodes(graph: CompiledGraph): Node[] {
         attributedTo: `id:${o.observedBy}`,
         about: o.about.map((a) => `id:${a}`),
         sourcePost: `id:${o.post}`,
-        episodeNumber: o.episode,
+        datePublished: postFor(o.post),
         page: page(o.id),
       }),
     );
@@ -214,7 +212,7 @@ function recordNodes(graph: CompiledGraph): Node[] {
         attributedTo: `id:${c.attributedTo}`,
         refines: c.refines ? `id:${c.refines}` : undefined,
         sourcePost: `id:${c.post}`,
-        episodeNumber: c.episode,
+        datePublished: postFor(c.post),
         page: page(c.id),
       }),
     );
@@ -231,7 +229,7 @@ function recordNodes(graph: CompiledGraph): Node[] {
         comment: a.note,
         evidence: a.evidence.map((e) => `id:${e}`),
         sourcePost: `id:${a.post}`,
-        episodeNumber: a.episode,
+        datePublished: postFor(a.post),
         sequence: a.sequence,
         page: page(a.id),
       }),

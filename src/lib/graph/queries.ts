@@ -1,7 +1,7 @@
 /**
  * "Ask the household": the questions readers actually want answered, as plain
  * functions over the compiled graph. Pass a graph from cutoff() to ask them
- * as of an earlier episode.
+ * as of an earlier post.
  */
 import type { Assessment, Claim, CompiledGraph, Entity, Observation } from './compile.ts';
 import { stance, type ClaimStatus } from './stances.ts';
@@ -33,10 +33,10 @@ export function withdrawalsBy(graph: CompiledGraph, personId: string): Withdrawa
 }
 
 export type SagaEvent =
-  | { kind: 'observation'; episode: number; observation: Observation }
-  | { kind: 'claim'; episode: number; claim: Claim }
-  | { kind: 'assessment'; episode: number; assessment: Assessment; claim: Claim }
-  | { kind: 'alias'; episode: number; entity: Entity; label: string };
+  | { kind: 'observation'; seq: number; observation: Observation }
+  | { kind: 'claim'; seq: number; claim: Claim }
+  | { kind: 'assessment'; seq: number; assessment: Assessment; claim: Claim }
+  | { kind: 'alias'; seq: number; entity: Entity; label: string };
 
 /** Everything recorded about a set of entities, in the order it was published. */
 export function saga(graph: CompiledGraph, entityIds: string[]): SagaEvent[] {
@@ -45,23 +45,23 @@ export function saga(graph: CompiledGraph, entityIds: string[]): SagaEvent[] {
   for (const entity of graph.entities) {
     if (!wanted.has(entity.id)) continue;
     for (const alias of entity.aliases) {
-      if (alias.since > entity.mentionedIn[0]) events.push({ kind: 'alias', episode: alias.since, entity, label: alias.label });
+      if (alias.since > entity.mentionedIn[0]) events.push({ kind: 'alias', seq: alias.since, entity, label: alias.label });
     }
   }
   for (const observation of graph.observations) {
     if (observation.about.some((id) => wanted.has(id))) {
-      events.push({ kind: 'observation', episode: observation.episode, observation });
+      events.push({ kind: 'observation', seq: observation.seq, observation });
     }
   }
   for (const claim of graph.claims) {
     if (!claim.about.some((id) => wanted.has(id))) continue;
-    events.push({ kind: 'claim', episode: claim.episode, claim });
+    events.push({ kind: 'claim', seq: claim.seq, claim });
     for (const assessment of claimHistory(graph, claim.id)) {
-      events.push({ kind: 'assessment', episode: assessment.episode, assessment, claim });
+      events.push({ kind: 'assessment', seq: assessment.seq, assessment, claim });
     }
   }
   const order = { alias: 0, observation: 1, claim: 2, assessment: 3 };
-  return events.sort((a, b) => a.episode - b.episode || order[a.kind] - order[b.kind]);
+  return events.sort((a, b) => a.seq - b.seq || order[a.kind] - order[b.kind]);
 }
 
 export interface Belief {
@@ -93,7 +93,7 @@ export function manyNames(graph: CompiledGraph, type?: Entity['type']): Entity[]
 
 export interface NullResult {
   results: never[];
-  searched: { observations: number; claims: number; assessments: number; episodes: number };
+  searched: { observations: number; claims: number; assessments: number; posts: number };
 }
 
 /**
@@ -107,7 +107,7 @@ export function whyIsHeCrying(graph: CompiledGraph): NullResult {
       observations: graph.observations.length,
       claims: graph.claims.length,
       assessments: graph.assessments.length,
-      episodes: graph.posts.length,
+      posts: graph.posts.length,
     },
   };
 }

@@ -1,14 +1,14 @@
 export const SITE = {
   title: 'Born Unstructured',
   description:
-    'A serial about one household and its newborn, compiled into a real knowledge graph. Every theory is on file. So is every retraction.',
+    'A blog about one household and its newborn, compiled into a real knowledge graph. Every theory is on file. So is every retraction.',
   /** The entity the explorer opens on when no focus is given. */
   defaultFocus: 'baby',
   /** The people whose retractions get their own question on the Ask page. */
   household: ['dad', 'mom'],
   /**
    * Standing questions on the Ask page that gather everything recorded about a set of things.
-   * A saga is only offered once at least one of its entities has appeared in an episode.
+   * A saga is only offered once at least one of its entities has appeared in a post.
    */
   sagas: [
     {

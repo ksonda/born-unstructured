@@ -3,7 +3,7 @@
   import type { CompiledGraph } from '../../lib/graph/compile.ts';
   import { pathFor } from '../../lib/graph/routes.ts';
   import { stance } from '../../lib/graph/stances.ts';
-  import { claimHistory, entityLabel, entityTimeline, indexById, postFor } from '../../lib/graph/views.ts';
+  import { claimHistory, dateOf, entityLabel, entityTimeline, indexById, postFor } from '../../lib/graph/views.ts';
 
   interface Props {
     graph: CompiledGraph;
@@ -19,7 +19,7 @@
 
   interface Row {
     key: string;
-    episode: number;
+    seq: number;
     kind: string;
     text: string;
     polarity?: string;
@@ -35,13 +35,13 @@
         const key = `${event.kind}-${i}`;
         switch (event.kind) {
           case 'appearance':
-            return { key, episode: event.episode, kind: event.first ? 'First appearance' : 'Appears', text: event.post.title, link: href(event.post.id) };
+            return { key, seq: event.seq, kind: event.first ? 'First appearance' : 'Appears', text: event.post.title, link: href(event.post.id) };
           case 'alias':
-            return { key, episode: event.episode, kind: 'New name', text: `Starts being called ${event.label}` };
+            return { key, seq: event.seq, kind: 'New name', text: `Starts being called ${event.label}` };
           case 'observation':
             return {
               key,
-              episode: event.episode,
+              seq: event.seq,
               kind: `Observed by ${entityLabel(graph, event.observation.observedBy)}`,
               text: event.observation.text,
               select: event.observation.id,
@@ -49,7 +49,7 @@
           case 'claim':
             return {
               key,
-              episode: event.episode,
+              seq: event.seq,
               kind: `Claim proposed by ${entityLabel(graph, event.claim.attributedTo)}`,
               text: event.claim.label,
               select: event.claim.id,
@@ -57,7 +57,7 @@
           case 'assessment':
             return {
               key,
-              episode: event.episode,
+              seq: event.seq,
               kind: `${entityLabel(graph, event.assessment.by)} ${stance(event.assessment.stance).verb}`,
               polarity: stance(event.assessment.stance).polarity,
               text: event.claim.label,
@@ -69,7 +69,7 @@
     if (found?.kind === 'claim') {
       return claimHistory(graph, id).map((a) => ({
         key: a.id,
-        episode: a.episode,
+        seq: a.seq,
         kind: `${entityLabel(graph, a.by)}: ${stance(a.stance).label.toLowerCase()}`,
         polarity: stance(a.stance).polarity,
         text: a.note || 'No note recorded.',
@@ -78,7 +78,7 @@
     }
     if (found?.kind === 'observation') {
       const post = postFor(graph, found.record.post);
-      return [{ key: id, episode: found.record.episode, kind: 'Observed', text: post?.title ?? '', link: href(id) }];
+      return [{ key: id, seq: found.record.seq, kind: 'Observed', text: post?.title ?? '', link: href(id) }];
     }
     return [];
   });
@@ -93,7 +93,7 @@
   <ol>
     {#each rows as row, i (row.key)}
       <li>
-        <span class="episode">{i === 0 || rows[i - 1].episode !== row.episode ? `Episode ${row.episode}` : ''}</span>
+        <span class="when">{i === 0 || rows[i - 1].seq !== row.seq ? dateOf(graph, row.seq) : ''}</span>
         <span class="body">
           <span class="kind" class:stance={row.polarity} data-polarity={row.polarity}>{row.kind}</span>
           {#if row.select}
@@ -123,13 +123,13 @@
   }
   li {
     display: grid;
-    grid-template-columns: 5.25rem 1fr;
+    grid-template-columns: 6.5rem 1fr;
     gap: 0.75rem;
     padding: 0.5rem 0;
     border-top: 1px solid var(--rule-soft);
     font-size: 0.97rem;
   }
-  .episode {
+  .when {
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 0.95rem;

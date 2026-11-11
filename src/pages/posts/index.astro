@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { formatDate } from '../../lib/format.ts';
+import { shortDate } from '../../lib/format.ts';
 import { contributionOf } from '../../lib/graph/views.ts';
 import { withBase } from '../../lib/paths.ts';
 import { getSiteGraph } from '../../lib/site-graph.ts';
@@ -10,8 +10,8 @@ const posts = [...graph.posts].reverse();
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 ---
 
-<Base title="Episodes" description="Every installment, newest first.">
-  <h1>Episodes</h1>
+<Base title="Posts" description="Every post, newest first.">
+  <h1>Posts</h1>
   <p class="lede">Newest first. Each one adds a few observations, claims and changes of mind to the same graph.</p>
   <ol class="entry-list" reversed style="margin-top:2rem">
     {
@@ -19,16 +19,15 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
         const added = contributionOf(graph, post.id);
         return (
           <li>
-            <span class="entry-no">Episode {post.episode}</span>
+            <span class="entry-no">{shortDate(post.published)}</span>
             <div>
               <h3>
-                <a href={withBase(`/episodes/${post.slug}/`)}>{post.title}</a>
+                <a href={withBase(`/posts/${post.slug}/`)}>{post.title}</a>
               </h3>
               <p>{post.summary}</p>
               <p class="quiet small">
-                {formatDate(post.published)}. Added {plural(added.observations.length, 'observation')},{' '}
+                Added {plural(added.observations.length, 'observation')},{' '}
                 {plural(added.claims.length, 'new claim')} and {plural(added.assessments.length, 'position')}.
-                {post.sample && <span class="tag">Sample</span>}
               </p>
             </div>
           </li>

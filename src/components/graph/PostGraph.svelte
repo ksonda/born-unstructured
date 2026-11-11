@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * The small picture at the foot of an episode: the things it mentions and
+   * The small picture in a post: the things it mentions and
    * the claims it touched. Tapping anything shows where it leads.
    */
   import type { GraphView } from '../../lib/graph/neighborhood.ts';
@@ -22,9 +22,9 @@
   const current = $derived(selected ? links[selected] : null);
 </script>
 
-<figure class="episode-graph">
+<figure class="post-graph">
   <div class="frame">
-    <GraphCanvas {view} focus={view.centre ?? null} {selected} interactive={false} label="The things in this episode and how they connect" onselect={(id) => (selected = id)} />
+    <GraphCanvas {view} focus={view.centre ?? null} {selected} interactive={false} label="The things in this post and how they connect" onselect={(id) => (selected = id)} />
   </div>
   <figcaption aria-live="polite">
     {#if current}
@@ -40,7 +40,7 @@
 </figure>
 
 <style>
-  .episode-graph {
+  .post-graph {
     margin: 1rem 0;
   }
   .frame {

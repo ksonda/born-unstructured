@@ -3,11 +3,12 @@
  * timelines and lookups. Pure functions, shared by the build and the browser.
  */
 import type { Assessment, Claim, CompiledGraph, Entity, Observation, Post } from './compile.ts';
+import { shortDate } from '../format.ts';
 import { stance, type ClaimStatus } from './stances.ts';
 
-/** The graph as it stood once episode `through` had been published. */
+/** The graph as it stood once the post at position `through` had been published. */
 export function cutoff(graph: CompiledGraph, through: number): CompiledGraph {
-  if (through >= graph.latestEpisode) return graph;
+  if (through >= graph.latestSeq) return graph;
   const entities = graph.entities
     .filter((e) => e.mentionedIn[0] <= through)
     .map((e) => ({
@@ -19,15 +20,15 @@ export function cutoff(graph: CompiledGraph, through: number): CompiledGraph {
   for (const entity of entities) {
     entity.relations = entity.relations.filter((r) => present.has(r.object));
   }
-  const posts = graph.posts.filter((p) => p.episode <= through);
+  const posts = graph.posts.filter((p) => p.seq <= through);
   return {
     ...graph,
-    latestEpisode: posts.length ? posts[posts.length - 1].episode : 0,
+    latestSeq: posts.length ? posts[posts.length - 1].seq : 0,
     entities,
     posts,
-    observations: graph.observations.filter((o) => o.episode <= through),
-    claims: graph.claims.filter((c) => c.episode <= through),
-    assessments: graph.assessments.filter((a) => a.episode <= through),
+    observations: graph.observations.filter((o) => o.seq <= through),
+    claims: graph.claims.filter((c) => c.seq <= through),
+    assessments: graph.assessments.filter((a) => a.seq <= through),
   };
 }
 
@@ -112,11 +113,11 @@ export function refinementsOf(graph: CompiledGraph, claimId: string): Claim[] {
 }
 
 export type TimelineEvent =
-  | { kind: 'appearance'; episode: number; post: Post; first: boolean }
-  | { kind: 'alias'; episode: number; label: string }
-  | { kind: 'observation'; episode: number; observation: Observation }
-  | { kind: 'claim'; episode: number; claim: Claim }
-  | { kind: 'assessment'; episode: number; assessment: Assessment; claim: Claim };
+  | { kind: 'appearance'; seq: number; post: Post; first: boolean }
+  | { kind: 'alias'; seq: number; label: string }
+  | { kind: 'observation'; seq: number; observation: Observation }
+  | { kind: 'claim'; seq: number; claim: Claim }
+  | { kind: 'assessment'; seq: number; assessment: Assessment; claim: Claim };
 
 const EVENT_ORDER: Record<TimelineEvent['kind'], number> = {
   appearance: 0,
@@ -131,31 +132,61 @@ export function entityTimeline(graph: CompiledGraph, entityId: string): Timeline
   const entity = graph.entities.find((e) => e.id === entityId);
   if (!entity) return [];
   const events: TimelineEvent[] = [];
-  entity.mentionedIn.forEach((episode, i) => {
-    const post = graph.posts.find((p) => p.episode === episode);
-    if (post) events.push({ kind: 'appearance', episode, post, first: i === 0 });
+  entity.mentionedIn.forEach((seq, i) => {
+    const post = graph.posts.find((p) => p.seq === seq);
+    if (post) events.push({ kind: 'appearance', seq, post, first: i === 0 });
   });
   for (const alias of entity.aliases) {
-    if (alias.since > entity.mentionedIn[0]) events.push({ kind: 'alias', episode: alias.since, label: alias.label });
+    if (alias.since > entity.mentionedIn[0]) events.push({ kind: 'alias', seq: alias.since, label: alias.label });
   }
   for (const observation of observationsAbout(graph, entityId)) {
-    events.push({ kind: 'observation', episode: observation.episode, observation });
+    events.push({ kind: 'observation', seq: observation.seq, observation });
   }
   const claims = claimsInvolving(graph, entityId);
   for (const claim of claims) {
-    events.push({ kind: 'claim', episode: claim.episode, claim });
+    events.push({ kind: 'claim', seq: claim.seq, claim });
     for (const assessment of claimHistory(graph, claim.id)) {
-      events.push({ kind: 'assessment', episode: assessment.episode, assessment, claim });
+      events.push({ kind: 'assessment', seq: assessment.seq, assessment, claim });
     }
   }
-  return events.sort((a, b) => a.episode - b.episode || EVENT_ORDER[a.kind] - EVENT_ORDER[b.kind]);
+  return events.sort((a, b) => a.seq - b.seq || EVENT_ORDER[a.kind] - EVENT_ORDER[b.kind]);
 }
 
-/** What one installment added to the record. */
+/** What one post added to the record. */
 export function contributionOf(graph: CompiledGraph, postId: string) {
   return {
     observations: graph.observations.filter((o) => o.post === postId),
     claims: graph.claims.filter((c) => c.post === postId),
     assessments: graph.assessments.filter((a) => a.post === postId),
   };
+}
+
+/** The publication date of the post at a position, as "Nov 11, 2026". */
+export function dateOf(graph: CompiledGraph, seq: number): string {
+  const post = graph.posts.find((p) => p.seq === seq);
+  return post ? shortDate(post.published) : '';
+}
+
+/** The post at a position. */
+export function postAt(graph: CompiledGraph, seq: number): Post | undefined {
+  return graph.posts.find((p) => p.seq === seq);
+}
+
+/**
+ * Reads a "through" value from a URL: a date (the record as of the last post
+ * published on or before it) or, for older links, a post position.
+ */
+export function parseThrough(graph: CompiledGraph, value: string | null): number | null {
+  if (!value) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const upTo = graph.posts.filter((p) => p.published <= value);
+    return upTo.length ? upTo[upTo.length - 1].seq : 1;
+  }
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 1 ? Math.min(n, graph.latestSeq) : null;
+}
+
+/** The "through" value to put in a URL for a post position: its date. */
+export function throughParam(graph: CompiledGraph, seq: number): string {
+  return postAt(graph, seq)?.published ?? String(seq);
 }

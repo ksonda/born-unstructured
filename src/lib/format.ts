@@ -1,7 +1,14 @@
 const dateFormat = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
+const shortFormat = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+
 export function formatDate(iso: string): string {
   return dateFormat.format(new Date(`${iso}T00:00:00Z`));
+}
+
+/** "Nov 11, 2026" */
+export function shortDate(iso: string): string {
+  return shortFormat.format(new Date(`${iso}T00:00:00Z`));
 }
 
 export function capitalise(text: string): string {

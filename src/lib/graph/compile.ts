@@ -40,6 +40,7 @@ export interface CompileOptions {
 
 export interface Alias {
   label: string;
+  /** Position of the first post in which the name is in use. */
   since: number;
 }
 
@@ -50,22 +51,25 @@ export interface Entity {
   description: string;
   aliases: Alias[];
   relations: { predicate: string; object: string }[];
-  /** Episode numbers of every installment that mentions it, ascending. */
+  /** Positions (see Post.seq) of every post that mentions it, ascending. */
   mentionedIn: number[];
 }
 
 export interface Post {
-  /** Graph identifier: "episode-01". */
+  /** Graph identifier, the same as the slug: "not-all-sloths-are-muppies". */
   id: string;
-  /** URL segment: "a-reliable-method-once". */
+  /** URL segment. */
   slug: string;
   title: string;
-  episode: number;
+  /**
+   * Position in publication order, starting at 1. Derived from the dates, never
+   * written by an author, and never shown to readers. It exists so that "the
+   * record as of this post" is a simple comparison.
+   */
+  seq: number;
   /** ISO date, YYYY-MM-DD. */
   published: string;
   summary: string;
-  /** True for made-up placeholder episodes. */
-  sample: boolean;
   mentions: string[];
 }
 
@@ -74,7 +78,8 @@ export interface Observation {
   text: string;
   observedBy: string;
   about: string[];
-  episode: number;
+  /** Position of the post that published it. */
+  seq: number;
   post: string;
   /** True when the prose marks the exact passage with an obs: link. */
   hasPassage: boolean;
@@ -92,7 +97,8 @@ export interface Claim {
   about: string[];
   attributedTo: string;
   refines: string | null;
-  episode: number;
+  /** Position of the post that published it. */
+  seq: number;
   post: string;
 }
 
@@ -103,9 +109,10 @@ export interface Assessment {
   stance: StanceId;
   note: string;
   evidence: string[];
-  episode: number;
+  /** Position of the post that published it. */
+  seq: number;
   post: string;
-  /** Position in publication order across the whole series, starting at 1. */
+  /** Position in publication order across all posts, starting at 1. */
   sequence: number;
 }
 
@@ -117,7 +124,8 @@ export interface Predicate {
 
 export interface CompiledGraph {
   site: { url: string; idBase: string; vocabBase: string };
-  latestEpisode: number;
+  /** Position of the most recent post, or 0 when nothing is published. */
+  latestSeq: number;
   entities: Entity[];
   posts: Post[];
   observations: Observation[];
@@ -166,10 +174,6 @@ export function extractProseLinks(body: string): ProseLinks {
   return found;
 }
 
-export function episodeId(episode: number): string {
-  return `episode-${String(episode).padStart(2, '0')}`;
-}
-
 export function slugFromFile(fileId: string): string {
   return fileId.replace(/^\d+[-_]/, '');
 }
@@ -186,9 +190,10 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
   const siteUrl = options.siteUrl.replace(/\/+$/, '');
 
   // Selection comes first: drafts and private entities never reach an index or an export.
+  // Posts are ordered by date; posts from the same day keep the order of their file names.
   const published = input.posts
     .filter((post) => !post.data.draft)
-    .sort((a, b) => a.data.episode - b.data.episode);
+    .sort((a, b) => a.data.published.getTime() - b.data.published.getTime() || a.id.localeCompare(b.id));
   const privateIds = new Set(input.entities.filter((e) => !e.data.public).map((e) => e.id));
   const publicEntities = input.entities
     .filter((e) => e.data.public)
@@ -218,7 +223,6 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     }
   };
 
-  const episodesSeen = new Map<number, string>();
   const posts: Post[] = [];
   const observations: Observation[] = [];
   const claims: Claim[] = [];
@@ -226,17 +230,12 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
   const mentionedIn = new Map<string, number[]>();
   let sequence = 0;
 
-  for (const raw of published) {
+  for (const [index, raw] of published.entries()) {
     const { data } = raw;
     const where = `posts/${raw.id}`;
-    const postId = episodeId(data.episode);
-
-    if (episodesSeen.has(data.episode)) {
-      problems.push(`${where}: episode ${data.episode} is also claimed by posts/${episodesSeen.get(data.episode)}`);
-      continue;
-    }
-    episodesSeen.set(data.episode, raw.id);
-    register(postId, `episode ${data.episode}`, where);
+    const seq = index + 1;
+    const postId = slugFromFile(raw.id);
+    register(postId, `the post "${data.title}"`, where);
 
     const links = extractProseLinks(raw.body ?? '');
     const mentions: string[] = [];
@@ -266,7 +265,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
         text: o.text,
         observedBy: o.observedBy,
         about: unique(o.about),
-        episode: data.episode,
+        seq,
         post: postId,
         hasPassage,
       });
@@ -292,7 +291,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
       }
       for (const id of c.about) requireEntity(id, at, 'entity');
       if (c.refines && !claims.some((earlier) => earlier.id === c.refines) && !data.claims.some((x) => x.id === c.refines)) {
-        problems.push(`${at}: refines "${c.refines}", which is not a claim published by this episode`);
+        problems.push(`${at}: refines "${c.refines}", which is not a claim published by this post or an earlier one`);
       }
 
       const about = unique([c.subject, c.object, ...c.about].filter((x): x is string => Boolean(x)));
@@ -307,7 +306,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
         about,
         attributedTo: c.attributedTo,
         refines: c.refines ?? null,
-        episode: data.episode,
+        seq,
         post: postId,
       });
       [c.attributedTo, ...about].forEach(mention);
@@ -316,7 +315,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     for (const id of unique(links.claims)) {
       const claim = claims.find((c) => c.id === id);
       if (!claim) {
-        problems.push(`${where}: the prose links to claim "${id}", which has not been published by this episode`);
+        problems.push(`${where}: the prose links to claim "${id}", which has not been published by this post or an earlier one`);
       } else {
         claim.about.forEach(mention);
       }
@@ -328,11 +327,11 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
       requirePerson(a.by, at, 'assessor');
       const claim = claims.find((c) => c.id === a.claim);
       if (!claim) {
-        problems.push(`${at}: assesses "${a.claim}", which is not a claim published by this episode`);
+        problems.push(`${at}: assesses "${a.claim}", which is not a claim published by this post or an earlier one`);
       }
       for (const id of a.evidence) {
         if (!observations.some((o) => o.id === id)) {
-          problems.push(`${at}: cites "${id}", which is not an observation published by this episode`);
+          problems.push(`${at}: cites "${id}", which is not an observation published by this post or an earlier one`);
         }
       }
       sequence += 1;
@@ -343,7 +342,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
         stance: a.stance,
         note: a.note ?? '',
         evidence: unique(a.evidence),
-        episode: data.episode,
+        seq,
         post: postId,
         sequence,
       });
@@ -352,35 +351,33 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     }
 
     for (const id of mentions) {
-      mentionedIn.set(id, [...(mentionedIn.get(id) ?? []), data.episode]);
+      mentionedIn.set(id, [...(mentionedIn.get(id) ?? []), seq]);
     }
 
     posts.push({
       id: postId,
       slug: slugFromFile(raw.id),
       title: data.title,
-      episode: data.episode,
+      seq,
       published: data.published.toISOString().slice(0, 10),
       summary: data.summary,
-      sample: data.sample,
       mentions,
     });
   }
 
-  const slugs = new Map<string, string>();
-  for (const post of posts) {
-    if (slugs.has(post.slug)) problems.push(`posts: episodes ${slugs.get(post.slug)} and ${post.id} share the slug "${post.slug}"`);
-    slugs.set(post.slug, post.id);
-  }
-
-  const latestEpisode = posts.length ? posts[posts.length - 1].episode : 0;
+  const latestSeq = posts.length;
+  /** The first post published on or after a date, or null when there is none yet. */
+  const seqFrom = (date: Date): number | null => {
+    const day = date.toISOString().slice(0, 10);
+    return posts.find((post) => post.published >= day)?.seq ?? null;
+  };
 
   const entities: Entity[] = [];
   for (const { id, data } of publicEntities) {
     const where = `entities/${id}`;
     const appearances = mentionedIn.get(id) ?? [];
     if (appearances.length === 0) {
-      warnings.push(`${where}: not mentioned in any published episode, so it is left out of the graph`);
+      warnings.push(`${where}: not mentioned in any published post, so it is left out of the graph`);
       continue;
     }
     const relations = data.relations.filter((relation) => {
@@ -393,13 +390,15 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     });
     const aliases = data.aliases.flatMap((alias) => {
       const label = typeof alias === 'string' ? alias : alias.label;
-      const since = typeof alias === 'string' ? undefined : alias.since;
-      if (since !== undefined && since > latestEpisode) {
-        // Like a draft post: it waits for its episode instead of leaking into the graph early.
-        warnings.push(`${where}: alias "${label}" starts in episode ${since}, which is not published yet, so it is left out`);
+      if (typeof alias === 'string' || alias.since === undefined) return [{ label, since: appearances[0] }];
+      const since = seqFrom(alias.since);
+      if (since === null) {
+        // Like a draft post: it waits for a post on or after its date instead of leaking into the graph early.
+        const day = alias.since.toISOString().slice(0, 10);
+        warnings.push(`${where}: alias "${label}" starts on ${day}, after the latest post, so it is left out`);
         return [];
       }
-      return [{ label, since: since ?? appearances[0] }];
+      return [{ label, since: Math.max(since, appearances[0]) }];
     });
     entities.push({
       id,
@@ -429,7 +428,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
   return {
     graph: {
       site: { url: siteUrl, idBase: `${siteUrl}/id/`, vocabBase: `${siteUrl}/vocab#` },
-      latestEpisode,
+      latestSeq,
       entities,
       posts,
       observations,
