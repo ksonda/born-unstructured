@@ -17,9 +17,9 @@ observations:
     observedBy: dad
     about: [bedtime, messy-muppy, flat-muppy]
   - id: observation-03
-    text: "Big Muppy is a stuffed animal, not a blankie. It is a muppy anyway, because the authority said so."
+    text: "Big Muppy is a stuffed animal, not a blankie. It is a muppy because it is a sloth, and a cute and prominent one."
     observedBy: dad
-    about: [big-muppy, muppy, the-authority]
+    about: [big-muppy, muppy, sloth]
   - id: observation-04
     text: "The 3D-printed sloth is called Messy New. Not New Muppy, and not Printed Muppy."
     observedBy: dad
@@ -73,7 +73,7 @@ assessments:
     by: dad
     stance: undecided
     evidence: [observation-03]
-    note: "It's a sloth. It's in the Messy line. It came out of a printer. Leaving it to the authority."
+    note: "It's a sloth, so it clears the one firm rule. Cute enough and prominent enough is the authority's call."
   - id: assessment-04
     claim: claim-newborn-muppy
     by: dad
@@ -93,9 +93,9 @@ So before the baby shows up and starts generating new data, I want to document t
 
 ## Meet the muppies
 
-The central entity in our household is [the muppy](thing:muppy). If you don't have a small child: a muppy is a lovey, which is the specific soft object a kid needs in order to sleep.[^2] The word "specific" is doing a lot of work there. Keep an eye on it.
+The central entity in our household is [the muppy](thing:muppy). If you don't have a small child: a lovey is the specific soft object a kid needs in order to sleep.[^2] The word "specific" is doing a lot of work there. Keep an eye on it. A muppy is our household's version, and the admission rules are simple: any [sloth](thing:sloth) cute enough and prominent enough to be let into the system.
 
-All of our muppies are [sloths](thing:sloth). Here is the current registry, as dictated by the naming authority:
+Here is the current registry, as dictated by the naming authority:
 
 | Name | What it is | How you tell it apart |
 | --- | --- | --- |
@@ -114,7 +114,7 @@ There are at least three different kinds of thing in that table, and the kid kee
 
 **"Sloth" is a concept.** It's the animal kind. Sloths exist whether or not anyone in this house owns one.
 
-**"Muppy" is a household category.** Being a muppy is not the same as being a sloth. A sloth becomes a muppy by being admitted to the system, and only one person does the admitting. Not all sloths are muppies. All muppies, so far, are sloths.
+**"Muppy" is a household category.** Being a muppy is not the same as being a sloth. A sloth becomes a muppy by being admitted to the system, and only one person does the admitting. The entry requirements are short. Be a sloth. Be cute enough and prominent enough. Blankie or stuffed animal doesn't come into it. Not all sloths are muppies. All muppies are sloths.
 
 **"Messy Muppy" is a role.** Not a species, not a brand, and, it turns out, not any particular object. It's a slot that has to be filled at [bedtime](thing:bedtime), or car ride time, and several loveys are qualified to fill it.
 
@@ -126,7 +126,7 @@ And then there are two more things. One is the physical lovey actually on duty t
 
 In water data, the version of this problem is that a river, the name of the river, and the line in a GIS file that someone digitized decades ago are three different things. Plenty of systems treat them as one. Then the river gets renamed, or the line gets redrawn, and everything downstream (sorry) breaks.
 
-A knowledge graph makes you be explicit. The concept, the category, the object, and the name each get their own node, and the relationships between them are stated rather than assumed.[^4] Big Muppy is a nice test case. It's a stuffed animal, not a blankie, so it doesn't match Messy Muppy feature for feature. [It's a muppy anyway, because it's close enough to the prototype and because the authority said so.](obs:observation-03)[^5]
+A knowledge graph makes you be explicit. The concept, the category, the object, and the name each get their own node, and the relationships between them are stated rather than assumed.[^4] Big Muppy is a nice test case. It's a stuffed animal, not a blankie, and it looks nothing like a Messy Muppy. It doesn't have to. [Big Muppy is a muppy because it is a sloth, and a cute and prominent one.](obs:observation-03) The test was never "is it like the original?" It was "is it a sloth, and did it make the cut?"[^5]
 
 ## Flat Muppy and the identity problem
 
@@ -150,7 +150,7 @@ Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](o
 
 Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it in under four years with no committee.
 
-[Whether Messy New is a muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. It's a sloth. It's in the Messy line. It came out of a printer. I'm treating it as an open question and leaving it to the authority.
+[Whether Messy New is a muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. It's a sloth, so it clears the one firm rule. It's in the Messy line. It came out of a printer. Whether that adds up to cute enough and prominent enough is not my call. I'm treating it as an open question and leaving it to the authority.
 
 Which brings us to the newborn. In a few weeks a new person arrives who will, at some point, need a lovey. The questions write themselves:
 
@@ -193,11 +193,11 @@ For readers who want the longer version. Each note links back to where it came f
 
 [^4]: **Concepts versus classes.** There are two common ways to model a "kind of thing" in RDF, and they behave differently. SKOS (Simple Knowledge Organization System) treats "sloth" and "muppy" as concepts in a vocabulary, connected by broader and narrower links. This is how thesauri and library subject headings work. It's forgiving: saying muppy is narrower than sloth tells a search tool to look in both places, and not much more.
 
-    OWL (the Web Ontology Language) treats them as classes with logical membership. Saying every muppy is a sloth lets a reasoner conclude Messy Muppy is a sloth without being told. That's powerful, and also a commitment: if the authority ever admits a non-sloth lovey, the ontology is wrong. For a household governed by a preschooler, I lean SKOS. See the [SKOS Reference](https://www.w3.org/TR/skos-reference/) and the [OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
+    OWL (the Web Ontology Language) treats them as classes with logical membership. Saying every muppy is a sloth lets a reasoner conclude Messy Muppy is a sloth without being told. Here that axiom is safe, because being a sloth is the one firm rule. What a reasoner can't do is the rest of the test. It can check that something is a sloth. It can't check that it is cute enough or prominent enough, because those aren't properties of the sloth. They're decisions by the authority. So the graph states the rule once and records each admission as a fact. See the [SKOS Reference](https://www.w3.org/TR/skos-reference/) and the [OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
 
-[^5]: **Fuzzy categories.** Classical definitions say a thing belongs to a category if it meets a list of necessary and sufficient conditions. Eleanor Rosch's research in the 1970s showed that people don't actually categorize that way. We judge membership by resemblance to a prototype: a robin is a more birdlike bird than a penguin, though both are birds.
+[^5]: **Necessary, not sufficient.** Classical definitions say a thing belongs to a category if it meets a list of necessary and sufficient conditions. Eleanor Rosch's research in the 1970s showed that people mostly don't categorize that way. We judge membership by resemblance to a prototype: a robin is a more birdlike bird than a penguin, though both are birds.
 
-    Wittgenstein made a related point earlier with "family resemblance": the things we call games share overlapping features, but no single feature that all of them have. Big Muppy is a family-resemblance muppy. Sloth, soft, loved, not a blankie. Formal ontologies struggle with this, which is part of why lighter vocabularies like SKOS exist.
+    The muppy test is a hybrid. Being a sloth is necessary in the classical sense: no sloth, no muppy. It isn't sufficient. "Cute enough" and "prominent enough" are graded judgments against a standard that lives in one person's head. Plenty of real registries work the same way: an eligibility rule a machine can check, then an admission decision a person makes. The graph can hold the rule and the decisions. It can't hold the judge.
 
 [^6]: **The open world.** Knowledge graphs built on OWL make two assumptions that surprise people coming from relational databases. The open world assumption says a fact missing from the graph is unknown, not false. The graph doesn't know whether Messy New is a muppy, and won't conclude that it isn't.
 

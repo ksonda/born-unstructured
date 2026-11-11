@@ -1,8 +1,9 @@
 label: muppy
 type: concept
 description: >
-  A household category. A sloth becomes a muppy by being admitted to the system, and only one
-  person does the admitting. Not all sloths are muppies. All muppies, so far, are sloths.
+  A household category: any sloth cute enough and prominent enough to be admitted to the system.
+  Blankie or stuffed animal doesn't matter. Only one person does the admitting. Not all sloths
+  are muppies. All muppies are sloths.
 relations:
   - predicate: kindOf
     object: sloth
