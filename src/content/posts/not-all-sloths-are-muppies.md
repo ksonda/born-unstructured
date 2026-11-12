@@ -8,7 +8,7 @@ mentions: [lovey-01, lovey-02, lovey-03, lovey-04, lovey-05, lovey-06, messy-new
 
 observations:
   - id: observation-01
-    text: "To any adult the loveys look the same. To the almost-four-year-old they very much do not."
+    text: "To any adult the loveys look the same. To the kid they very much do not."
     observedBy: dad
     about: [the-authority, messy-muppy, flat-muppy]
   - id: observation-02
@@ -88,7 +88,7 @@ assessments:
 
 We are about to have a newborn. Everyone tells you to prepare the older sibling, and we are. [Our almost-four-year-old](thing:the-authority) has questions. Most of them are about logistics.
 
-But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority. The naming authority is not yet four.
+But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority.
 
 I work on data infrastructure. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
 
@@ -107,13 +107,13 @@ Here is the current registry, as dictated by the naming authority:
 | [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
 | ![](/images/things/messy-new.jpg) [Messy New](thing:messy-new) | Seven 3D-printed sloths from the same model, each named for its color | The color. Status: complicated |
 
-Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are six loveys in the house qualified for one shift or the other: four for Messy and two for Flat. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
+Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are six loveys in the house qualified for one shift or the other: four for Messy and two for Flat. [To any adult they look the same. To the kid they very much do not.](obs:observation-01)
 
 ![Two identical sloth loveys lying side by side](/images/posts/two-loveys.jpg)
 
 *The two Flat Muppies, side by side. To any adult, the same lovey twice.*
 
-So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science, and the person who built it can't read yet.
+So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science.
 
 ## Sloth, muppy, Messy Muppy
 
@@ -167,7 +167,7 @@ That's a composite name. One part says what kind of thing it is, and the other t
 
 Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](obs:observation-04) My working theory is that ["Messy" has stopped being a description of a nose and become something more like a lineage](claim:claim-messy-lineage). The Messy Muppies came first. Messy New is the new branch of the Messy line. The adjective has been promoted to a type.
 
-Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it in under four years with no committee.
+Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it with no committee.
 
 [Whether Messy New is a kind of muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. They're sloths, so they clear the one firm rule. They're in the Messy line. They came out of a printer, seven at a time. Whether that adds up to cute enough and prominent enough is not my call. I'm treating it as an open question and leaving it to the authority.
 
