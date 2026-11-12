@@ -5,12 +5,12 @@ summary: "What this blog is, who's writing it, how every post doubles as data in
 
 # The file name starts with 00- so that this sorts ahead of anything else published the same day.
 # The post's slug and identifier are still "readme".
-mentions: [dad]
+mentions: [dad, mom]
 ---
 
 Every data engineer eventually meets a source with no schema, no documentation, and no service-level agreement. It emits output at 3 a.m. It changes formats without warning. It has strong opinions about which cup is the correct cup.
 
-Mine is almost four. A second one is due any day now, and I've been told there is no staging environment.
+Ours is almost four. A second one is due any day now, and I've been told there is no staging environment.
 
 In data work, "unstructured" is what we call everything that doesn't arrive in neat rows and columns: text, photos, audio, the contents of a diaper bag.[^1] Most of the world is unstructured. Most of a family is too. Children are born unstructured, and then everyone spends about eighteen years arguing about the schema.
 

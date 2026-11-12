@@ -86,7 +86,7 @@ assessments:
 
 ## Before the new user arrives
 
-We are about to have a newborn. Everyone tells you to prepare the older sibling, and we are. [Our almost-four-year-old](thing:the-authority) has questions. Most of them are about logistics.
+[My wife](thing:mom) and I are about to have a newborn. Everyone tells you to prepare the older sibling, and we are. [Our almost-four-year-old](thing:the-authority) has questions. Most of them are about logistics.
 
 But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority.
 

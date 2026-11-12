@@ -28,3 +28,7 @@
 - id: parentOf
   label: is a parent of
   description: The subject is a parent of the object.
+
+- id: marriedTo
+  label: is married to
+  description: The subject and the object are married. Stated once; it holds in both directions.

@@ -1,0 +1,14 @@
+label: Mom
+type: person
+description: >
+  Married to Dad, and the other parent of both kids. Co-runs the household. When she takes a
+  position on one of Dad's theories, it goes on the record like anyone else's.
+aliases:
+  - my wife
+relations:
+  - predicate: marriedTo
+    object: dad
+  - predicate: parentOf
+    object: the-authority
+  - predicate: parentOf
+    object: baby

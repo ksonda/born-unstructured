@@ -74,7 +74,7 @@ const eventsIn = (seq: number) => timeline.filter((e): e is Exclude<TimelineEven
             ))}
             {incoming.map((r) => (
               <div>
-                <Thing graph={graph} id={r.subject} inline /> {predicateLabel(r.predicate)} it
+                <Thing graph={graph} id={r.subject} inline /> {predicateLabel(r.predicate)} {entity.type === 'person' ? entity.label : 'it'}
               </div>
             ))}
           </dd>
