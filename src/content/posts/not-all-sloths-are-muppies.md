@@ -4,7 +4,7 @@ published: 2026-11-11
 summary: "A legacy schema inventory of the household's sloths, taken before the newborn arrives. Two of the four turn out to be jobs."
 
 # The individual loveys and most of the prints are never named in the prose, so they are listed here.
-mentions: [lovey-01, lovey-02, lovey-03, lovey-04, lovey-05, messy-new-01, messy-new-02, messy-new-03, messy-new-04, messy-new-05, messy-new-06, messy-new-07]
+mentions: [lovey-01, lovey-02, lovey-03, lovey-04, lovey-05, lovey-06, messy-new-01, messy-new-02, messy-new-03, messy-new-04, messy-new-05, messy-new-06, messy-new-07]
 
 observations:
   - id: observation-01
@@ -103,15 +103,15 @@ Here is the current registry, as dictated by the naming authority:
 | Name | What it is | How you tell it apart |
 | --- | --- | --- |
 | ![](/images/things/messy-muppy.jpg) [Messy Muppy](thing:messy-muppy) | A role, not a single lovey. Four identical-looking blankie-style sloths are qualified to fill it | The nose is, in the household's technical vocabulary, "all messed up" |
-| ![](/images/things/flat-muppy.jpg) [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey. One is qualified at the moment | The nose has been chewed flat |
+| ![](/images/things/flat-muppy.jpg) [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey. Two are qualified at the moment | The nose has been chewed flat |
 | [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
 | ![](/images/things/messy-new.jpg) [Messy New](thing:messy-new) | Seven 3D-printed sloths from the same model, each named for its color | The color. Status: complicated |
 
-Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are five loveys in the house qualified for one shift or the other: four for Messy, and, at the moment, one for Flat. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
+Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are six loveys in the house qualified for one shift or the other: four for Messy and two for Flat. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
 
 ![Two identical sloth loveys lying side by side](/images/posts/two-loveys.jpg)
 
-*Two of the loveys, side by side. To any adult, the same lovey twice.*
+*The two Flat Muppies, side by side. To any adult, the same lovey twice.*
 
 So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science, and the person who built it can't read yet.
 
@@ -139,7 +139,7 @@ A knowledge graph makes you be explicit. The concept, the category, the object, 
 
 ## Flat Muppy and the identity problem
 
-Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are five loveys in this house, all the same model, that look identical to every adult who has examined them. Four of them are Messy Muppies. One, currently, is a Flat Muppy. Bedtime goes smoothly when at least one of each is in the bed.
+Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are six loveys in this house, all the same model, that look identical to every adult who has examined them. Four of them are Messy Muppies. Two, currently, are Flat Muppies. Bedtime goes smoothly when at least one of each is in the bed.
 
 To the kid this is not complicated. [The nose determines the role.](claim:claim-nose-role) Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a flattened one can be Flat Muppy. Within a role they're interchangeable. Across roles they absolutely are not. [A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident.](obs:observation-02)
 
@@ -263,7 +263,8 @@ For readers who want the longer version. Each note links back to where it came f
     h:lovey-03 h:kind h:muppy ; h:fills h:role-messy .
     h:lovey-04 h:kind h:muppy ; h:fills h:role-messy .
     h:lovey-05 h:kind h:muppy ; h:fills h:role-flat .
-    h:lovey-01 owl:differentFrom h:lovey-02, h:lovey-03, h:lovey-04, h:lovey-05 .
+    h:lovey-06 h:kind h:muppy ; h:fills h:role-flat .
+    h:lovey-01 owl:differentFrom h:lovey-02, h:lovey-03, h:lovey-04, h:lovey-05, h:lovey-06 .
 
     h:big-muppy rdfs:label "Big Muppy" ; h:kind h:muppy .
 
