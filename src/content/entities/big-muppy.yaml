@@ -3,6 +3,7 @@ type: object
 description: >
   A sloth, and an actual stuffed animal rather than a blankie. It has volume. A muppy because it
   is a sloth, and a cute and prominent one.
+image: things/big-muppy.jpg
 relations:
   - predicate: isA
     object: muppy

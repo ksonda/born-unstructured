@@ -88,15 +88,15 @@ assessments:
 
 [My wife](thing:mom) and I are about to have a newborn. Everyone tells you to prepare the older sibling, and we are. [Our almost-four-year-old](thing:the-authority) has questions. Most of them are about logistics.
 
-But I've come to think the real onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority.
+But I think the harder onboarding problem runs the other way. [The newborn](thing:baby) is joining a household with an existing information system, and that system has a governance model, a controlled vocabulary, and exactly one naming authority.
 
-I work on data infrastructure. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is frankly more coherent than some federal datasets I've had to join.
+I work on data infrastructure. Meanwhile, at home, a preschooler has built a naming system for stuffed sloths that is more coherent than some federal datasets I've had to join.
 
-So before the baby shows up and starts generating new data, I want to document the system as it stands. Call it a legacy schema inventory. This blog tracks the household as a knowledge graph, an actual one published as RDF,[^1] not a metaphor. How that works is in the [README](post:readme). It's called *Born Unstructured* because that's how everyone arrives. First, the sloths.
+So before the baby shows up and starts generating new data, I want to document the system as it stands, in what I'm calling a legacy schema inventory. This blog tracks the household as an actual knowledge graph, published as RDF,[^1] and the [README](post:readme) explains how that works. It's called *Born Unstructured* because that's how everyone arrives. The sloths come first.
 
 ## Meet the muppies
 
-The central entity in our household is [the muppy](thing:muppy). If you don't have a small child: a lovey is the specific soft object a kid needs in order to sleep.[^2] The word "specific" is doing a lot of work there. Keep an eye on it. A muppy is our household's version, and the admission rules are simple: any [sloth](thing:sloth) cute enough and prominent enough to be let into the system.
+The central entity in our household is [the muppy](thing:muppy). If you don't have a small child: a lovey is the specific soft object a kid needs in order to sleep.[^2] "Specific" is the important word in that sentence, and it comes back later. A muppy is our household's version, and it can be any [sloth](thing:sloth) cute enough and prominent enough to be let into the system.
 
 Here is the current registry, as dictated by the naming authority:
 
@@ -104,7 +104,7 @@ Here is the current registry, as dictated by the naming authority:
 | --- | --- | --- |
 | ![](/images/things/messy-muppy.jpg) [Messy Muppy](thing:messy-muppy) | A role, not a single lovey. Four identical-looking blankie-style sloths are qualified to fill it | The nose is, in the household's technical vocabulary, "all messed up" |
 | ![](/images/things/flat-muppy.jpg) [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey. Two are qualified at the moment | The nose has been chewed flat |
-| [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
+| ![](/images/things/big-muppy.jpg) [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
 | ![](/images/things/messy-new.jpg) [Messy New](thing:messy-new) | Seven 3D-printed sloths from the same model, each named for its color | The color. Status: complicated |
 
 Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are six loveys in the house qualified for one shift or the other: four for Messy and two for Flat. [To any adult they look the same. To the kid they very much do not.](obs:observation-01)
@@ -113,7 +113,7 @@ Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least
 
 *The two Flat Muppies, side by side. To any adult, the same lovey twice.*
 
-So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science.
+So that list of four stuffed animals is a working demonstration of about five distinct problems in information science.
 
 ## Sloth, muppy, Messy Muppy
 
@@ -121,11 +121,11 @@ There are at least three different kinds of thing in that table, and the kid kee
 
 **"Sloth" is a concept.** It's the animal kind. Sloths exist whether or not anyone in this house owns one.
 
-**"Muppy" is a household category.** Being a muppy is not the same as being a sloth. A sloth becomes a muppy by being admitted to the system, and only one person does the admitting. The entry requirements are short. Be a sloth. Be cute enough and prominent enough. Blankie or stuffed animal doesn't come into it. Not all sloths are muppies. All muppies are sloths.
+**"Muppy" is a household category.** Being a muppy is not the same as being a sloth. A sloth becomes a muppy by being admitted to the system, and only one person does the admitting. The entry requirements are short: be a sloth, and be cute enough and prominent enough. Whether it's a blankie or a stuffed animal doesn't come into it. So all muppies are sloths, and not all sloths are muppies.
 
-**"Messy Muppy" is a role.** Not a species, not a brand, and, it turns out, not any particular object. It's a slot that has to be filled at [bedtime](thing:bedtime), or car ride time, and several loveys are qualified to fill it.
+**"Messy Muppy" is a role.** It isn't a species or a brand, and it turns out it isn't any particular object either. It's a slot that has to be filled at [bedtime](thing:bedtime), or car ride time, and several loveys are qualified to fill it.
 
-To be clear, the kid can tell every one of these loveys apart. They are not, to the kid, the same lovey.[^3] But for the job, any qualified one will do. It works like an on-call rotation: everyone on the team is a distinct person, and the pager doesn't care which of them picks up. It just needs somebody. Each bedtime, each car ride, the shift gets filled fresh.
+The kid can tell every one of these loveys apart, and to the kid they are not the same lovey.[^3] But for the job, any qualified one will do. It works like an on-call rotation: everyone on the team is a distinct person, and the pager doesn't care which of them picks up as long as somebody does. Each bedtime, each car ride, the shift gets filled fresh.
 
 ![Four sloth loveys piled together on a blanket](/images/posts/loveys.jpg)
 
@@ -135,13 +135,17 @@ And then there are two more things. One is the physical lovey actually on duty t
 
 In water data, the version of this problem is that a river, the name of the river, and the line in a GIS file that someone digitized decades ago are three different things. Plenty of systems treat them as one. Then the river gets renamed, or the line gets redrawn, and everything downstream (sorry) breaks.
 
-A knowledge graph makes you be explicit. The concept, the category, the object, and the name each get their own node, and the relationships between them are stated rather than assumed.[^4] Big Muppy is a nice test case. It's a stuffed animal, not a blankie, and it looks nothing like a Messy Muppy. It doesn't have to. [Big Muppy is a muppy because it is a sloth, and a cute and prominent one.](obs:observation-03) The test was never "is it like the original?" It was "is it a sloth, and did it make the cut?"[^5]
+A knowledge graph makes you be explicit. The concept, the category, the object, and the name each get their own node, and the relationships between them are stated rather than assumed.[^4] Big Muppy is a nice test case. It's a stuffed animal, not a blankie, and it looks nothing like a Messy Muppy, which turns out not to matter. [Big Muppy is a muppy because it is a sloth, and a cute and prominent one.](obs:observation-03) The test is whether it's a sloth and whether it made the cut. Resembling the original was never part of it.[^5]
+
+![Big Muppy, a plush stuffed sloth, held up in front of a crib](/images/posts/big-muppy.jpg)
+
+*Big Muppy, who has volume and has never once been mistaken for a blankie.*
 
 ## Flat Muppy and the identity problem
 
-Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are six loveys in this house, all the same model, that look identical to every adult who has examined them. Four of them are Messy Muppies. Two, currently, are Flat Muppies. Bedtime goes smoothly when at least one of each is in the bed.
+It took me an embarrassingly long time to understand that there is no single Messy Muppy. The six loveys in this house are all the same model and look identical to every adult who has examined them. Four are Messy Muppies and two, currently, are Flat Muppies, and bedtime goes smoothly when at least one of each is in the bed.
 
-To the kid this is not complicated. [The nose determines the role.](claim:claim-nose-role) Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a flattened one can be Flat Muppy. Within a role they're interchangeable. Across roles they absolutely are not. [A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident.](obs:observation-02)
+To the kid this is not complicated. [The nose determines the role.](claim:claim-nose-role) Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a flattened one can be Flat Muppy. Within a role they're interchangeable. Across roles they are not. [A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident.](obs:observation-02)
 
 ![A Messy Muppy, held up to the camera](/images/posts/messy-muppy.jpg) ![A Flat Muppy, held up to the camera](/images/posts/flat-muppy.jpg)
 
@@ -151,13 +155,13 @@ Most databases would get this wrong in one of two directions. One is to merge al
 
 The kid is running a three-layer model: the category (muppy), the role (Messy or Flat), and the individual lovey. Each layer needs its own identity, and the individual loveys need identifiers that don't depend on which role they happen to be in this week.[^7]
 
-This is a familiar pattern in environmental monitoring. A stream gage monitoring site keeps the same identifier for decades, while the physical sensor on the bridge gets swapped out when it fails. Nobody asks for data from the sensor. They ask for data from the site. Messy Muppy is the site. Whichever lovey is on duty tonight is the sensor.[^8]
+This is a familiar pattern in environmental monitoring. A stream gage monitoring site keeps the same identifier for decades, while the physical sensor on the bridge gets swapped out when it fails. People ask for data from the site, and nobody asks for data from the sensor. Messy Muppy is the site, and whichever lovey is on duty tonight is the sensor.[^8]
 
-It also quietly fixes the complaint I was going to make about descriptive names. "Messy" and "Flat" look like the kind of names that break when the thing they describe changes. But they don't name loveys. They name roles, and the nose is the qualifying criterion. If a Messy Muppy's nose gets chewed flat, nothing in the system becomes inaccurate. That lovey just changes jobs. This is more elegant than some schemas I've reviewed professionally.
+It also takes care of the complaint I was going to make about descriptive names. "Messy" and "Flat" look like the kind of names that break when the thing they describe changes. But they name roles, with the nose as the qualifying criterion, and no lovey is named by them. If a Messy Muppy's nose gets chewed flat, nothing in the system becomes inaccurate, and that lovey just changes jobs. I have reviewed schemas, professionally, that handle this worse.
 
 ## Messy New, or how a name becomes a type
 
-Then there's [Messy New](thing:messy-new), and this is where the system gets genuinely sophisticated. Messy New is not one sloth. [It's seven, printed from the same model, and each one goes by its color: pink Messy New, teal Messy New, olive Messy New.](obs:observation-05)
+Then there's [Messy New](thing:messy-new), which is where the system gets sophisticated. Messy New is not one sloth. [It's seven, printed from the same model, and each one goes by its color: pink Messy New, teal Messy New, olive Messy New.](obs:observation-05)
 
 ![Seven 3D-printed sloths in a row: rose gold, teal, black, olive, red, maroon and pink](/images/posts/messy-new-lineup.jpg)
 
@@ -169,13 +173,13 @@ Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](o
 
 Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it with no committee.
 
-[Whether Messy New is a kind of muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. They're sloths, so they clear the one firm rule. They're in the Messy line. They came out of a printer, seven at a time. Whether that adds up to cute enough and prominent enough is not my call. I'm treating it as an open question and leaving it to the authority.
+[Whether Messy New is a kind of muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. They're sloths, so they clear the one firm rule, and they're in the Messy line. They also came out of a printer, seven at a time. Whether that adds up to cute enough and prominent enough is the authority's decision, so I'm treating it as an open question.
 
 ![An olive 3D-printed sloth in the palm of a hand](/images/posts/olive-messy-new.jpg)
 
 *Olive Messy New, for scale. Cute? Prominent? Not my call.*
 
-Which brings us to the newborn. In a few weeks a new person arrives who will, at some point, need a lovey. The questions write themselves:
+That leaves the newborn. In a few weeks a new person arrives who will, at some point, need a lovey, and I have questions:
 
 - [Does the newborn get a muppy](claim:claim-newborn-muppy), or does the category stay closed?
 - If a new muppy is admitted, who names it? The authority, or whoever is holding the baby when the subject comes up?
@@ -192,13 +196,13 @@ Here's the registry as a graph. Solid lines are things the authority has confirm
 
 Every node in that picture gets a stable identifier in the published graph, and every name is just a label hung on it.[^10] When a nose changes, a lovey moves between roles and nothing else has to. The bedtime rule, at least one Messy and at least one Flat, can be written down as a constraint and checked. When the newborn arrives, they get a node too. What they get attached to is above my pay grade.
 
-This is version 1 of the muppy registry. I expect breaking changes.
+This is version 1 of the muppy registry, and I expect breaking changes.
 
 Next up: Montessori laundry. A place for everything, everything in its place, and nothing folded.
 
 ## Notes
 
-For readers who want the longer version. Each note links back to where it came from.
+These are for readers who want the longer version. Each note links back to where it came from.
 
 [^1]: **Knowledge graphs and RDF.** A knowledge graph stores information as a web of small statements, each with three parts: a subject, a predicate, and an object. "Messy Muppy, is a, muppy." "Flat Muppy, has nose condition, chewed flat." RDF (the Resource Description Framework) is the W3C standard for writing those statements down so that systems built by different people can read them.
 
@@ -216,11 +220,11 @@ For readers who want the longer version. Each note links back to where it came f
 
 [^4]: **Concepts versus classes.** There are two common ways to model a "kind of thing" in RDF, and they behave differently. SKOS (Simple Knowledge Organization System) treats "sloth" and "muppy" as concepts in a vocabulary, connected by broader and narrower links. This is how thesauri and library subject headings work. It's forgiving: saying muppy is narrower than sloth tells a search tool to look in both places, and not much more.
 
-    OWL (the Web Ontology Language) treats them as classes with logical membership. Saying every muppy is a sloth lets a reasoner conclude Messy Muppy is a sloth without being told. Here that axiom is safe, because being a sloth is the one firm rule. What a reasoner can't do is the rest of the test. It can check that something is a sloth. It can't check that it is cute enough or prominent enough, because those aren't properties of the sloth. They're decisions by the authority. So the graph states the rule once and records each admission as a fact. See the [SKOS Reference](https://www.w3.org/TR/skos-reference/) and the [OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
+    OWL (the Web Ontology Language) treats them as classes with logical membership. Saying every muppy is a sloth lets a reasoner conclude Messy Muppy is a sloth without being told. Here that axiom is safe, because being a sloth is the one firm rule. What a reasoner can't do is the rest of the test. It can check that something is a sloth, but cute enough and prominent enough are decisions by the authority, and a reasoner has no property of the sloth to check them against. So the graph states the rule once and records each admission as a fact. See the [SKOS Reference](https://www.w3.org/TR/skos-reference/) and the [OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
 
 [^5]: **Necessary, not sufficient.** Classical definitions say a thing belongs to a category if it meets a list of necessary and sufficient conditions. Eleanor Rosch's research in the 1970s showed that people mostly don't categorize that way. We judge membership by resemblance to a prototype: a robin is a more birdlike bird than a penguin, though both are birds.
 
-    The muppy test is a hybrid. Being a sloth is necessary in the classical sense: no sloth, no muppy. It isn't sufficient. "Cute enough" and "prominent enough" are graded judgments against a standard that lives in one person's head. Plenty of real registries work the same way: an eligibility rule a machine can check, then an admission decision a person makes. The graph can hold the rule and the decisions. It can't hold the judge.
+    The muppy test is a hybrid. Being a sloth is necessary in the classical sense: no sloth, no muppy. It isn't sufficient. "Cute enough" and "prominent enough" are graded judgments against a standard that lives in one person's head. Plenty of real registries work the same way: an eligibility rule a machine can check, then an admission decision a person makes. The graph can hold the rule and the decisions, but it can't hold the judge.
 
 [^6]: **The open world.** Knowledge graphs built on OWL make two assumptions that surprise people coming from relational databases. The open world assumption says a fact missing from the graph is unknown, not false. The graph doesn't know whether Messy New is a muppy, and won't conclude that it isn't.
 

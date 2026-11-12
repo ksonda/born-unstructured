@@ -21,6 +21,7 @@ const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const nav = [
+  { href: '/posts/readme/', label: 'README' },
   { href: '/posts/', label: 'Posts' },
   { href: '/explore/', label: 'Explore' },
   { href: '/beliefs/', label: 'Things we believed' },
@@ -35,6 +36,13 @@ const footer = [
 ];
 const source = { href: 'https://github.com/ksonda/born-unstructured#readme', label: 'How it works' };
 const here = Astro.url.pathname;
+const readme = withBase('/posts/readme/');
+// The README lives under /posts/, so Posts is not the current page when the README is.
+const isCurrent = (href: string) => {
+  const path = withBase(href);
+  if (path === readme) return here === readme || here === readme.slice(0, -1);
+  return here.startsWith(path) && !here.startsWith(readme);
+};
 
 ---
 
@@ -61,7 +69,7 @@ const here = Astro.url.pathname;
         <nav class="site-nav" aria-label="Main">
           {
             nav.map((item) => (
-              <a href={withBase(item.href)} aria-current={here.startsWith(withBase(item.href)) ? 'page' : undefined}>
+              <a href={withBase(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}>
                 {item.label}
               </a>
             ))
