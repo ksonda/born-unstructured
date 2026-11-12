@@ -525,6 +525,80 @@ a.chip:hover {
   color: var(--blue);
 }
 
+.prose img {
+  display: block;
+  max-width: 100%;
+  max-height: 34rem;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin: 1.75rem auto 0.5rem;
+  border-radius: var(--radius);
+}
+/* Two or more images written on one line sit side by side. */
+.prose p:has(> img + img) {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+.prose p:has(> img + img) > img {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+/* A paragraph that is only an italic line, right after an image, is its caption. */
+.prose p:has(> img) + p:has(> em:only-child) {
+  margin-top: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.prose p:has(> img) + p:has(> em:only-child) em {
+  font-style: normal;
+}
+/* Thumbnails in a table cell. */
+.prose td img {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 0 0.4rem;
+  border: 1px solid var(--rule);
+}
+@media (max-width: 640px) {
+  .prose td img {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.thing-head.has-photo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 13rem;
+  gap: 2rem;
+  align-items: start;
+}
+.thing-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--rule);
+  margin-top: 1rem;
+}
+@media (max-width: 640px) {
+  .thing-head.has-photo {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .thing-photo {
+    max-width: 12rem;
+  }
+}
+
 .prose table {
   width: 100%;
   border-collapse: collapse;

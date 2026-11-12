@@ -3,8 +3,8 @@ title: "Not All Sloths Are Muppies"
 published: 2026-11-11
 summary: "A legacy schema inventory of the household's sloths, taken before the newborn arrives. Two of the four turn out to be jobs."
 
-# The individual loveys are never named in the prose, so they are listed here.
-mentions: [lovey-01, lovey-02, lovey-03, lovey-04]
+# The individual loveys and most of the prints are never named in the prose, so they are listed here.
+mentions: [lovey-01, lovey-02, lovey-03, lovey-04, lovey-05, messy-new-01, messy-new-02, messy-new-03, messy-new-04, messy-new-05, messy-new-06, messy-new-07]
 
 observations:
   - id: observation-01
@@ -20,10 +20,14 @@ observations:
     observedBy: dad
     about: [big-muppy, muppy, sloth]
   - id: observation-04
-    text: "The 3D-printed sloth is called Messy New. Not New Muppy, and not Printed Muppy."
+    text: "The 3D-printed sloths are called Messy New. Not New Muppy, and not Printed Muppy."
     observedBy: dad
     about: [messy-new, the-authority]
 
+  - id: observation-05
+    text: "Seven 3D-printed sloths share the name Messy New. Each one goes by its color: pink Messy New, teal Messy New, olive Messy New."
+    observedBy: dad
+    about: [messy-new, the-authority]
 claims:
   - id: claim-nose-role
     label: "The nose determines the role"
@@ -41,10 +45,10 @@ claims:
     object: messy-muppy
     attributedTo: dad
   - id: claim-messy-new-muppy
-    label: "Messy New is a muppy"
-    short: "is a muppy?"
+    label: "Messy New is a kind of muppy"
+    short: "a kind of muppy?"
     subject: messy-new
-    predicate: isA
+    predicate: kindOf
     object: muppy
     about: [the-authority]
     attributedTo: dad
@@ -71,8 +75,8 @@ assessments:
     claim: claim-messy-new-muppy
     by: dad
     stance: undecided
-    evidence: [observation-03]
-    note: "It's a sloth, so it clears the one firm rule. Cute enough and prominent enough is the authority's call."
+    evidence: [observation-03, observation-05]
+    note: "They're sloths, so they clear the one firm rule. Cute enough and prominent enough is the authority's call."
   - id: assessment-04
     claim: claim-newborn-muppy
     by: dad
@@ -98,12 +102,16 @@ Here is the current registry, as dictated by the naming authority:
 
 | Name | What it is | How you tell it apart |
 | --- | --- | --- |
-| [Messy Muppy](thing:messy-muppy) | A role, not a single lovey. Any of several identical-looking blankie-style sloths can fill it | The nose is, in the household's technical vocabulary, "all messed up" |
-| [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey | The nose has been chewed flat |
+| ![](/images/things/messy-muppy.jpg) [Messy Muppy](thing:messy-muppy) | A role, not a single lovey. Four identical-looking blankie-style sloths are qualified to fill it | The nose is, in the household's technical vocabulary, "all messed up" |
+| ![](/images/things/flat-muppy.jpg) [Flat Muppy](thing:flat-muppy) | Another role, filled from the same kind of lovey. One is qualified at the moment | The nose has been chewed flat |
 | [Big Muppy](thing:big-muppy) | A similar sloth, but an actual stuffed animal rather than a blankie | It has volume |
-| [Messy New](thing:messy-new) | A 3D-printed sloth | Printed, not sewn. Status: complicated |
+| ![](/images/things/messy-new.jpg) [Messy New](thing:messy-new) | Seven 3D-printed sloths from the same model, each named for its color | The color. Status: complicated |
 
-Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are a few loveys in the house qualified for each shift. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
+Yes, the first two rows are jobs, not stuffed animals. Bedtime requires at least one Messy Muppy and at least one Flat Muppy, and there are five loveys in the house qualified for one shift or the other: four for Messy, and, at the moment, one for Flat. [To any adult they look the same. To the almost-four-year-old they very much do not.](obs:observation-01)
+
+![Two identical sloth loveys lying side by side](/images/posts/two-loveys.jpg)
+
+*Two of the loveys, side by side. To any adult, the same lovey twice.*
 
 So what looks like a list of four stuffed animals is actually a working demonstration of about five distinct problems in information science, and the person who built it can't read yet.
 
@@ -119,7 +127,9 @@ There are at least three different kinds of thing in that table, and the kid kee
 
 To be clear, the kid can tell every one of these loveys apart. They are not, to the kid, the same lovey.[^3] But for the job, any qualified one will do. It works like an on-call rotation: everyone on the team is a distinct person, and the pager doesn't care which of them picks up. It just needs somebody. Each bedtime, each car ride, the shift gets filled fresh.
 
-<!-- TODO: the screenshot you marked in the draft goes here. Put the image in src/assets/ and use ![alt text](../../assets/name.png). -->
+![Four sloth loveys piled together on a blanket](/images/posts/loveys.jpg)
+
+*The rotation, off duty.*
 
 And then there are two more things. One is the physical lovey actually on duty tonight. The other is the *name* "Messy Muppy", a string of letters that is none of the above. Philosophers have been drawing distinctions like this for about a hundred and thirty years.[^3] Data people mostly learn them the hard way.
 
@@ -129,9 +139,13 @@ A knowledge graph makes you be explicit. The concept, the category, the object, 
 
 ## Flat Muppy and the identity problem
 
-Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are several loveys in this house, all the same model, that look identical to every adult who has examined them. Some of them are Messy Muppies. Some are Flat Muppies. Bedtime goes smoothly when at least one of each is in the bed.
+Here's the part that took me an embarrassingly long time to understand. There is no single Messy Muppy. There are five loveys in this house, all the same model, that look identical to every adult who has examined them. Four of them are Messy Muppies. One, currently, is a Flat Muppy. Bedtime goes smoothly when at least one of each is in the bed.
 
 To the kid this is not complicated. [The nose determines the role.](claim:claim-nose-role) Any lovey with a messed-up nose is qualified to be Messy Muppy tonight, and any with a flattened one can be Flat Muppy. Within a role they're interchangeable. Across roles they absolutely are not. [A bed full of Messy Muppies and no Flat Muppy is not a bedtime. It's an incident.](obs:observation-02)
+
+![A Messy Muppy, held up to the camera](/images/posts/messy-muppy.jpg) ![A Flat Muppy, held up to the camera](/images/posts/flat-muppy.jpg)
+
+*Left, a Messy Muppy: the nose is all messed up. Right, a Flat Muppy: the nose has been chewed flat. For the first one you may have to take the kid's word for it.*
 
 Most databases would get this wrong in one of two directions. One is to merge all the identical-looking loveys into one record, because the product description matches. The other is to treat every lovey as unique and lose the fact that they're interchangeable for the one purpose that matters. A knowledge graph won't make either assumption on its own; you have to say what's the same and what's different.[^6]
 
@@ -143,13 +157,23 @@ It also quietly fixes the complaint I was going to make about descriptive names.
 
 ## Messy New, or how a name becomes a type
 
-Then there's Messy New, a 3D-printed sloth, and this is where the system gets genuinely sophisticated.
+Then there's [Messy New](thing:messy-new), and this is where the system gets genuinely sophisticated. Messy New is not one sloth. [It's seven, printed from the same model, and each one goes by its color: pink Messy New, teal Messy New, olive Messy New.](obs:observation-05)
 
-Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](obs:observation-04) My working theory is that ["Messy" has stopped being a description of a nose and become something more like a lineage](claim:claim-messy-lineage). The Messy Muppies came first. Messy New is a new thing in the Messy line. The adjective has been promoted to a type.
+![Seven 3D-printed sloths in a row: rose gold, teal, black, olive, red, maroon and pink](/images/posts/messy-new-lineup.jpg)
+
+*The Messy New line, complete as of this writing.*
+
+That's a composite name. One part says what kind of thing it is, and the other tells the members apart. Plenty of real data is keyed this way, a site plus a parameter, a product plus a size, and it works right up until someone prints a second pink one.[^11]
+
+Look at the name. [It isn't "New Muppy" or "Printed Muppy." It's *Messy* New.](obs:observation-04) My working theory is that ["Messy" has stopped being a description of a nose and become something more like a lineage](claim:claim-messy-lineage). The Messy Muppies came first. Messy New is the new branch of the Messy line. The adjective has been promoted to a type.
 
 Languages do this all the time. A brand name becomes the word for the whole category, and the company loses its trademark.[^9] Software does it too, any time a project's first version becomes the template everything after it is measured against. Our household did it in under four years with no committee.
 
-[Whether Messy New is a muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. It's a sloth, so it clears the one firm rule. It's in the Messy line. It came out of a printer. Whether that adds up to cute enough and prominent enough is not my call. I'm treating it as an open question and leaving it to the authority.
+[Whether Messy New is a kind of muppy](claim:claim-messy-new-muppy) is, as of this writing, not something I'm confident about. They're sloths, so they clear the one firm rule. They're in the Messy line. They came out of a printer, seven at a time. Whether that adds up to cute enough and prominent enough is not my call. I'm treating it as an open question and leaving it to the authority.
+
+![An olive 3D-printed sloth in the palm of a hand](/images/posts/olive-messy-new.jpg)
+
+*Olive Messy New, for scale. Cute? Prominent? Not my call.*
 
 Which brings us to the newborn. In a few weeks a new person arrives who will, at some point, need a lovey. The questions write themselves:
 
@@ -214,7 +238,7 @@ For readers who want the longer version. Each note links back to where it came f
 
     In a knowledge graph you'd model the lineage explicitly. Messy New gets a relationship back to Messy Muppy (something like "named after") rather than a name you have to parse to understand. Parsing meaning out of names is one of the oldest bad habits in data management. The kid has, to be fair, made it look elegant.
 
-[^10]: **What the graph looks like.** Here is the registry as RDF, in the Turtle syntax, plus the bedtime rule written as a [SHACL](https://www.w3.org/TR/shacl/) shape, the W3C standard for checking that data meets constraints. The namespace is a placeholder and the lovey headcount is illustrative. The individual loveys get opaque identifiers, the roles get nodes of their own, and each lovey points at the role it currently fills. A bedtime with no Flat Muppy fails validation, which matches the observed behavior of the user.
+[^10]: **What the graph looks like.** Here is the registry as RDF, in the Turtle syntax, plus the bedtime rule written as a [SHACL](https://www.w3.org/TR/shacl/) shape, the W3C standard for checking that data meets constraints. The namespace is a placeholder. The individual loveys get opaque identifiers, the roles get nodes of their own, and each lovey points at the role it currently fills. A bedtime with no Flat Muppy fails validation, which matches the observed behavior of the user.
 
     ```turtle
     @prefix h:    <https://example.org/household/> .
@@ -236,13 +260,19 @@ For readers who want the longer version. Each note links back to where it came f
     # The loveys: same model, identical to adults
     h:lovey-01 h:kind h:muppy ; h:fills h:role-messy .
     h:lovey-02 h:kind h:muppy ; h:fills h:role-messy .
-    h:lovey-03 h:kind h:muppy ; h:fills h:role-flat .
-    h:lovey-04 h:kind h:muppy ; h:fills h:role-flat .
-    h:lovey-01 owl:differentFrom h:lovey-02, h:lovey-03, h:lovey-04 .
+    h:lovey-03 h:kind h:muppy ; h:fills h:role-messy .
+    h:lovey-04 h:kind h:muppy ; h:fills h:role-messy .
+    h:lovey-05 h:kind h:muppy ; h:fills h:role-flat .
+    h:lovey-01 owl:differentFrom h:lovey-02, h:lovey-03, h:lovey-04, h:lovey-05 .
 
     h:big-muppy rdfs:label "Big Muppy" ; h:kind h:muppy .
-    h:messy-new rdfs:label "Messy New" ; h:kind h:sloth ;
-        h:namedAfter h:role-messy .
+
+    # Messy New: a line of prints, each known by its color
+    h:messy-new a skos:Concept ; skos:prefLabel "Messy New" ;
+        skos:broader h:sloth ; h:namedAfter h:role-messy .
+    h:messy-new-04 h:kind h:messy-new ; rdfs:label "olive Messy New" .
+    h:messy-new-07 h:kind h:messy-new ; rdfs:label "pink Messy New" .
+    # ...and five more
 
     # Bedtime needs at least one of each role
     h:BedtimeShape a sh:NodeShape ;
@@ -256,3 +286,5 @@ For readers who want the longer version. Each note links back to where it came f
             sh:qualifiedValueShape [ sh:path h:fills ; sh:hasValue h:role-flat ] ;
             sh:qualifiedMinCount 1 ] .
     ```
+
+[^11]: **Composite names.** Relational databases call this a composite key: no single column identifies a row, but two together do. It's common and it's fine, as long as the combination stays unique and nobody has to parse it back apart. In the graph each print gets an identifier that means nothing (`messy-new-07`), and "pink Messy New" is only its label. A second pink print would be `messy-new-08` with a naming problem, not a collision.

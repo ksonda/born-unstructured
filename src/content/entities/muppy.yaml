@@ -7,3 +7,4 @@ description: >
 relations:
   - predicate: kindOf
     object: sloth
+image: things/muppy.jpg

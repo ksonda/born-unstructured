@@ -10,6 +10,7 @@
   import { onMount } from 'svelte';
   import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
   import type { GraphView, ViewEdge, ViewNode } from '../../lib/graph/neighborhood.ts';
+  import { withBase } from '../../lib/paths.ts';
 
   interface Props {
     view: GraphView;
@@ -83,6 +84,23 @@
         style: { shape: 'round-rectangle', width: 16, height: 16, 'font-size': size(10), 'font-weight': 400, color: soft },
       },
       { selector: 'node.focus', style: { width: 42, height: 42, 'font-size': size(14), 'font-weight': 700 } },
+      // Things with a photo show it, ringed in their type's colour.
+      {
+        selector: 'node[imageUrl]',
+        style: {
+          'background-image': 'data(imageUrl)',
+          'background-fit': 'cover',
+          'background-clip': 'node',
+          width: 46,
+          height: 46,
+          'border-width': 3,
+        },
+      },
+      ...variants.slice(0, 6).map((variant) => ({
+        selector: `node[imageUrl][variant = "${variant}"]`,
+        style: { 'border-color': cssVar(`--${variant}`) },
+      })),
+      { selector: 'node[imageUrl].focus', style: { width: 72, height: 72, 'border-width': 4 } },
       { selector: 'node.more', style: { 'border-style': 'dashed', 'border-color': ink, 'border-width': 2 } },
       {
         selector: 'edge',
@@ -119,7 +137,11 @@
     ] as StylesheetJson;
   }
 
-  const nodeData = (n: ViewNode) => ({ ...n, display: n.hidden > 0 ? `${n.label} (+${n.hidden})` : n.label });
+  const nodeData = (n: ViewNode) => ({
+    ...n,
+    display: n.hidden > 0 ? `${n.label} (+${n.hidden})` : n.label,
+    ...(n.image ? { imageUrl: withBase(n.image) } : {}),
+  });
   const edgeData = (e: ViewEdge) => ({ ...e, status: e.status ?? '' });
 
   /**

@@ -1,7 +1,9 @@
 label: Messy New
-type: object
+type: concept
 description: >
-  A 3D-printed sloth. Printed, not sewn. Status: complicated.
+  A line of 3D-printed sloths, all from the same model. Seven so far, each known by its color:
+  pink Messy New, teal Messy New, and so on. Printed, not sewn. Status: complicated.
 relations:
-  - predicate: isA
+  - predicate: kindOf
     object: sloth
+image: things/messy-new.jpg

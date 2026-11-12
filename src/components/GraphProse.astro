@@ -7,10 +7,21 @@
  * goes. Whatever is passed in the "graph" slot is placed there. Without the
  * marker the slot is not rendered and the page puts the picture elsewhere.
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { imageSize } from '../lib/image-size.ts';
 import { withBase } from '../lib/paths.ts';
 import { GRAPH_MARKER, resolveGraphLinks, splitAtGraph } from '../lib/prose.ts';
 
-const html = resolveGraphLinks(await Astro.slots.render('default'), withBase);
+// Builds run from the project root, where public/ lives.
+const sizeOf = (path: string) => {
+  try {
+    return imageSize(readFileSync(join(process.cwd(), 'public', path)));
+  } catch {
+    return null;
+  }
+};
+const html = resolveGraphLinks(await Astro.slots.render('default'), withBase, sizeOf);
 const parts = splitAtGraph(html);
 const figure = parts && Astro.slots.has('graph') ? await Astro.slots.render('graph') : '';
 ---

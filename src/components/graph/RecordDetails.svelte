@@ -2,6 +2,7 @@
   /** Everything on file about the selected thing, claim or observation. */
   import type { CompiledGraph } from '../../lib/graph/compile.ts';
   import { pathFor } from '../../lib/graph/routes.ts';
+  import { withBase } from '../../lib/paths.ts';
   import { stance, STATUS_LABELS } from '../../lib/graph/stances.ts';
   import {
     citationsOf,
@@ -41,6 +42,7 @@
   {@const observations = observationsAbout(graph, entity.id)}
   <p class="kind"><span class="dot" data-type={entity.type}>{typeLabel[entity.type]}</span></p>
   <h2>{entity.label}</h2>
+  {#if entity.image}<img class="photo" src={withBase(entity.image)} alt={`Photo of ${entity.label}`} width="480" height="480" />{/if}
   {#if entity.aliases.length}
     <p class="aliases">Also known as {entity.aliases.map((a) => a.label).join(', ')}</p>
   {/if}
@@ -158,6 +160,15 @@
 {/if}
 
 <style>
+  .photo {
+    display: block;
+    width: 9rem;
+    height: 9rem;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--rule);
+    margin: 0.25rem 0 0.75rem;
+  }
   .kind {
     color: var(--ink-soft);
     font-size: 0.88rem;

@@ -94,6 +94,7 @@ Stances: `tentative`, `endorses`, `strongly-endorses`, `qualifies`, `questions`,
 | `[Things We Believed](page:beliefs)` | Links to a section of the site: `posts`, `things`, `beliefs`, `explore`, `ask`, `query`, `data` or `vocab`. |
 | `Some sentence.[^1]` and `[^1]: **Title.** The longer version.` | A footnote. They are gathered at the end with links back. Indent continuation paragraphs and code blocks by four spaces. |
 | `::graph::` on a line of its own | Puts the post's graph at that point in the prose instead of at the foot of the page. |
+| `![What it shows](/images/posts/photo.jpg)` | A photo from `public/images/`. Two on one line sit side by side. An italic line right after is its caption. Width and height are added at build time. |
 | `<!-- a note to yourself -->` | Stays in the Markdown and out of the published page. |
 
 `draft: true` keeps a post, and everything it introduces, out of every page, index and export.
@@ -114,13 +115,18 @@ aliases:
 relations:            # plain household facts, asserted without attribution
   - predicate: requires
     object: messy-muppy
+image: things/bedtime.jpg   # optional photo, a path under public/images/
 ```
+
+A thing with an `image` shows the photo on its page, in the explorer's details panel, inside its node in every graph, and as `schema:image` in the RDF.
 
 Keep identifiers stable when names change: add an alias, never rename the file. A thing is published only once a post mentions it, and `public: false` keeps one out entirely (see `grandma.yaml`). The aliases in the example above are made up to show the syntax.
 
 Predicates for claims and relations are declared once in `src/content/vocab/predicates.yaml`, with a label that reads naturally between a subject and an object.
 
 ### What the build checks
+
+Photos are plain JPEGs in `public/images/` (`things/` for thing photos, `posts/` for figures). Resize them to about 1600 px on the long side for figures and 480 px square for things, and strip location data before committing; the repository is public. `npm test` fails if a post or thing points at a photo that isn't there.
 
 The build stops, with every problem listed, if a record refers to a thing that is not in the registry, a claim or observation that has not been published by that post or an earlier one, an undeclared predicate, a private entity or a reused identifier. It warns about observations with no marked passage, claims nobody has taken a position on, and aliases dated after the latest post. `npm test` treats those warnings as failures, so CI keeps the content clean.
 
@@ -204,5 +210,4 @@ tests/                    Compiler, views, real content and RDF export
 
 - **SHACL validation.** The first post says the bedtime rule "can be written down as a constraint and checked". The shape is in that post's last note, but the build does not run it. Publishing a shapes file and validating the graph against it at build time would make that sentence literally true.
 - **Standard vocabulary mappings.** `bu:kindOf` and `bu:isA` are the site's own terms. Declaring them sub-properties of `skos:broader` and `rdf:type` (or exporting those directly) is a small change in `jsonld.ts`.
-- **Images.** No post uses one yet. Astro handles them from `src/assets/` with ordinary Markdown image syntax.
 - **LLM-proposed records.** The proposal suggests having a model draft the frontmatter from the prose and the registry, for you to accept or reject. `npm run new` already prints the registry and the claims on file into each new draft, which is the context such a step would need.

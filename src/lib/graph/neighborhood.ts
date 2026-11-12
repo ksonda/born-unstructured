@@ -21,6 +21,8 @@ export interface ViewNode {
   ring: number;
   /** Connections that exist but are not drawn yet. */
   hidden: number;
+  /** Site path of a photo to draw inside the node. */
+  image?: string;
 }
 
 export interface ViewEdge {
@@ -70,7 +72,7 @@ function fullView(graph: CompiledGraph, options: ViewOptions): Full {
 
   for (const e of graph.entities) {
     if (hiddenTypes.has(e.type)) continue;
-    nodes.set(e.id, { id: e.id, label: e.label, kind: 'entity', variant: e.type, seq: e.mentionedIn[e.mentionedIn.length - 1] });
+    nodes.set(e.id, { id: e.id, label: e.label, kind: 'entity', variant: e.type, seq: e.mentionedIn[e.mentionedIn.length - 1], ...(e.image ? { image: e.image } : {}) });
   }
   for (const e of graph.entities) {
     for (const r of e.relations) {

@@ -23,7 +23,8 @@
 </script>
 
 <figure class="post-graph">
-  <div class="frame">
+  <!-- A post that touches many things gets a taller picture, so labels stay readable. -->
+  <div class="frame" class:tall={view.nodes.length > 14}>
     <GraphCanvas {view} focus={view.centre ?? null} {selected} interactive={false} label="The things in this post and how they connect" onselect={(id) => (selected = id)} />
   </div>
   <figcaption aria-live="polite">
@@ -46,6 +47,10 @@
   .frame {
     height: min(30rem, 78vw);
     min-height: 20rem;
+  }
+  .frame.tall {
+    height: min(46rem, 115vw);
+    min-height: 26rem;
   }
   figcaption {
     display: flex;

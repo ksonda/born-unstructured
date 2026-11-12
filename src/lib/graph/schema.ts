@@ -46,6 +46,11 @@ export const entitySchema = z
     aliases: z.array(alias).default([]),
     /** Plain household facts, asserted without attribution: "the dishwasher is in the kitchen". */
     relations: z.array(z.object({ predicate: z.string(), object: id }).strict()).default([]),
+    /** A photo, as a path under public/images/: "things/messy-muppy.jpg". */
+    image: z
+      .string()
+      .regex(/^[\w./-]+\.(jpe?g|png|webp)$/, 'image must be a path under public/images/, like things/messy-muppy.jpg')
+      .optional(),
     /** Set to false to keep an entity out of every page, index and export. */
     public: z.boolean().default(true),
   })

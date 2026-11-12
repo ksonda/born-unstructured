@@ -1,0 +1,8 @@
+label: teal Messy New
+type: object
+description: >
+  One of the seven Messy New prints. Told apart from the others by its color, and by nothing else.
+relations:
+  - predicate: isA
+    object: messy-new
+image: things/messy-new-teal.jpg

@@ -18,9 +18,22 @@ const GRAPH_LINK = /<a\s+([^>]*?)href="(thing|claim|obs|post|page):([a-z0-9-]+)"
 
 const COMMENT = /<!--[\s\S]*?-->/g;
 
-export function resolveGraphLinks(html: string, withBase: (path: string) => string): string {
+export function resolveGraphLinks(
+  html: string,
+  withBase: (path: string) => string,
+  /** Dimensions of a site image, so the page can reserve its space. */
+  sizeOf: (path: string) => { width: number; height: number } | null = () => null,
+): string {
   // Author notes written as HTML comments stay in the Markdown file and out of the published page.
-  return html.replace(COMMENT, '').replace(GRAPH_LINK, (_match, _before, scheme: string, id: string, _after, text: string) => {
+  // Images written as ![alt](/images/...) live in public/ and need the base path too.
+  return html
+    .replace(COMMENT, '')
+    .replace(/<img src="\/(?!\/)([^"]*)"/g, (_, path: string) => {
+      const size = sizeOf(`/${path}`);
+      const dimensions = size ? ` width="${size.width}" height="${size.height}"` : '';
+      return `<img loading="lazy" decoding="async"${dimensions} src="${withBase(`/${path}`)}"`;
+    })
+    .replace(GRAPH_LINK, (_match, _before, scheme: string, id: string, _after, text: string) => {
     if (scheme === 'obs') return `<span class="passage" id="${id}">${text}</span>`;
     if (scheme === 'post') return `<a href="${withBase(`/posts/${id}/`)}">${text}</a>`;
     if (scheme === 'page') return `<a href="${withBase(`/${id}/`)}">${text}</a>`;

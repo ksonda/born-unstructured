@@ -53,6 +53,8 @@ export interface Entity {
   relations: { predicate: string; object: string }[];
   /** Positions (see Post.seq) of every post that mentions it, ascending. */
   mentionedIn: number[];
+  /** Site path of its photo, "/images/things/messy-muppy.jpg", if it has one. */
+  image?: string;
 }
 
 export interface Post {
@@ -426,6 +428,7 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
       aliases,
       relations,
       mentionedIn: appearances,
+      ...(data.image ? { image: `/images/${data.image}` } : {}),
     });
   }
 

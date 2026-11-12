@@ -30,9 +30,14 @@ const eventsIn = (seq: number) => timeline.filter((e): e is Exclude<TimelineEven
 ---
 
 <Base title={capitalise(entity.label)} description={entity.description} jsonld={nodeFor(graph, entity.id)}>
-  <p class="quiet"><span class="dot" data-type={entity.type}>{TYPE_LABELS[entity.type].one}</span></p>
-  <h1>{capitalise(entity.label)}</h1>
-  {entity.description && <p class="lede">{entity.description}</p>}
+  <div class:list={['thing-head', { 'has-photo': entity.image }]}>
+    <div>
+      <p class="quiet"><span class="dot" data-type={entity.type}>{TYPE_LABELS[entity.type].one}</span></p>
+      <h1>{capitalise(entity.label)}</h1>
+      {entity.description && <p class="lede">{entity.description}</p>}
+    </div>
+    {entity.image && <img class="thing-photo" src={withBase(entity.image)} alt={`Photo of ${entity.label}`} width="480" height="480" />}
+  </div>
 
   <dl class="form">
     {

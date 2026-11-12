@@ -42,6 +42,7 @@ export function jsonLdContext(graph: CompiledGraph): Node {
     headline: 'schema:headline',
     datePublished: { '@id': 'schema:datePublished', '@type': 'xsd:date' },
     page: ref('schema:url'),
+    image: ref('schema:image'),
     mentions: ref('schema:mentions'),
     about: ref('schema:about'),
     subject: ref('rdf:subject'),
@@ -158,6 +159,7 @@ function recordNodes(graph: CompiledGraph): Node[] {
       description: e.description,
       firstAppearedIn: `id:${graph.posts.find((p) => p.seq === e.mentionedIn[0])!.id}`,
       page: page(e.id),
+      ...(e.image ? { image: graph.site.url + e.image } : {}),
     };
     for (const relation of e.relations) {
       const key = `bu:${relation.predicate}`;
