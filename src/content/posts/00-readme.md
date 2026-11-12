@@ -39,7 +39,7 @@ I wear four hats, usually at the same time, usually at 12:30 a.m.
 
 Every post is published twice: once as a post you can read, and once as data in a real knowledge graph you can query.
 
-The graph is built in RDF, the W3C standard for describing things as small three-part statements: subject, predicate, object.[^4] "Messy Muppy, is a, muppy." "Flat Muppy, has condition, flat." Each person, object and idea in the house gets a stable identifier, and each post adds statements or revises old ones. The vocabulary that says what kinds of things exist and how they relate is an ontology,[^5] which here is a fancy word for "house rules, written down."
+The graph is built in RDF, the W3C standard for describing things as small three-part statements: subject, predicate, object.[^4] "Messy Muppy, is a, muppy." "Flat Muppy, has condition, flat." Each person, object and idea in the house gets a stable identifier, and each post adds statements or revises old ones. The vocabulary that says what kinds of things exist and how they relate is an ontology.[^5]
 
 Statements also carry provenance: who said it, in which post, and how sure we were.[^6] Parenting beliefs have a short half-life, so this gets used. When we change our minds, the old claim stays on the record and moves to a page called [Things We Believed](page:beliefs), where it can be studied by future historians, and by us at 2 a.m.
 
