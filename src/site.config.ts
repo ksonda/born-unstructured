@@ -9,7 +9,7 @@ export const SITE = {
    * analytics at all. The tag is only added to production builds, never to `npm run dev`.
    * The ID is public by design: it appears in every page's HTML.
    */
-  googleAnalyticsId: '',
+  googleAnalyticsId: 'G-2GM7KJF8JE',
   /** The people whose retractions get their own question on the Ask page. */
   household: ['dad', 'mom'],
   /**
