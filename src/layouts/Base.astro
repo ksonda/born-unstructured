@@ -36,6 +36,10 @@ const footer = [
 ];
 const source = { href: 'https://github.com/ksonda/born-unstructured#readme', label: 'How it works' };
 const here = Astro.url.pathname;
+const gaId = import.meta.env.PROD ? SITE.googleAnalyticsId : '';
+if (gaId && !/^G-[A-Z0-9]+$/.test(gaId)) {
+  throw new Error(`SITE.googleAnalyticsId should look like "G-XXXXXXXXXX", got "${gaId}"`);
+}
 const readme = withBase('/posts/readme/');
 // The README lives under /posts/, so Posts is not the current page when the README is.
 const isCurrent = (href: string) => {
@@ -61,6 +65,19 @@ const isCurrent = (href: string) => {
     <meta property="og:description" content={description} />
     <meta name="generator" content={Astro.generator} />
     {jsonld && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonld)} />}
+    {gaId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />}
+    {
+      gaId && (
+        <script is:inline define:vars={{ gaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      )
+    }
   </head>
   <body>
     <header class="site-header">
