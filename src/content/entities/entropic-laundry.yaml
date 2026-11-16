@@ -1,0 +1,10 @@
+label: entropic laundry management
+type: concept
+description: >
+  What replaced the dresser system once nobody had time to fold. Clean loads went on the bed
+  as a warm, unindexed heap and were excavated on demand. It ran, in the sense that a river runs.
+aliases:
+  - the heap
+relations:
+  - predicate: replaces
+    object: dresser-system

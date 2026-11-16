@@ -1,0 +1,12 @@
+label: the bin system
+type: concept
+description: >
+  Fewer clothes, open bins with labels, hangers for what wrinkles, and two hampers. Nobody folds
+  anything. Borrowed loosely from a Montessori classroom. In use for both kids and Mom; Dad is
+  still on the legacy system.
+aliases:
+  - the bins
+  - Montessori laundry
+relations:
+  - predicate: replaces
+    object: entropic-laundry

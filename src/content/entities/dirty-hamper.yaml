@@ -1,0 +1,7 @@
+label: the dirty hamper
+type: object
+description: >
+  For clothes that need washing. Everything in it goes to the wash.
+relations:
+  - predicate: leadsTo
+    object: wash-and-dry

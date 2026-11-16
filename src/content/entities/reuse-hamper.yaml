@@ -1,0 +1,10 @@
+label: the reuse hamper
+type: object
+description: >
+  For clothes that are worn but not dirty. Its contents go back on a body, not into the wash.
+  Replaces The Chair, which was never a storage location.
+aliases:
+  - worn, not dirty
+relations:
+  - predicate: leadsTo
+    object: worn
