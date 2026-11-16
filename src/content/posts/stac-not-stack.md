@@ -103,7 +103,7 @@ Here's what's actually in production. [Mom](thing:mom)'s bins sort by garment ty
 
 *Mom's catalog. The reuse hamper is the basket on top of the shelf, and it is winning.*
 
-The newborn's system is the interesting one. Clothes are partitioned by size, into 0–3, 3–6 and 6–9 months. A baby size is really a date range, so this is a time axis, the temporal half of SpatioTemporal. Everything else is sorted by job, into bibs, burp cloths, washcloths, sheets, swaddles, and swaddle blankets, which are not the same bin as swaddles. Don't worry about it. Outerwear and hats get a drawer, and there's a basket labeled Miscellaneous, the catch-all every taxonomy needs.
+The newborn's clothes are partitioned by size, into 0–3, 3–6 and 6–9 months. A baby size is really a date range, so this is a time axis, the temporal half of SpatioTemporal. Everything else is sorted by job, into bibs, burp cloths, washcloths, sheets, swaddles, and swaddle blankets, which are not the same bin as swaddles. Don't worry about it. Outerwear and hats get a drawer, and there's a basket labeled Miscellaneous, the catch-all every taxonomy needs.
 
 ![The kids' system: baskets for miscellaneous, sheets, swaddle blankets, burp cloths and swaddles over rows of labeled drawers, including 0M-3M, 3M-6M and 6M-9M](/images/posts/bins-kids.jpg)
 
