@@ -1,0 +1,7 @@
+label: clean, in its bin
+type: concept
+description: >
+  A garment state. Washed and sorted into the bin its label says. Not folded.
+relations:
+  - predicate: leadsTo
+    object: worn

@@ -1,0 +1,8 @@
+label: sort by label
+type: routine
+description: >
+  The step that replaced folding. Each clean garment goes in the bin its label names. Anyone who
+  can read can do it, which was the point.
+relations:
+  - predicate: leadsTo
+    object: clean-in-bin

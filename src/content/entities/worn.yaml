@@ -1,0 +1,10 @@
+label: worn
+type: concept
+description: >
+  A garment state. On a body, or just off one. Goes next to the reuse hamper or the dirty hamper,
+  never back into a clean bin.
+relations:
+  - predicate: leadsTo
+    object: reuse-hamper
+  - predicate: leadsTo
+    object: dirty-hamper

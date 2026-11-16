@@ -1,0 +1,7 @@
+label: wash and dry
+type: routine
+description: >
+  The machines. Never the bottleneck.
+relations:
+  - predicate: leadsTo
+    object: sort-by-label

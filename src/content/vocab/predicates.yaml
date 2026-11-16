@@ -32,3 +32,15 @@
 - id: marriedTo
   label: is married to
   description: The subject and the object are married. Stated once; it holds in both directions.
+
+- id: replaces
+  label: replaced
+  description: The subject took over the job the object used to do. The object is retired, not deleted.
+
+- id: leadsTo
+  label: can move on to
+  description: A step or state in a routine. Things in the subject can go next to the object.
+
+- id: moreSustainableThan
+  label: is more sustainable than
+  description: The subject keeps working under load that made the object fall apart.
