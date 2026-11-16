@@ -13,7 +13,7 @@ observations:
     observedBy: dad
     about: [dresser-system, entropic-laundry, the-authority]
   - id: observation-07
-    text: "The second kid forced a redesign. Entropy doesn't scale to two."
+    text: "The second kid forced a redesign."
     observedBy: dad
     about: [entropic-laundry, bin-system, baby]
   - id: observation-08
@@ -55,7 +55,7 @@ Before kids, our laundry ran on [a dresser](thing:dresser-system). Everything go
 
 Then [the first kid](thing:the-authority) arrived and [the dresser system fell apart. We were both overwhelmed, nobody had time to fold](obs:observation-06), and laundry management became [purely entropic](thing:entropic-laundry). A clean load came out of the dryer, got dumped on the bed, and sat there in a warm, unindexed heap. Somebody needed pajamas at 6:45 pm, the heap got excavated, and half of it became the next load by sheer contact. That system ran, in the sense that a river runs, for about four years.
 
-[The second kid](thing:baby) [forced a redesign, because entropy doesn't scale to two.](obs:observation-07) This time we stopped folding on purpose, as a matter of policy. The replacement is borrowed, loosely, from our older kid's Montessori school,[^1] with a generous helping of good-enough engineering (more on that later). Montessori classrooms are built so that a three-year-old can take something off an open shelf and put it back where it lives, without an adult. ([Here's a representative one](https://raintreemontessori.org/current/nine-qualities-of-an-authentic-montessori-school/#iLightbox[gallery11651]/0).) Every item has a place, and the place is obvious. If a preschooler can run that system before snack time, two tired adults can probably run a version of it at 11 pm.
+[The second kid](thing:baby) [forced a redesign.](obs:observation-07) This time we stopped folding on purpose, as a matter of policy. The replacement is borrowed, loosely, from our older kid's Montessori school,[^1] with a generous helping of good-enough engineering (more on that later). Montessori classrooms are built so that a three-year-old can take something off an open shelf and put it back where it lives, without an adult. ([Here's a representative one](https://raintreemontessori.org/current/nine-qualities-of-an-authentic-montessori-school/#iLightbox[gallery11651]/0).) Every item has a place, and the place is obvious. If a preschooler can run that system before snack time, two tired adults can probably run a version of it at 11 pm.
 
 Ours comes down to fewer clothes, [a labeled place for every kind of thing](thing:bin-system), and no step that requires a skill I don't have. [It covers both kids and mom so far.](obs:observation-08) The thesis, stated plainly for the knowledge graph's benefit, is that [bins are more sustainable than dressers](claim:claim-bins-sustainable).
 
@@ -111,7 +111,7 @@ The newborn's system is the interesting one. Clothes are partitioned by size, in
 
 ## Two hampers
 
-Our household, and perhaps others, has a third laundry state, worn but not dirty. Jeans worn for an afternoon. A sweater worn over something else for an hour. These used to go on The Chair, which is not a storage location, has no label, and grows until it's load-bearing.
+Our household, and perhaps others, has a third laundry state, worn but not dirty. Jeans worn for an afternoon. A sweater worn over something else for an hour. These used to pile up on The Chair, which was never meant for storage and has no label, so the pile just kept growing.
 
 We gave that state its own hamper. [The dirty hamper](thing:dirty-hamper) goes to the wash. [The reuse hamper](thing:reuse-hamper) goes back on a body. That's the whole change, and it fixes a lot. Clean bins stay clean because nothing half-worn goes back in them, nothing wearable gets washed out of guilt, and the chair gets to be a chair again. In my wife's closet, the dirty hamper is a gray mesh pop-up and the reuse hamper is a plain laundry basket on top of the shelf.
 
