@@ -7,7 +7,7 @@ draft: false
 # Referenced only in relations, or in passing in the prose, so listed here.
 mentions:
   [roud-129, roud-4959, scenes-de-la-vie-de-boheme, luigi-illica, giuseppe-giacosa, au-clair-grandpa,
-   first-sounds-playback, birth-record-format-2021]
+   first-sounds-playback, birth-record-format-2021, coirault-103-16]
 
 observations:
   - id: observation-12
@@ -38,6 +38,10 @@ observations:
     text: "L'arbre est dans ses feuilles nests the same way, in French: the branch is in the tree, the knot is in the branch, the hole is in the knot."
     observedBy: dad
     about: [larbre-est-dans-ses-feuilles, roud-129]
+  - id: observation-25
+    text: "Coirault 103 16, Le bois d'amour, goes wood, tree, branch, nest, egg, bird and ends in a heart. Kan.bzh puts it at Laforte IV Kb 3 and RADdO at IV Kb 4. Neither lists a version from Louisiana."
+    observedBy: dad
+    about: [coirault-103-16, laforte-catalogue, larbre-est-dans-ses-feuilles]
   - id: observation-21
     text: "500 Miles is on the car's playlist, in the version from Inside Llewyn Davis."
     observedBy: dad
@@ -93,7 +97,7 @@ claims:
   - id: claim-roud-129-coirault
     label: "Roud 129 has a close match in Coirault's catalogue of French songs"
     short: "a match in Coirault?"
-    about: [roud-129, coirault-repertoire, larbre-est-dans-ses-feuilles]
+    about: [roud-129, coirault-repertoire, coirault-103-16, larbre-est-dans-ses-feuilles]
     attributedTo: dad
   - id: claim-arbre-roud-129
     label: "L'arbre est dans ses feuilles belongs to the Roud 129 family"
@@ -107,8 +111,9 @@ assessments:
   - id: assessment-13
     claim: claim-roud-129-coirault
     by: dad
-    stance: questions
-    note: "If L'arbre est dans ses feuilles is in Coirault, its number is the match. Nobody has published the crosswalk, and I haven't looked it up yet."
+    stance: qualifies
+    evidence: [observation-25]
+    note: "There's a match, but between families, not songs. Coirault 103 16, Le bois d'amour, ends in a heart like L'arbre does. Laforte puts it at IV Kb 3 or 4, depending on the source. L'arbre itself isn't in either catalogue."
   - id: assessment-06
     claim: claim-eight-copies
     by: dad
@@ -252,7 +257,7 @@ We sing "[Frère Jacques](https://www.youtube.com/watch?v=0Raj4EOBL0Q)" [sometim
 
 "[Brother John](thing:brother-john)" is the textbook English version, but it has an interesting semantic change. In "[Frère Jacques](thing:frere-jacques)," someone asks the friar whether he's asleep and tells him to ring the bells for *matins*, the early-morning prayers. He's the bell-ringer, and he's overslept. In English, "morning bells are ringing." The bells are already going, and Brother John is merely late.[^9] The plot has changed! So is ["Brother John" a faithful translation of "Frère Jacques,"](claim:claim-brother-john-faithful) or an adaptation imbued with new meaning?
 
-In another example, let's explore some related songs about streets. The most famous French song about [the most famous avenue in Paris](thing:avenue-des-champs-elysees) started out as "[Waterloo Road](https://www.youtube.com/watch?v=6a2ePTpPCT0)," a 1968 single about [a street in London](thing:waterloo-road-london) by British band Jason Crest. It is quite obscure (~243k Spotify listens). The next year, the lyricist [Pierre Delanoë](thing:pierre-delanoe) wrote French words for the same tune and [Joe Dassin](thing:joe-dassin) sang it to a slightly different instrumental track, and "[Les Champs-Élysées](https://www.youtube.com/watch?v=pvgjEdnTgXA)" became the globally recognized anthem of Paris (158 million Spotify listens).[^10]
+In another example, let's explore some related songs about streets. The most famous French song about [the most famous avenue in Paris](thing:avenue-des-champs-elysees) started out as "[Waterloo Road](https://www.youtube.com/watch?v=6a2ePTpPCT0)," a 1968 single about [a street in London](thing:waterloo-road-london) by British band Jason Crest. It is quite obscure (~243k Spotify listens as of November 2026). The next year, the lyricist [Pierre Delanoë](thing:pierre-delanoe) wrote French words for the same tune and [Joe Dassin](thing:joe-dassin) sang it to a slightly different instrumental track, and "[Les Champs-Élysées](https://www.youtube.com/watch?v=pvgjEdnTgXA)" became the globally recognized anthem of Paris (158 million Spotify listens in the same month).[^10]
 
 [Set the two side by side and they share almost every scene, in the same order: a chance meeting on a street, a night in a basement full of guitars, birds at dawn, and a chorus promising that the street has whatever you're after. What Delanoë changed is the story. In London, she picks him up and takes him to meet her friends, and in the morning he walks home alone, humming. In Paris, he does the talking, and by dawn two strangers are in love.](obs:observation-23) Ah Paris.
 
@@ -385,6 +390,6 @@ In lineage order, official uploads where they exist.
 
 [^13]: **The Roud Folk Song Index**, compiled by Steve Roud and searchable at the [Vaughan Williams Memorial Library](https://www.vwml.org/roudnumber/129), gives each number a stable web address. Roud numbers are on [Wikidata](https://www.wikidata.org/wiki/Property:P1829) as property P1829, and MusicBrainz keeps the index as a series of works, so the identifiers already show up across the linked-data web. Older catalogues work the same way at a smaller scale. The 305 Child Ballads, numbered by Francis James Child in the 1880s and 1890s, are each a family of variants too.
 
-[^14]: **French folk song catalogues.** Patrice Coirault's *Répertoire des chansons françaises de tradition orale* was revised and published by the Bibliothèque nationale de France in three volumes (1996–2007), and identifies about 2,000 song types. Conrad Laforte's *Catalogue de la chanson folklorique française* (Presses de l'Université Laval, six volumes, 1977–1987) is its older Quebec counterpart. In 2004, the Quebec folklore journal *Rabaska* asked researchers who had used both to [compare them](https://doi.org/10.7202/039391ar). <!-- To check: look up the Coirault and Laforte numbers for "L'arbre est dans ses feuilles," if it has them. -->
+[^14]: **French folk song catalogues.** Patrice Coirault's *Répertoire des chansons françaises de tradition orale* was revised and published by the Bibliothèque nationale de France in three volumes (1996–2007), and identifies about 2,000 song types. Conrad Laforte's *Catalogue de la chanson folklorique française* (Presses de l'Université Laval, six volumes, 1977–1987) is its older Quebec counterpart. In 2004, the Quebec folklore journal *Rabaska* asked researchers who had used both to [compare them](https://doi.org/10.7202/039391ar). "L'arbre est dans ses feuilles" isn't in either one, but [its closest French relative also ends in a heart](obs:observation-25): [Coirault 103 16](thing:coirault-103-16), *Le bois d'amour*. The Breton database [Kan.bzh](https://tof.kan.bzh/chant-00682.html) puts that family at Laforte IV Kb 3, and the Vendée archive [RADdO](https://raddo-ethnodoc.com/raddo/document/111397) puts it at IV Kb 4.
 
 [^15]: **900 Miles to 500 to Dylan.** The [Wikipedia article on "500 Miles"](https://en.wikipedia.org/wiki/500_Miles) has the distances (from the folklorist Norm Cohen), the covers (the Kingston Trio and Peter, Paul and Mary in 1962, and a country hit for Bobby Bare in 1963) and a long list of translations, including a 1965 Slovenian hit. Jochen Markhorst's [essay on "I Was Young When I Left Home"](https://bob-dylan.org.uk/archives/21531) traces which of West's lines Dylan kept and what was left by the Basement Tapes. The speech quote is from Markhorst's [second installment](https://bob-dylan.org.uk/?p=21564), which is about exactly this chain.

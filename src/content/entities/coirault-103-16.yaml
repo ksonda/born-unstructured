@@ -1,0 +1,17 @@
+label: "Coirault 103 16: Le bois d'amour"
+type: concept
+description: >
+  A song type in Coirault's catalogue: a little wood of love, then a tree, a branch, a nest, an egg,
+  a bird, and at the end a heart with a message written on it. The closest French match for
+  L'arbre est dans ses feuilles, which also ends in a heart. Laforte files the same family under
+  IV Kb (container and/or contents), as number 3 according to Kan.bzh and number 4 according to
+  RADdO.
+aliases:
+  - Le bois d'amour
+relations:
+  - predicate: inScheme
+    object: coirault-repertoire
+types: [skos:Concept]
+sameAs:
+  - https://tof.kan.bzh/chant-00682.html
+language: fr
