@@ -1,0 +1,11 @@
+label: I Was Young When I Left Home
+type: concept
+description: >
+  Bob Dylan, December 1961, from a home tape made in Minnesota. His own song, built on
+  900 Miles, with two couplets lifted almost whole from Hedy West's 500 Miles.
+relations:
+  - predicate: quotesFrom
+    object: five-hundred-miles
+    by: [bob-dylan]
+    date: "1961-12-22"
+language: en

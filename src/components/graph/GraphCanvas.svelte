@@ -46,7 +46,7 @@
     const paper = cssVar('--paper');
     const card = cssVar('--card');
     const blue = cssVar('--blue');
-    const variants = ['person', 'object', 'role', 'routine', 'concept', 'place', 'observation', 'held', 'disputed', 'withdrawn', 'unassessed'];
+    const variants = ['person', 'agent', 'object', 'role', 'routine', 'concept', 'place', 'observation', 'held', 'disputed', 'withdrawn', 'unassessed'];
     const body = cssVar('--font-body');
     const compact = (styledCompact = isCompact());
     const size = (px: number) => (compact ? Math.round(px * 1.3) : px);
@@ -96,7 +96,7 @@
           'border-width': 3,
         },
       },
-      ...variants.slice(0, 6).map((variant) => ({
+      ...variants.slice(0, 7).map((variant) => ({
         selector: `node[imageUrl][variant = "${variant}"]`,
         style: { 'border-color': cssVar(`--${variant}`) },
       })),

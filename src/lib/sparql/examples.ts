@@ -16,6 +16,7 @@ export function sparqlPrefixes(idBase: string, vocabBase: string): string {
     `PREFIX bu: <${vocabBase}>`,
     'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
     'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
+    'PREFIX owl: <http://www.w3.org/2002/07/owl#>',
     'PREFIX skos: <http://www.w3.org/2004/02/skos/core#>',
     'PREFIX prov: <http://www.w3.org/ns/prov#>',
     'PREFIX dcterms: <http://purl.org/dc/terms/>',
@@ -140,6 +141,27 @@ ASK {
          rdf:object ?o .
   ?s ?p ?o .
 }`),
+    },
+    {
+      id: 'lineage',
+      title: 'What was made from what, by whom, and when',
+      note: 'Every copy the graph asserts, in PROV\'s long form: the source, the kind of activity that made the copy, who was responsible and when, where anyone knows. An empty "who" means nobody knows, like whoever first sang Brother John in English. A copy that is only claimed does not come back, because recording a claim does not assert it.',
+      query: q(`
+SELECT ?copyLabel ?kindLabel ?sourceLabel (GROUP_CONCAT(?agentLabel; separator=", ") AS ?who) ?when WHERE {
+  VALUES ?qualified { prov:qualifiedDerivation prov:qualifiedPrimarySource prov:qualifiedQuotation }
+  ?copy ?qualified ?how .
+  ?how prov:entity ?source ;
+       prov:hadActivity ?activity .
+  ?activity a ?kind .
+  ?kind rdfs:subClassOf prov:Activity ;
+        rdfs:label ?kindLabel .
+  ?copy rdfs:label ?copyLabel .
+  ?source rdfs:label ?sourceLabel .
+  OPTIONAL { ?activity prov:wasAssociatedWith ?agent . ?agent rdfs:label ?agentLabel }
+  OPTIONAL { ?activity dcterms:date ?when }
+}
+GROUP BY ?copyLabel ?kindLabel ?sourceLabel ?when
+ORDER BY STR(?when)`),
     },
     {
       id: 'crying',

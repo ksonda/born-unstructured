@@ -1,0 +1,11 @@
+label: Brother John
+type: concept
+description: >
+  The traditional English version of Frère Jacques. Same tune, same scansion, different plot: the
+  morning bells are already ringing, and Brother John is merely late. What the in-laws sing.
+aliases:
+  - Are You Sleeping
+relations:
+  - predicate: translationOf
+    object: frere-jacques
+language: en

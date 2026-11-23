@@ -1,0 +1,7 @@
+label: the in-laws
+type: person
+description: >
+  Mom's parents. English-speaking, and the household's main source of Brother John.
+relations:
+  - predicate: parentOf
+    object: mom

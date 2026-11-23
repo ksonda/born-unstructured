@@ -1,0 +1,16 @@
+label: 500 Miles
+type: concept
+description: >
+  Hedy West's 1961 rewrite of 900 Miles, with a new tune and several of the old verses. Covered
+  by the Kingston Trio and Peter, Paul and Mary in 1962, and a country hit for Bobby Bare in 1963.
+aliases:
+  - Five Hundred Miles
+  - 500 Miles Away from Home
+relations:
+  - predicate: adaptationOf
+    object: nine-hundred-miles
+    by: [hedy-west]
+    date: "1961"
+language: en
+sameAs:
+  - https://en.wikipedia.org/wiki/500_Miles

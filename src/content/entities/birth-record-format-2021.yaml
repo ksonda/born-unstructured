@@ -1,0 +1,9 @@
+label: the French birth record model of 2021
+type: concept
+description: >
+  The justice ministry's current model for a birth record, which lays out the child and each
+  parent as labeled fields. Only the closing line is still a sentence.
+language: fr
+relations:
+  - predicate: revisionOf
+    object: birth-record-format-1803

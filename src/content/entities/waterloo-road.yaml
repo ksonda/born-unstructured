@@ -1,0 +1,9 @@
+label: Waterloo Road
+type: concept
+description: >
+  A 1968 single by the British band Jason Crest, lyrics by Mike Deighan, music by Mike Wilsh.
+  A street song about London. It did not chart. Its adaptation did a lot better.
+relations:
+  - predicate: setIn
+    object: waterloo-road-london
+language: en

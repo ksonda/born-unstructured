@@ -35,6 +35,8 @@ I wear four hats, usually at the same time, usually at 12:30 a.m.
 - **Semantic tech enthusiast.** My day job involves giving rivers permanent identifiers, so that different agencies can agree they're talking about the same creek.[^3] I find this deeply satisfying, and I have accepted what that says about me.
 - **Tired parent and husband.** This is the main role. The others are side projects.
 
+I'm also a dual US-French citizen, so the household runs on two sets of bureaucratic paperwork.
+
 ## How it works
 
 Every post is published twice: once as a post you can read, and once as data in a real knowledge graph you can query.

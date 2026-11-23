@@ -1,0 +1,14 @@
+label: La Bohème
+type: concept
+description: >
+  Puccini's opera, libretto by Luigi Illica and Giuseppe Giacosa, first performed in Turin on
+  February 1, 1896. Set in a Paris garret in 1837. In the first act, Mimì's candle goes out, she
+  knocks on Rodolfo's door for a light, drops her key, and they fall for each other by moonlight.
+relations:
+  - predicate: adaptationOf
+    object: scenes-de-la-vie-de-boheme
+    by: [giacomo-puccini, luigi-illica, giuseppe-giacosa]
+    date: "1896"
+language: it
+sameAs:
+  - https://en.wikipedia.org/wiki/La_boh%C3%A8me

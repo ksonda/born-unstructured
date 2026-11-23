@@ -1,0 +1,13 @@
+label: Five Hundred Miles (Inside Llewyn Davis)
+type: object
+description: >
+  Justin Timberlake, Carey Mulligan and Stark Sands as Jim, Jean and Troy, singing Hedy West's song
+  at the Gaslight Café in the Coen brothers' Inside Llewyn Davis (2013). A cover, by fictional
+  characters, of a song best known from a cover. The version on the car's Spotify.
+relations:
+  - predicate: appearsIn
+    object: inside-llewyn-davis
+  - predicate: recordingOf
+    object: five-hundred-miles
+    date: "2013"
+language: en

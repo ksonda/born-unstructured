@@ -1,0 +1,10 @@
+label: Grandpa
+type: person
+description: >
+  Dad's dad. Sings to the grandchildren in French, which is how the household's lullaby
+  repertoire got its first entry.
+aliases:
+  - my dad
+relations:
+  - predicate: parentOf
+    object: dad

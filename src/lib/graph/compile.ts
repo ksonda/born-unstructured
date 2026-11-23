@@ -8,7 +8,7 @@
  * This module is pure: no file system, no Astro. That keeps it testable and
  * lets the same code run in the build, in the browser and on the command line.
  */
-import type { EntityData, EntityType, PostData, PredicateData, StanceId } from './schema.ts';
+import type { CopyKindData, EntityData, EntityType, PostData, PredicateData, StanceId } from './schema.ts';
 
 // ---------------------------------------------------------------- input ----
 
@@ -29,6 +29,8 @@ export interface CompileInput {
   posts: RawPost[];
   entities: RawEntity[];
   predicates: PredicateData[];
+  /** Kinds of copy from vocab/copies.yaml. Optional so older inputs still compile. */
+  copyKinds?: CopyKindData[];
 }
 
 export interface CompileOptions {
@@ -44,13 +46,27 @@ export interface Alias {
   since: number;
 }
 
+export interface Relation {
+  predicate: string;
+  object: string;
+  /** Who did it, for links that make a copy. */
+  by: string[];
+  /** When, as YYYY, YYYY-MM or YYYY-MM-DD, for links that make a copy. */
+  date: string | null;
+}
+
 export interface Entity {
   id: string;
   label: string;
   type: EntityType;
   description: string;
   aliases: Alias[];
-  relations: { predicate: string; object: string }[];
+  relations: Relation[];
+  /** Reference pages elsewhere, published as schema:sameAs. */
+  sameAs: string[];
+  language: string | null;
+  /** Extra RDF classes, as prefixed names. */
+  types: string[];
   /** Positions (see Post.seq) of every post that mentions it, ascending. */
   mentionedIn: number[];
   /** Site path of its photo, "/images/things/messy-muppy.jpg", if it has one. */
@@ -122,7 +138,12 @@ export interface Predicate {
   id: string;
   label: string;
   description: string;
+  /** Standard terms this predicate narrows, as prefixed names. */
+  subPropertyOf: string[];
 }
+
+/** A kind of copy, published as a subclass of prov:Activity. */
+export type CopyKind = CopyKindData;
 
 export interface CompiledGraph {
   site: { url: string; idBase: string; vocabBase: string };
@@ -134,6 +155,7 @@ export interface CompiledGraph {
   claims: Claim[];
   assessments: Assessment[];
   predicates: Predicate[];
+  copyKinds: CopyKind[];
 }
 
 export interface CompileResult {
@@ -209,6 +231,8 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     .sort((a, b) => a.id.localeCompare(b.id));
 
   const predicates = new Map(input.predicates.map((p) => [p.id, p]));
+  const copyKinds = input.copyKinds ?? [];
+  const kindForPredicate = new Map<string, CopyKindData>();
   const entityInput = new Map(publicEntities.map((e) => [e.id, e.data]));
 
   // One identifier space for everything, because everything shares /id/.
@@ -392,6 +416,18 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
     return posts.find((post) => post.published >= day)?.seq ?? null;
   };
 
+  for (const kind of copyKinds) {
+    for (const predicate of kind.predicates) {
+      if (!predicates.has(predicate)) {
+        problems.push(`vocab/copies.yaml "${kind.id}": predicate "${predicate}" is not declared in vocab/predicates.yaml`);
+      } else if (kindForPredicate.has(predicate)) {
+        problems.push(`vocab/copies.yaml "${kind.id}": predicate "${predicate}" already belongs to "${kindForPredicate.get(predicate)!.id}"`);
+      } else {
+        kindForPredicate.set(predicate, kind);
+      }
+    }
+  }
+
   const entities: Entity[] = [];
   for (const { id, data } of publicEntities) {
     const where = `entities/${id}`;
@@ -406,8 +442,14 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
         problems.push(`${at}: predicate "${relation.predicate}" is not declared in vocab/predicates.yaml`);
         return false;
       }
-      return requireEntity(relation.object, at, 'object');
-    });
+      const kind = kindForPredicate.get(relation.predicate);
+      if ((relation.by.length || relation.date) && (!kind || kind.qualifiedAs === 'none')) {
+        problems.push(`${at}: "by" and "date" only go on links that make a copy (see vocab/copies.yaml), not on "${relation.predicate}"`);
+      }
+      const agentsOk = relation.by.every((agent) => requireEntity(agent, at, 'by'));
+      return requireEntity(relation.object, at, 'object') && agentsOk;
+    })
+      .map((relation) => ({ predicate: relation.predicate, object: relation.object, by: relation.by, date: relation.date ?? null }));
     const aliases = data.aliases.flatMap((alias) => {
       const label = typeof alias === 'string' ? alias : alias.label;
       if (typeof alias === 'string' || alias.since === undefined) return [{ label, since: appearances[0] }];
@@ -427,6 +469,9 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
       description: data.description.trim(),
       aliases,
       relations,
+      sameAs: data.sameAs,
+      language: data.language ?? null,
+      types: data.types,
       mentionedIn: appearances,
       ...(data.image ? { image: `/images/${data.image}` } : {}),
     });
@@ -435,7 +480,9 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
   // Relations may only point at entities that made it into the graph.
   const present = new Set(entities.map((e) => e.id));
   for (const entity of entities) {
-    entity.relations = entity.relations.filter((relation) => present.has(relation.object));
+    entity.relations = entity.relations
+      .filter((relation) => present.has(relation.object))
+      .map((relation) => ({ ...relation, by: relation.by.filter((agent) => present.has(agent)) }));
   }
 
   for (const claim of claims) {
@@ -455,7 +502,8 @@ export function compileGraph(input: CompileInput, options: CompileOptions): Comp
       observations,
       claims,
       assessments,
-      predicates: input.predicates.map((p) => ({ id: p.id, label: p.label, description: p.description })),
+      predicates: input.predicates.map((p) => ({ id: p.id, label: p.label, description: p.description, subPropertyOf: p.subPropertyOf })),
+      copyKinds,
     },
     warnings,
   };

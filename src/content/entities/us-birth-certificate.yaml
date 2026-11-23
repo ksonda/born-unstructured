@@ -1,0 +1,9 @@
+label: the US birth certificate
+type: object
+description: >
+  The newborn's birth as the issuing state records it. In English, in that state's format, with
+  that state's number. The original.
+relations:
+  - predicate: documents
+    object: baby
+language: en

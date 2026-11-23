@@ -1,0 +1,16 @@
+label: Les Champs-Élysées
+type: concept
+description: >
+  Joe Dassin's 1969 hit, with French lyrics by Pierre Delanoë on the tune of Waterloo Road. The
+  same scenes in the same order, moved to Paris, with a love story where the night out used to be.
+  Sold about 600,000 copies in France.
+relations:
+  - predicate: setIn
+    object: avenue-des-champs-elysees
+  - predicate: adaptationOf
+    object: waterloo-road
+    by: [pierre-delanoe]
+    date: "1969-05"
+language: fr
+sameAs:
+  - https://en.wikipedia.org/wiki/Les_Champs-%C3%89lys%C3%A9es_(song)

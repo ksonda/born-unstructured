@@ -1,0 +1,14 @@
+label: the 1860 phonautogram
+type: object
+description: >
+  About ten seconds of Au clair de la lune, traced onto soot-blackened paper by Édouard-Léon Scott
+  de Martinville on April 9, 1860. Meant to be looked at, not listened to. Played back for the
+  first time in 2008, and the oldest known recording of a human voice.
+relations:
+  - predicate: recordingOf
+    object: au-clair-de-la-lune
+    by: [scott-de-martinville]
+    date: "1860-04-09"
+language: fr
+sameAs:
+  - https://www.firstsounds.org/sounds/scott.php

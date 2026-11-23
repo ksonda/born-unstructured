@@ -1,0 +1,12 @@
+label: the Roud Folk Song Index
+type: concept
+description: >
+  Steve Roud's index of English-language songs collected from oral tradition: about 250,000
+  references to some 25,000 songs, each family under one number. Searchable at the Vaughan
+  Williams Memorial Library.
+types: [skos:ConceptScheme]
+aliases:
+  - Roud
+sameAs:
+  - https://en.wikipedia.org/wiki/Roud_Folk_Song_Index
+  - https://www.vwml.org/

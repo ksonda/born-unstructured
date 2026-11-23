@@ -7,7 +7,7 @@
  */
 import { z } from 'astro/zod';
 
-export const ENTITY_TYPES = ['person', 'object', 'role', 'routine', 'concept', 'place'] as const;
+export const ENTITY_TYPES = ['person', 'agent', 'object', 'role', 'routine', 'concept', 'place'] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
 
 export const STANCE_IDS = [
@@ -37,6 +37,28 @@ const alias = z.union([
     .strict(),
 ]);
 
+/** A prefixed name from one of the standard vocabularies the site publishes with. */
+const standardTerm = z
+  .string()
+  .regex(/^(prov|schema|owl|skos|dcterms|rdfs):[A-Za-z][A-Za-z0-9]*$/, 'Use a prefixed name from prov, schema, owl, skos, dcterms or rdfs');
+
+/** Year, year and month, or full date: 1969, 1969-05, 1860-04-09. */
+const partialDate = z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'Dates are YYYY, YYYY-MM or YYYY-MM-DD');
+
+const relation = z
+  .object({
+    predicate: z.string(),
+    object: id,
+    /**
+     * For a link that makes a copy (see vocab/copies.yaml): who did the copying.
+     * Published as prov:wasAssociatedWith on the activity.
+     */
+    by: z.array(id).default([]),
+    /** For a link that makes a copy: when. Published as dcterms:date on the activity. */
+    date: partialDate.optional(),
+  })
+  .strict();
+
 /** One file per recurring thing in src/content/entities/. The file name is the ID. */
 export const entitySchema = z
   .object({
@@ -45,7 +67,13 @@ export const entitySchema = z
     description: z.string().default(''),
     aliases: z.array(alias).default([]),
     /** Plain household facts, asserted without attribution: "the dishwasher is in the kitchen". */
-    relations: z.array(z.object({ predicate: z.string(), object: id }).strict()).default([]),
+    relations: z.array(relation).default([]),
+    /** Reference pages elsewhere that identify the thing (Wikipedia, the VWML). Published as schema:sameAs. */
+    sameAs: z.array(z.string().url().startsWith('https://')).default([]),
+    /** Language of a song, text or record, as a BCP 47 tag: fr, en, it. Published as dcterms:language. */
+    language: z.string().regex(/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/, 'Use a BCP 47 language tag, like fr or en').optional(),
+    /** Extra RDF classes from standard vocabularies, such as skos:ConceptScheme. */
+    types: z.array(standardTerm).default([]),
     /** A photo, as a path under public/images/: "things/messy-muppy.jpg". */
     image: z
       .string()
@@ -64,9 +92,44 @@ export const predicateSchema = z
     /** Reads naturally between a subject and an object: "settles with". */
     label: z.string(),
     description: z.string().default(''),
+    /**
+     * Standard terms this predicate is a narrower version of, as prefixed names
+     * (prov:wasDerivedFrom, schema:isBasedOn). Published as rdfs:subPropertyOf.
+     */
+    subPropertyOf: z.array(standardTerm).default([]),
   })
   .strict();
 export type PredicateData = z.infer<typeof predicateSchema>;
+
+/**
+ * How a kind of copy is spelled in PROV's long ("qualified") form.
+ * derivation: prov:qualifiedDerivation · primarySource: prov:qualifiedPrimarySource ·
+ * quotation: prov:qualifiedQuotation · none: not published as a derivation.
+ */
+export const COPY_QUALIFIERS = ['derivation', 'primarySource', 'quotation', 'none'] as const;
+export type CopyQualifier = (typeof COPY_QUALIFIERS)[number];
+
+/** Entries in src/content/vocab/copies.yaml: the kinds of copy, each published as a kind of prov:Activity. */
+export const copyKindSchema = z
+  .object({
+    /** The activity's class name, PascalCase: Adapting. */
+    id: z.string().regex(/^[A-Z][A-Za-z0-9]*$/, 'Copy kind IDs are PascalCase activity names, like Adapting'),
+    /** The activity, lowercase: "adapting". */
+    label: z.string(),
+    /** What the activity produces: "adaptation". */
+    copy: z.string(),
+    /** What survives from the source. */
+    keeps: z.string(),
+    /** What changes. */
+    changes: z.string(),
+    /** The site predicates that assert this kind of copy between two things, if any. */
+    predicates: z.array(z.string().regex(/^[a-z][A-Za-z0-9]*$/)).default([]),
+    qualifiedAs: z.enum(COPY_QUALIFIERS).default('derivation'),
+    /** How it sits in PROV when there is no predicate for it. */
+    note: z.string().optional(),
+  })
+  .strict();
+export type CopyKindData = z.infer<typeof copyKindSchema>;
 
 const observation = z
   .object({

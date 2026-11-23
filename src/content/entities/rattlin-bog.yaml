@@ -1,0 +1,10 @@
+label: The Rattlin' Bog
+type: concept
+description: >
+  The Irish branch of the tree song. "Rattlin'" means splendid. Hi ho.
+relations:
+  - predicate: isA
+    object: roud-129
+language: en
+sameAs:
+  - https://en.wikipedia.org/wiki/The_Rattlin%27_Bog

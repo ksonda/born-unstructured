@@ -1,0 +1,11 @@
+label: Inside Llewyn Davis
+type: concept
+description: >
+  The Coen brothers' 2013 film about a folk singer in Greenwich Village in 1961. The source of the
+  500 Miles on the car's playlist.
+language: en
+relations:
+  - predicate: setIn
+    object: gaslight-cafe
+sameAs:
+  - https://en.wikipedia.org/wiki/Inside_Llewyn_Davis

@@ -4,12 +4,12 @@
  * content collections (src/lib/site-graph.ts) and validates them with the same
  * schemas, so both routes produce the same compiler input.
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 import matter from 'gray-matter';
 import { parse as parseYaml } from 'yaml';
 import type { CompileInput } from './compile.ts';
-import { entitySchema, postSchema, predicateSchema } from './schema.ts';
+import { copyKindSchema, entitySchema, postSchema, predicateSchema } from './schema.ts';
 
 export function loadContent(contentDir: string): CompileInput {
   const postsDir = join(contentDir, 'posts');
@@ -34,5 +34,10 @@ export function loadContent(contentDir: string): CompileInput {
     (entry) => predicateSchema.parse(entry),
   );
 
-  return { posts, entities, predicates };
+  const copiesFile = join(contentDir, 'vocab', 'copies.yaml');
+  const copyKinds = existsSync(copiesFile)
+    ? (parseYaml(readFileSync(copiesFile, 'utf8')) as unknown[]).map((entry) => copyKindSchema.parse(entry))
+    : [];
+
+  return { posts, entities, predicates, copyKinds };
 }

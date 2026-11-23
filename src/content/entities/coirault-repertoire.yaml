@@ -1,0 +1,7 @@
+label: Coirault's Répertoire
+type: concept
+description: >
+  Patrice Coirault's catalogue of French songs from oral tradition, published by the Bibliothèque
+  nationale de France in three volumes (1996–2007). About 2,000 song types.
+types: [skos:ConceptScheme]
+language: fr

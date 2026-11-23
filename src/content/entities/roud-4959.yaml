@@ -1,0 +1,11 @@
+label: Roud 4959
+type: concept
+description: >
+  The Roud Folk Song Index number for 900 Miles and its relatives: a traveller far from home, too
+  broke and too proud to go back.
+relations:
+  - predicate: inScheme
+    object: roud-index
+types: [skos:Concept]
+sameAs:
+  - https://www.vwml.org/roudnumber/4959

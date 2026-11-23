@@ -55,7 +55,7 @@
   /** The filter list starts collapsed on small screens, where the graph should come first. */
   let filtersOpen = $state(true);
 
-  const typeNames: Record<EntityType, string> = { person: 'People', object: 'Objects', role: 'Roles', routine: 'Routines', concept: 'Concepts', place: 'Places' };
+  const typeNames: Record<EntityType, string> = { person: 'People', agent: 'Agents', object: 'Objects', role: 'Roles', routine: 'Routines', concept: 'Concepts', place: 'Places' };
 
   const seq = $derived(full ? Math.min(through ?? full.latestSeq, full.latestSeq) : 0);
   const graph = $derived(full ? cutoff(full, seq) : null);

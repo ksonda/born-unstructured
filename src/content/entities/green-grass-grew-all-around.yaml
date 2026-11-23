@@ -1,0 +1,13 @@
+label: The Green Grass Grew All Around
+type: concept
+description: >
+  The American branch of the tree song, first noted in 1877 and a summer-camp standard ever since.
+  Recorded by, among many others, Pete Seeger.
+aliases:
+  - Green Grass Grows All Around
+relations:
+  - predicate: isA
+    object: roud-129
+language: en
+sameAs:
+  - https://en.wikipedia.org/wiki/And_the_Green_Grass_Grew_All_Around

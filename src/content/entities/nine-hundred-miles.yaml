@@ -1,0 +1,11 @@
+label: 900 Miles
+type: concept
+description: >
+  A traditional American song from the early 1900s or before: a traveller far from home, listening
+  for the train. Nine hundred is the most common distance, but versions run from 400 to 10,000.
+aliases:
+  - Nine Hundred Miles
+relations:
+  - predicate: isA
+    object: roud-4959
+language: en

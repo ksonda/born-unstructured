@@ -1,0 +1,7 @@
+label: the French birth record format of 1803
+type: concept
+description: >
+  What a French birth record has to say and how it says it, set out in the Civil Code of 1803: the
+  day, hour and place, the child's sex and names, the parents and the witnesses, in one long
+  sentence with every date spelled out. A schema written as prose.
+language: fr

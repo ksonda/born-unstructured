@@ -5,6 +5,14 @@ import { getSiteGraph } from '../../lib/site-graph.ts';
 
 const graph = await getSiteGraph();
 const terms = vocabulary(graph);
+const QUALIFIED_AS: Record<string, string> = {
+  derivation: 'prov:qualifiedDerivation',
+  primarySource: 'prov:qualifiedPrimarySource',
+  quotation: 'prov:qualifiedQuotation',
+};
+/** The standard terms a site term narrows, from its rdfs:subClassOf and rdfs:subPropertyOf. */
+const narrower = (term: (typeof terms)[number]): string[] =>
+  [term.extra?.subClassOf, term.extra?.subPropertyOf].flat().filter((v): v is string => typeof v === 'string');
 const sections = [
   { title: 'Classes', terms: terms.filter((t) => t.kind === 'class') },
   { title: 'Properties', terms: terms.filter((t) => t.kind === 'property') },
@@ -14,8 +22,45 @@ const sections = [
 
 <Base title="Vocabulary" description="The small RDF vocabulary this site defines for itself.">
   <h1>Vocabulary</h1>
-  <p class="lede">The terms this site defines for itself. Everything else is borrowed from RDF, RDFS, SKOS, PROV, Dublin Core and schema.org.</p>
+  <p class="lede">The terms this site defines for itself. Everything else is borrowed from RDF, RDFS, OWL, SKOS, PROV, Dublin Core and schema.org. Where a term here is a narrower version of a standard one, it says so, and the data says so too, as rdfs:subClassOf or rdfs:subPropertyOf.</p>
   <p class="identifier">Namespace: {graph.site.vocabBase}</p>
+
+  <section id="copies">
+    <h2>Kinds of copy</h2>
+    <p>Each is a kind of <code>prov:Activity</code>. Where a link on this site asserts that kind of copy, every use of it is also published in PROV's long form, as a qualified derivation whose activity has that type, along with who did it (<code>prov:wasAssociatedWith</code>) and when (<code>dcterms:date</code>), where known.</p>
+    <div class="ledger-wrap">
+      <table class="ledger ledger--stack">
+        <thead>
+          <tr>
+            <th scope="col">Term</th>
+            <th scope="col">Copy</th>
+            <th scope="col">What survives</th>
+            <th scope="col">What changes</th>
+            <th scope="col">In PROV</th>
+          </tr>
+        </thead>
+        <tbody>
+          {graph.copyKinds.map((kind) => (
+            <tr id={kind.id}>
+              <td class="mono">bu:{kind.id}</td>
+              <td>{kind.copy}</td>
+              <td>{kind.keeps}</td>
+              <td>{kind.changes}</td>
+              <td>
+                {kind.predicates.length > 0 && kind.qualifiedAs !== 'none' ? (
+                  <>
+                    {kind.predicates.map((p, i) => [i > 0 && ' and ', <a href={`#${p}`}><code>bu:{p}</code></a>])}, also published as <code>{QUALIFIED_AS[kind.qualifiedAs]}</code>
+                  </>
+                ) : (
+                  kind.note
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   {
     sections.map((section) => (
@@ -35,7 +80,14 @@ const sections = [
                 <tr id={term.term}>
                   <td class="mono">bu:{term.term}</td>
                   <td>{term.label}</td>
-                  <td>{term.comment}</td>
+                  <td>
+                    {term.comment}
+                    {narrower(term).length > 0 && (
+                      <span class="vocab-maps">
+                        A narrower kind of {narrower(term).map((iri, i) => [i > 0 && ', ', <code>{iri}</code>])}
+                      </span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

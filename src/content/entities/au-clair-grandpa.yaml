@@ -1,0 +1,10 @@
+label: Grandpa's Au clair de la lune
+type: routine
+description: >
+  The version Grandpa sang to the older kid, and the first entry in the household's lullaby
+  repertoire.
+language: fr
+relations:
+  - predicate: performanceOf
+    object: au-clair-de-la-lune
+    by: [grandpa]

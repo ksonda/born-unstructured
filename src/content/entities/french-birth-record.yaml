@@ -1,0 +1,17 @@
+label: the French birth record
+type: object
+description: >
+  The newborn's birth as the French civil registry records it: the facts on the US certificate,
+  transcribed into the French format, in French, under a French registry number. Once it exists,
+  it is the copy French offices ask for.
+aliases:
+  - acte de naissance
+  - the transcription
+relations:
+  - predicate: conformsTo
+    object: birth-record-format-1803
+  - predicate: transcriptionOf
+    object: us-birth-certificate
+  - predicate: documents
+    object: baby
+language: fr

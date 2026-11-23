@@ -17,6 +17,7 @@ export function capitalise(text: string): string {
 
 export const TYPE_LABELS: Record<string, { one: string; many: string }> = {
   person: { one: 'Person', many: 'People' },
+  agent: { one: 'Agent', many: 'Agents' },
   object: { one: 'Object', many: 'Objects' },
   role: { one: 'Role', many: 'Roles' },
   routine: { one: 'Routine', many: 'Routines' },

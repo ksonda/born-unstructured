@@ -25,6 +25,7 @@
   --unassessed: #5b6b85;
 
   --person: #14233f;
+  --agent: #a3346b;
   --object: #1b56c4;
   --role: #0b7a8c;
   --routine: #17714f;
@@ -60,6 +61,7 @@
     --unassessed: #9db0ce;
 
     --person: #e3ebf7;
+    --agent: #f18dbf;
     --object: #86b4ff;
     --role: #63d3e6;
     --routine: #5ccba1;
@@ -474,6 +476,9 @@ a.chip:hover {
 [data-type='person']::before {
   background: var(--person);
 }
+[data-type='agent']::before {
+  background: var(--agent);
+}
 [data-type='object']::before {
   background: var(--object);
 }
@@ -621,6 +626,13 @@ a.chip:hover {
 .prose td:first-child {
   font-weight: 600;
   white-space: nowrap;
+}
+/* On a phone, a wide table scrolls sideways inside its own box instead of widening the page. */
+@media (max-width: 40rem) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 .prose li {
   margin-bottom: 0.4rem;
@@ -932,6 +944,13 @@ a.chip:hover {
   font-size: 0.82rem;
   color: var(--ink-soft);
   overflow-wrap: anywhere;
+}
+
+.vocab-maps {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
 }
 
 pre {

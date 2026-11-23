@@ -1,0 +1,13 @@
+label: the 2008 playback of the phonautogram
+type: object
+description: >
+  Scott de Martinville's 1860 trace, scanned and turned into sound by First Sounds in 2008. The
+  same performance, moved from soot on paper to something you can hear.
+language: fr
+relations:
+  - predicate: transcriptionOf
+    object: phonautogram-1860
+    by: [first-sounds]
+    date: "2008-03"
+sameAs:
+  - https://www.firstsounds.org/sounds/scott.php

@@ -8,16 +8,18 @@ import { compileGraph, type CompiledGraph } from './graph/compile.ts';
 let cached: Promise<CompiledGraph> | undefined;
 
 async function load(): Promise<CompiledGraph> {
-  const [posts, entities, predicates] = await Promise.all([
+  const [posts, entities, predicates, copyKinds] = await Promise.all([
     getCollection('posts'),
     getCollection('entities'),
     getCollection('predicates'),
+    getCollection('copyKinds'),
   ]);
   const { graph, warnings } = compileGraph(
     {
       posts: posts.map((post) => ({ id: post.id, data: post.data, body: post.body })),
       entities: entities.map((entity) => ({ id: entity.id, data: entity.data })),
       predicates: predicates.map((predicate) => predicate.data),
+      copyKinds: copyKinds.map((kind) => kind.data),
     },
     // The site's address including any base path, e.g. https://ksonda.github.io/born-unstructured
     { siteUrl: new URL(import.meta.env.BASE_URL, import.meta.env.SITE ?? 'http://localhost:4321').href },

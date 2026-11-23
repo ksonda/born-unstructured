@@ -33,7 +33,7 @@
 
   const found = $derived(indexById(graph).get(id));
   const href = (recordId: string) => base + (pathFor(graph, recordId) ?? '/');
-  const typeLabel: Record<string, string> = { person: 'Person', object: 'Object', role: 'Role', routine: 'Routine', concept: 'Concept', place: 'Place' };
+  const typeLabel: Record<string, string> = { person: 'Person', agent: 'Agent', object: 'Object', role: 'Role', routine: 'Routine', concept: 'Concept', place: 'Place' };
 </script>
 
 {#if found?.kind === 'entity'}

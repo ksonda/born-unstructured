@@ -1,0 +1,16 @@
+label: Les Champs-Élysées (version anglaise)
+type: concept
+description: >
+  Joe Dassin's own English-language recording of Les Champs-Élysées, from 1969. Its words follow
+  Waterloo Road, not Delanoë's French: the same plot and most of the same lines, with the street
+  renamed and a café and an accordion standing in for the cellar and the guitar.
+aliases:
+  - the English version of Les Champs-Élysées
+relations:
+  - predicate: setIn
+    object: avenue-des-champs-elysees
+  - predicate: adaptationOf
+    object: waterloo-road
+    by: [joe-dassin]
+    date: "1969"
+language: en

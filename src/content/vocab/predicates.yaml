@@ -44,3 +44,68 @@
 - id: moreSustainableThan
   label: is more sustainable than
   description: The subject keeps working under load that made the object fall apart.
+
+- id: documents
+  label: documents
+  description: The subject is a record whose job is to state facts about the object. Several records can document the same thing without being the same thing.
+  subPropertyOf: [schema:about]
+
+- id: sameAs
+  label: is the same thing as
+  description: Two identifiers, one thing. Anything true of the subject is true of the object. A much stronger promise than it looks.
+  subPropertyOf: [owl:sameAs]
+
+- id: transcriptionOf
+  label: is a transcription of
+  description: The subject carries the object's content into a new format, register or medium. Same facts, new shape. Nothing is translated.
+  subPropertyOf: [prov:hadPrimarySource, schema:isBasedOn]
+
+- id: translationOf
+  label: is a translation of
+  description: The subject renders the object in another language, line by line. Whether it says the same thing is a separate question.
+  subPropertyOf: [prov:wasDerivedFrom, schema:translationOfWork]
+
+- id: adaptationOf
+  label: is an adaptation of
+  description: The subject remakes the object for a new context. Enough survives to recognize the source, and the adapter chooses what changes.
+  subPropertyOf: [prov:wasDerivedFrom, schema:isBasedOn]
+
+- id: recordingOf
+  label: is a recording of
+  description: The subject captures one performance of the object.
+  subPropertyOf: [prov:wasDerivedFrom, schema:recordingOf]
+
+- id: quotesFrom
+  label: quotes from
+  description: The subject lifts specific lines from the object into a work that is otherwise its own.
+  subPropertyOf: [prov:wasQuotedFrom, schema:citation]
+
+- id: performanceOf
+  label: is a performance of
+  description: The subject is someone singing or playing the object, live or from memory, with whatever changes that brings.
+  subPropertyOf: [prov:wasDerivedFrom, schema:isBasedOn]
+
+- id: setIn
+  label: is set in
+  description: The subject is about, or takes place in, the object.
+  subPropertyOf: [schema:contentLocation]
+
+- id: appearsIn
+  label: appears in
+  description: The subject is part of the object, the way a song is part of a film.
+  subPropertyOf: [schema:isPartOf]
+
+- id: conformsTo
+  label: conforms to
+  description: The subject is written to the format or standard that the object sets out.
+  subPropertyOf: [dcterms:conformsTo]
+
+- id: revisionOf
+  label: is a revision of
+  description: The subject is a later version of the object, by the same authority, meant to replace it.
+  subPropertyOf: [prov:wasRevisionOf]
+
+- id: inScheme
+  label: is listed in
+  description: The subject is one of the entries in the catalogue, index or other identifier system named by the object.
+  subPropertyOf: [skos:inScheme]

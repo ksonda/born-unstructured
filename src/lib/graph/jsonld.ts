@@ -10,7 +10,8 @@
  *  - Relations declared in the entity registry ARE asserted as bare triples.
  *    Those are household facts ("the dishwasher is in the kitchen"), not theories.
  */
-import type { CompiledGraph } from './compile.ts';
+import type { CompiledGraph, CopyKind, Relation } from './compile.ts';
+import type { CopyQualifier } from './schema.ts';
 import { pathFor } from './routes.ts';
 import { STANCES } from './stances.ts';
 
@@ -22,6 +23,7 @@ export function prefixes(graph: CompiledGraph): Record<string, string> {
     bu: graph.site.vocabBase,
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+    owl: 'http://www.w3.org/2002/07/owl#',
     skos: 'http://www.w3.org/2004/02/skos/core#',
     prov: 'http://www.w3.org/ns/prov#',
     schema: 'https://schema.org/',
@@ -60,11 +62,18 @@ export function jsonLdContext(graph: CompiledGraph): Node {
     subClassOf: ref('rdfs:subClassOf'),
     subPropertyOf: ref('rdfs:subPropertyOf'),
     inScheme: ref('skos:inScheme'),
+    definition: 'skos:definition',
+    keeps: 'bu:keeps',
+    changes: 'bu:changes',
+    activityType: ref('bu:activityType'),
+    sameAs: ref('schema:sameAs'),
+    language: 'dcterms:language',
   };
 }
 
 const TYPE_TERMS: Record<string, string> = {
   person: 'Person',
+  agent: 'Agent',
   object: 'Object',
   role: 'Role',
   routine: 'Routine',
@@ -84,7 +93,7 @@ function tidy(node: Node): Node {
 
 export interface VocabTerm {
   term: string;
-  kind: 'class' | 'property' | 'stance';
+  kind: 'class' | 'property' | 'stance' | 'copy';
   label: string;
   comment: string;
   extra?: Node;
@@ -94,11 +103,12 @@ export interface VocabTerm {
 export function vocabulary(graph: CompiledGraph): VocabTerm[] {
   const classes: VocabTerm[] = [
     { term: 'Person', kind: 'class', label: 'Person', comment: 'A member of the household.', extra: { subClassOf: ['prov:Agent', 'schema:Person'] } },
+    { term: 'Agent', kind: 'class', label: 'Agent', comment: 'A person or group outside the household who made, changed or recorded something.', extra: { subClassOf: 'prov:Agent' } },
     { term: 'Object', kind: 'class', label: 'Object', comment: 'A physical thing that keeps turning up.' },
     { term: 'Role', kind: 'class', label: 'Role', comment: 'A job that has to be filled. Which thing fills it can change; the role keeps its identity.' },
     { term: 'Routine', kind: 'class', label: 'Routine', comment: 'Something the household does repeatedly, in the hope that it works.' },
     { term: 'Concept', kind: 'class', label: 'Concept', comment: 'An idea the household talks about as though it were a thing.' },
-    { term: 'Place', kind: 'class', label: 'Place', comment: 'A location in or near the home.' },
+    { term: 'Place', kind: 'class', label: 'Place', comment: 'A location, in or near the home or somewhere a song is set.', extra: { subClassOf: 'schema:Place' } },
     { term: 'Post', kind: 'class', label: 'Post', comment: 'A published blog post.', extra: { subClassOf: 'schema:BlogPosting' } },
     { term: 'Observation', kind: 'class', label: 'Observation', comment: 'One person’s report of a particular occurrence.' },
     { term: 'Claim', kind: 'class', label: 'Claim', comment: 'An interpretation or proposition. Recording a claim does not assert it.' },
@@ -114,12 +124,35 @@ export function vocabulary(graph: CompiledGraph): VocabTerm[] {
     { term: 'refines', kind: 'property', label: 'refines', comment: 'An earlier claim that this claim narrows or replaces.', extra: { subPropertyOf: 'prov:wasDerivedFrom' } },
     { term: 'sequence', kind: 'property', label: 'sequence', comment: 'Position of an assessment in publication order across all posts.' },
     { term: 'polarity', kind: 'property', label: 'polarity', comment: 'Whether a stance supports, doubts, leaves open or retracts a claim.' },
+    { term: 'keeps', kind: 'property', label: 'keeps', comment: 'What survives from the source in a kind of copy.', extra: { '@type': 'owl:AnnotationProperty' } },
+    { term: 'changes', kind: 'property', label: 'changes', comment: 'What a kind of copy changes.', extra: { '@type': 'owl:AnnotationProperty' } },
+    {
+      term: 'activityType',
+      kind: 'property',
+      label: 'activity type',
+      comment: 'The kind of activity a shortcut link stands for. Every use of the link is also published in PROV’s long form, with an activity of this type.',
+      extra: { '@type': 'owl:AnnotationProperty' },
+    },
   ];
+  const kindFor = new Map(graph.copyKinds.flatMap((k) => k.predicates.map((p) => [p, k] as const)));
   const predicates: VocabTerm[] = graph.predicates.map((p) => ({
     term: p.id,
     kind: 'property',
     label: p.label,
     comment: p.description,
+    extra: { subPropertyOf: p.subPropertyOf, ...(kindFor.has(p.id) ? { activityType: `bu:${kindFor.get(p.id)!.id}` } : {}) },
+  }));
+  const copies: VocabTerm[] = graph.copyKinds.map((k) => ({
+    term: k.id,
+    kind: 'copy',
+    label: k.label,
+    comment: `The activity that makes a ${k.copy}.${k.note ? ' ' + k.note : ''}`,
+    extra: {
+      subClassOf: 'prov:Activity',
+      definition: `What survives: ${k.keeps}. What changes: ${k.changes}.`,
+      keeps: k.keeps,
+      changes: k.changes,
+    },
   }));
   const stances: VocabTerm[] = STANCES.map((s) => ({
     term: s.term,
@@ -128,14 +161,15 @@ export function vocabulary(graph: CompiledGraph): VocabTerm[] {
     comment: s.description,
     extra: { polarity: s.polarity, inScheme: 'bu:Stances' },
   }));
-  return [...classes, ...properties, ...predicates, ...stances];
+  return [...classes, ...properties, ...predicates, ...copies, ...stances];
 }
 
 function vocabNodes(graph: CompiledGraph): Node[] {
   const nodes: Node[] = vocabulary(graph).map((term) =>
     tidy({
       '@id': `bu:${term.term}`,
-      '@type': term.kind === 'class' ? 'rdfs:Class' : term.kind === 'property' ? 'rdf:Property' : 'bu:Stance',
+      '@type':
+        term.kind === 'class' || term.kind === 'copy' ? 'rdfs:Class' : term.kind === 'property' ? 'rdf:Property' : 'bu:Stance',
       label: term.label,
       comment: term.comment,
       ...term.extra,
@@ -145,26 +179,76 @@ function vocabNodes(graph: CompiledGraph): Node[] {
   return nodes;
 }
 
+/** PROV's short and long forms for each way of qualifying a copy. */
+const QUALIFIED: Record<Exclude<CopyQualifier, 'none'>, { short: string; long: string; type: string }> = {
+  derivation: { short: 'prov:wasDerivedFrom', long: 'prov:qualifiedDerivation', type: 'prov:Derivation' },
+  primarySource: { short: 'prov:hadPrimarySource', long: 'prov:qualifiedPrimarySource', type: 'prov:PrimarySource' },
+  quotation: { short: 'prov:wasQuotedFrom', long: 'prov:qualifiedQuotation', type: 'prov:Quotation' },
+};
+
+/**
+ * A relation that asserts a kind of copy, spelled out in PROV: the plain PROV
+ * link, plus the qualified one naming the activity that did the copying.
+ * "Les Champs-Élysées is an adaptation of Waterloo Road" becomes a derivation
+ * whose activity is a bu:Adapting.
+ */
+/** A partial date as a typed literal: xsd:gYear, xsd:gYearMonth or xsd:date. */
+function dateLiteral(date: string): Node {
+  const type = date.length === 4 ? 'xsd:gYear' : date.length === 7 ? 'xsd:gYearMonth' : 'xsd:date';
+  return { '@value': date, '@type': type };
+}
+
+function provFor(kind: CopyKind, subjectId: string, relation: Relation): Node | null {
+  const objectId = relation.object;
+  if (kind.qualifiedAs === 'none') return null;
+  const q = QUALIFIED[kind.qualifiedAs];
+  // Named, not blank: the site publishes no blank nodes. Both live under the copy's own IRI,
+  // e.g. id:les-champs-elysees#adapting-waterloo-road for the activity.
+  const activity = `id:${subjectId}#${kind.label}-${objectId}`;
+  return {
+    [q.short]: { '@id': `id:${objectId}` },
+    [q.long]: {
+      '@id': `${activity}-${q.type.slice('prov:'.length).toLowerCase()}`,
+      '@type': q.type,
+      'prov:entity': { '@id': `id:${objectId}` },
+      'prov:hadActivity': tidy({
+        '@id': activity,
+        '@type': ['prov:Activity', `bu:${kind.id}`],
+        'prov:wasAssociatedWith': relation.by.map((agent) => ({ '@id': `id:${agent}` })),
+        // PROV's own time properties want exact timestamps; most of these are years.
+        'dcterms:date': relation.date ? dateLiteral(relation.date) : undefined,
+      }),
+    },
+  };
+}
+
 function recordNodes(graph: CompiledGraph): Node[] {
   const page = (id: string) => graph.site.url + pathFor(graph, id)!;
+  const kindFor = new Map(graph.copyKinds.flatMap((k) => k.predicates.map((p) => [p, k] as const)));
   const postFor = (postId: string) => graph.posts.find((p) => p.id === postId)!.published;
   const nodes: Node[] = [];
 
   for (const e of graph.entities) {
     const node: Node = {
       '@id': `id:${e.id}`,
-      '@type': `bu:${TYPE_TERMS[e.type]}`,
+      '@type': [`bu:${TYPE_TERMS[e.type]}`, ...e.types],
       label: e.label,
       altLabel: e.aliases.map((a) => a.label),
       description: e.description,
       firstAppearedIn: `id:${graph.posts.find((p) => p.seq === e.mentionedIn[0])!.id}`,
       page: page(e.id),
+      sameAs: e.sameAs,
+      language: e.language ?? undefined,
       ...(e.image ? { image: graph.site.url + e.image } : {}),
     };
+    const add = (key: string, value: unknown) => {
+      node[key] = node[key] ? [...(node[key] as unknown[]), value] : [value];
+    };
     for (const relation of e.relations) {
-      const key = `bu:${relation.predicate}`;
-      const value = { '@id': `id:${relation.object}` };
-      node[key] = node[key] ? [...(node[key] as Node[]), value] : [value];
+      add(`bu:${relation.predicate}`, { '@id': `id:${relation.object}` });
+      const kind = kindFor.get(relation.predicate);
+      const prov = kind && provFor(kind, e.id, relation);
+      if (prov) for (const [key, value] of Object.entries(prov)) add(key, value);
     }
     nodes.push(tidy(node));
   }

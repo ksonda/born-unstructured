@@ -1,0 +1,11 @@
+label: Dad's Au clair de la lune
+type: routine
+description: >
+  The version the newborn gets: Grandpa's, as remembered by a tired parent, minus whatever went
+  missing on the way. The folk process, at home.
+language: fr
+relations:
+  - predicate: performanceOf
+    object: au-clair-grandpa
+    by: [dad]
+    date: "2026-11"

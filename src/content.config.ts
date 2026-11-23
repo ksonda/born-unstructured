@@ -1,6 +1,6 @@
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
-import { entitySchema, postSchema, predicateSchema } from './lib/graph/schema.ts';
+import { copyKindSchema, entitySchema, postSchema, predicateSchema } from './lib/graph/schema.ts';
 
 /** Posts. The frontmatter carries each post's additions to the graph. */
 const posts = defineCollection({
@@ -20,4 +20,10 @@ const predicates = defineCollection({
   schema: predicateSchema,
 });
 
-export const collections = { posts, entities, predicates };
+/** Kinds of copy, each a kind of prov:Activity. */
+const copyKinds = defineCollection({
+  loader: file('./src/content/vocab/copies.yaml'),
+  schema: copyKindSchema,
+});
+
+export const collections = { posts, entities, predicates, copyKinds };

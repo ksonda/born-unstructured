@@ -1,0 +1,66 @@
+# Kinds of copy: the table in "Mon ami PROV-O", as data.
+# Each one is published as a subclass of prov:Activity, with what survives and
+# what changes. Where a predicate asserts that kind of copy between two things,
+# every use of it is also published in PROV's long form, with an activity of
+# this type, and a relation can say who did it (by) and when (date).
+# Keep the wording in step with the post's table.
+
+- id: Serializing
+  label: serializing
+  copy: serialization
+  keeps: Everything
+  changes: The syntax
+  qualifiedAs: none
+  note: Not a derivation at all. In PROV the two files are alternates of one another (prov:alternateOf).
+
+- id: Transliterating
+  label: transliterating
+  copy: transliteration
+  keeps: Every letter, mapped one to one
+  changes: The writing system
+  note: No predicate on this site yet.
+
+- id: Transcribing
+  label: transcribing
+  copy: transcription
+  keeps: The statements
+  changes: The format, medium or register
+  predicates: [transcriptionOf]
+  qualifiedAs: primarySource
+
+- id: Translating
+  label: translating
+  copy: translation
+  keeps: The meaning (as far as practicable)
+  changes: The language (and the meaning, as far as is unavoidable under other chosen constraints like meter or rhyme or register)
+  predicates: [translationOf]
+
+- id: Adapting
+  label: adapting
+  copy: adaptation
+  keeps: "Enough of the source to recognize it: a tune, a plot, characters or scenes"
+  changes: "Whatever the new context calls for, by the adapter's choice: the words, setting, medium, audience, even the story"
+  predicates: [adaptationOf]
+
+- id: Covering
+  label: covering
+  copy: cover
+  keeps: The song
+  changes: The performer
+  predicates: [recordingOf, performanceOf]
+
+- id: Varying
+  label: varying
+  copy: variant
+  keeps: A family resemblance
+  changes: Nearly anything, with no single author
+  qualifiedAs: none
+  note: No single source to derive from. Variants are grouped as members of a family, such as a Roud number, instead.
+
+- id: Quoting
+  label: quoting
+  copy: quotation
+  keeps: A few lines
+  changes: Everything else
+  predicates: [quotesFrom]
+  qualifiedAs: quotation

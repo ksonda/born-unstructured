@@ -1,0 +1,15 @@
+label: Roud 129
+type: concept
+description: >
+  A number in the Roud Folk Song Index, which groups closely related English-language folk songs
+  under one identifier. This one is the tree song: a tree in a bog (or the ground, or the wood),
+  a limb on the tree, a branch on the limb, and so on down to a bird in an egg. It identifies a
+  family of songs, not a text.
+aliases:
+  - the tree song
+relations:
+  - predicate: inScheme
+    object: roud-index
+types: [skos:Concept]
+sameAs:
+  - https://www.vwml.org/roudnumber/129

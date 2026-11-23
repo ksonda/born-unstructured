@@ -1,0 +1,14 @@
+label: Rent
+type: concept
+description: >
+  Jonathan Larson's musical, which opened off-Broadway 100 years to the day after La Bohème's
+  premiere, with the story moved to New York's East Village. "Light My Candle" is the candle scene,
+  nearly beat for beat. Mimi drops her stash instead of her key.
+relations:
+  - predicate: adaptationOf
+    object: la-boheme
+    by: [jonathan-larson]
+    date: "1996"
+language: en
+sameAs:
+  - https://en.wikipedia.org/wiki/Rent_(musical)
