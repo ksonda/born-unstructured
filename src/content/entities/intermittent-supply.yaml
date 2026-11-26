@@ -1,0 +1,10 @@
+label: intermittent supply
+type: concept
+description: >
+  Piped water that reaches the tap for less than 24 hours a day. It comes in kinds: on a
+  schedule, in unpredictable but dependable amounts, or whenever it feels like it.
+aliases:
+  - intermittent water supply
+  - IWS
+sameAs:
+  - https://en.wikipedia.org/wiki/Intermittent_water_supply

@@ -1,0 +1,8 @@
+label: period of record
+type: concept
+description: >
+  The first and last dates a monitoring record has data for. Says nothing about what happened
+  in between, which is usually the interesting part.
+aliases:
+  - POR
+  - temporal coverage
