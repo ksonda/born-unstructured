@@ -1,0 +1,8 @@
+label: the baby log
+type: object
+description: >
+  The app where the baby's feeds, diapers and sleep get logged. An irregular time series kept by
+  two observers whose own coverage is intermittent.
+aliases:
+  - the app
+  - the log
